@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle del Post - Hogwarts Community Hub</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>
+<body class="bg-background text-text-primary">
+    <!-- Navigation Header -->
+    <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <svg class="h-10 w-10 text-primary mr-3" viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="font-accent text-xl font-medium text-primary">Hogwarts Community Hub</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="homepage_sorting_hat_experience.html" class="text-text-secondary hover:text-primary magical-transition">Inicio</a>
+                    <a href="house_selection_portal_sorting_hat_quiz.html" class="text-text-secondary hover:text-primary magical-transition">Selección</a>
+                    <a href="interactive_forum_hub.html" class="text-primary font-medium border-b-2 border-primary pb-1">Foro</a>
+                    <a href="user_profile_achievement_system.html" class="text-text-secondary hover:text-primary magical-transition">Perfil</a>
+                    <a href="community_events_challenges_center.html" class="text-text-secondary hover:text-primary magical-transition">Eventos</a>
+                    <a href="house_common_rooms_personalized_dashboards.html" class="btn-primary text-sm px-4 py-2" id="navAuthButton">Mi Casa</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-lg hover:bg-primary/10 magical-transition">
+                    <svg class="h-6 w-6 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Back Button -->
+        <div class="mb-6">
+            <button onclick="history.back()" class="btn-secondary inline-flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                </svg>
+                Volver al Foro
+            </button>
+        </div>
+
+        <!-- Post Content -->
+        <div class="card p-8 mb-8" id="postContent">
+            <div class="animate-pulse">
+                <div class="h-8 bg-surface rounded w-3/4 mb-4"></div>
+                <div class="h-4 bg-surface rounded w-1/2 mb-8"></div>
+                <div class="h-4 bg-surface rounded mb-2"></div>
+                <div class="h-4 bg-surface rounded mb-2"></div>
+                <div class="h-4 bg-surface rounded w-2/3"></div>
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="card p-6" id="commentsSection">
+            <h3 class="font-headline text-xl font-medium mb-6 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+                </svg>
+                Comentarios
+                <span id="commentsCount" class="ml-2 text-sm text-text-secondary">(0)</span>
+            </h3>
+
+            <!-- New Comment Form -->
+            <div class="mb-8" id="newCommentForm">
+                <div class="bg-surface/50 p-4 rounded-lg">
+                    <p class="text-center text-text-secondary">
+                        <a href="#" class="text-primary hover:underline">Inicia sesión</a> para comentar
+                    </p>
+                </div>
+            </div>
+
+            <!-- Comments List -->
+            <div id="commentsList" class="space-y-6">
+                <!-- Comments will be loaded here -->
+            </div>
+
+            <!-- Load More Comments -->
+            <div class="text-center mt-8" id="loadMoreComments" style="display: none;">
+                <button class="btn-secondary px-6 py-2">
+                    Cargar más comentarios
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Universal Navigation Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/universal-nav.js"></script>
+    
+    <!-- Post Detail Script -->
+    <script type="module" src="../js/post-detail.js"></script>
+
+    <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

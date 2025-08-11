@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Supabase Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        .result {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+        label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Supabase Connection</h1>
+    
+    <div>
+        <label for="supabaseUrl">Supabase URL:</label>
+        <input type="text" id="supabaseUrl" value="https://vdcclritlgnwwdxloayt.supabase.co">
+    </div>
+    
+    <div>
+        <label for="supabaseKey">Supabase Anon Key:</label>
+        <input type="text" id="supabaseKey" placeholder="Enter your anon key here">
+    </div>
+    
+    <button id="testConnection">Test Connection</button>
+    
+    <div class="result" id="result">Results will appear here...</div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.getElementById('testConnection').addEventListener('click', async function() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'Testing connection...';
+            
+            const supabaseUrl = document.getElementById('supabaseUrl').value;
+            const supabaseKey = document.getElementById('supabaseKey').value;
+            
+            if (!supabaseUrl || !supabaseKey) {
+                resultDiv.textContent = 'Please enter both Supabase URL and key.';
+                return;
+            }
+            
+            try {
+                // Initialize Supabase client
+                const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+                
+                // Test connection
+                resultDiv.textContent = 'Checking authentication...';
+                const { data: authData, error: authError } = await supabase.auth.getSession();
+                
+                if (authError) {
+                    resultDiv.textContent = `Auth error: ${JSON.stringify(authError, null, 2)}`;
+                    return;
+                }
+                
+                resultDiv.textContent = 'Authentication check successful. Trying to access public data...';
+                
+                // Try to get public data
+                const { data, error } = await supabase.from('profiles').select('count');
+                
+                if (error) {
+                    resultDiv.textContent += `\n\nError accessing profiles: ${JSON.stringify(error, null, 2)}`;
+                    
+                    // Try to create the profiles table
+                    resultDiv.textContent += '\n\nTrying to check if tables exist...';
+                    
+                    const { data: tables, error: tablesError } = await supabase
+                        .from('information_schema.tables')
+                        .select('table_name')
+                        .eq('table_schema', 'public');
+                    
+                    if (tablesError) {
+                        resultDiv.textContent += `\n\nError checking tables: ${JSON.stringify(tablesError, null, 2)}`;
+                    } else {
+                        resultDiv.textContent += `\n\nTables found: ${JSON.stringify(tables, null, 2)}`;
+                    }
+                } else {
+                    resultDiv.textContent = `Connection successful!\n\nData: ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+<script id="dhws-dataInjector" src="/public/dhws-data-injector.js"></script>
+</body>
+</html>

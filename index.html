@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hogwarts Community Hub</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            font-family: 'Georgia', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .loading-container {
+            text-align: center;
+            color: #d4af37;
+            position: relative;
+        }
+        
+        .hogwarts-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: radial-gradient(circle, #d4af37, #b8860b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: #1a1a2e;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        .welcome-text {
+            font-size: 28px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: fadeIn 1s ease-in;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 30px;
+            animation: fadeIn 1.5s ease-in;
+        }
+        
+        .loading-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 2px;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+            border-radius: 2px;
+            animation: loading 3s ease-in-out;
+            width: 0%;
+        }
+        
+        .magical-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #d4af37;
+            border-radius: 50%;
+            animation: float 4s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            50% { 
+                transform: translateY(-100px) rotate(180deg);
+                opacity: 0.8;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="magical-particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 0.5s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1.5s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 2.5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 3.5s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 4s;"></div>
+    </div>
+    
+    <div class="loading-container">
+        <div class="hogwarts-logo">H</div>
+        <h1 class="welcome-text">Welcome to Hogwarts</h1>
+        <p class="subtitle">Preparing your magical experience...</p>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+    </div>
+
+    <script>
+        // Redirect to the homepage after 3 seconds
+        setTimeout(function() {
+            window.location.href = 'pages/homepage_sorting_hat_experience.html';
+        }, 3000);
+        
+        // Add some interactive magical effects
+        document.addEventListener('mousemove', function(e) {
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach((particle, index) => {
+                const speed = (index + 1) * 0.01;
+                const x = e.clientX * speed;
+                const y = e.clientY * speed;
+                particle.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+    
+    
+<script id="dhws-dataInjector" src="/public/dhws-data-injector.js"></script>
+</body>
+</html>

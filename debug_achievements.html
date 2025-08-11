@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Sistema de Logros</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">🔧 Debug Sistema de Logros</h1>
+        
+        <div class="space-y-4">
+            <!-- Estado de Conexión -->
+            <div class="bg-gray-800 p-4 rounded">
+                <h2 class="text-xl font-semibold mb-2">Estado de Conexión</h2>
+                <div id="connectionStatus">Verificando...</div>
+            </div>
+
+            <!-- Usuario Actual -->
+            <div class="bg-gray-800 p-4 rounded">
+                <h2 class="text-xl font-semibold mb-2">Usuario Actual</h2>
+                <div id="currentUser">Cargando...</div>
+            </div>
+
+            <!-- Perfil de Usuario -->
+            <div class="bg-gray-800 p-4 rounded">
+                <h2 class="text-xl font-semibold mb-2">Perfil en user_profiles</h2>
+                <div id="userProfile">Cargando...</div>
+            </div>
+
+            <!-- Tipos de Logros -->
+            <div class="bg-gray-800 p-4 rounded">
+                <h2 class="text-xl font-semibold mb-2">Tipos de Logros Disponibles</h2>
+                <div id="achievementTypes">Cargando...</div>
+            </div>
+
+            <!-- Logros del Usuario -->
+            <div class="bg-gray-800 p-4 rounded">
+                <h2 class="text-xl font-semibold mb-2">Logros del Usuario</h2>
+                <div id="userAchievements">Cargando...</div>
+            </div>
+
+            <!-- Acciones de Test -->
+            <div class="bg-gray-800 p-4 rounded">
+                <h2 class="text-xl font-semibold mb-2">Acciones de Test</h2>
+                <div class="space-y-2">
+                    <button onclick="createTestAchievement()" class="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">
+                        Crear Logro de Test
+                    </button>
+                    <button onclick="awardTestAchievement()" class="bg-green-600 px-4 py-2 rounded hover:bg-green-700">
+                        Asignar Logro de Test
+                    </button>
+                    <button onclick="checkAutoAchievements()" class="bg-purple-600 px-4 py-2 rounded hover:bg-purple-700">
+                        Verificar Logros Automáticos
+                    </button>
+                </div>
+                <div id="testResults" class="mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let supabaseClient = null;
+        let currentUser = null;
+
+        async function init() {
+            // Usar un único cliente de Supabase
+            if (!window.supabaseClient) {
+                window.supabaseClient = supabase.createClient(
+                    'https://vdcclritlgnwwdxloayt.supabase.co',
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E'
+                );
+            }
+            supabaseClient = window.supabaseClient;
+
+            // Verificar conexión
+            try {
+                const { data, error } = await supabaseClient.from('achievement_types').select('count', { count: 'exact' });
+                if (error) throw error;
+                document.getElementById('connectionStatus').innerHTML = 
+                    '<span class="text-green-400">✅ Conectado a Supabase</span>';
+            } catch (error) {
+                document.getElementById('connectionStatus').innerHTML = 
+                    `<span class="text-red-400">❌ Error de conexión: ${error.message}</span>`;
+            }
+
+            // Obtener usuario actual
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                currentUser = user;
+                if (user) {
+                    document.getElementById('currentUser').innerHTML = `
+                        <div class="text-green-400">
+                            ✅ Usuario autenticado<br>
+                            ID: ${user.id}<br>
+                            Email: ${user.email}
+                        </div>
+                    `;
+                    
+                    await loadUserProfile(user.id);
+                    await loadAchievementTypes();
+                    await loadUserAchievements(user.id);
+                } else {
+                    document.getElementById('currentUser').innerHTML = 
+                        '<span class="text-yellow-400">⚠️ No hay usuario autenticado</span>';
+                }
+            } catch (error) {
+                document.getElementById('currentUser').innerHTML = 
+                    `<span class="text-red-400">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function loadUserProfile(userId) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('user_profiles')
+                    .select('*')
+                    .eq('id', userId)
+                    .single();
+
+                if (error) throw error;
+
+                document.getElementById('userProfile').innerHTML = `
+                    <div class="text-green-400">
+                        ✅ Perfil encontrado<br>
+                        Nombre: ${data.display_name || 'Sin nombre'}<br>
+                        Casa: ${data.house || 'Sin casa'}<br>
+                        Puntos: ${data.house_points || 0}
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('userProfile').innerHTML = 
+                    `<span class="text-red-400">❌ Error o perfil no encontrado: ${error.message}</span>`;
+            }
+        }
+
+        async function loadAchievementTypes() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('achievement_types')
+                    .select('*')
+                    .order('name');
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    const html = data.map(type => `
+                        <div class="border-l-4 border-yellow-500 pl-2 mb-2">
+                            ${type.icon || '🏆'} <strong>${type.name}</strong><br>
+                            <span class="text-sm text-gray-400">${type.description || 'Sin descripción'}</span><br>
+                            <span class="text-xs">Puntos: ${type.points_reward}, Categoría: ${type.category || 'general'}</span>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('achievementTypes').innerHTML = 
+                        `<div class="text-green-400 mb-2">✅ ${data.length} tipos de logros encontrados:</div>${html}`;
+                } else {
+                    document.getElementById('achievementTypes').innerHTML = 
+                        '<span class="text-yellow-400">⚠️ No hay tipos de logros definidos</span>';
+                }
+            } catch (error) {
+                document.getElementById('achievementTypes').innerHTML = 
+                    `<span class="text-red-400">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function loadUserAchievements(userId) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('user_achievements')
+                    .select(`
+                        *,
+                        achievement_types (*)
+                    `)
+                    .eq('user_id', userId);
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    const html = data.map(ach => {
+                        const type = ach.achievement_types || {};
+                        return `
+                            <div class="bg-gray-700 p-2 rounded mb-2">
+                                ${type.icon || '🏆'} <strong>${type.name || 'Logro'}</strong><br>
+                                <span class="text-sm">Obtenido: ${new Date(ach.awarded_at).toLocaleDateString()}</span>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    document.getElementById('userAchievements').innerHTML = 
+                        `<div class="text-green-400 mb-2">✅ ${data.length} logros obtenidos:</div>${html}`;
+                } else {
+                    document.getElementById('userAchievements').innerHTML = 
+                        '<span class="text-yellow-400">⚠️ No tienes logros aún</span>';
+                }
+            } catch (error) {
+                document.getElementById('userAchievements').innerHTML = 
+                    `<span class="text-red-400">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function createTestAchievement() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('achievement_types')
+                    .insert([{
+                        name: 'Logro de Test ' + Date.now(),
+                        description: 'Este es un logro de prueba para verificar el sistema',
+                        icon: '🧪',
+                        points_reward: 10,
+                        category: 'test',
+                        trigger_condition: 'manual',
+                        auto_award: false
+                    }])
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                document.getElementById('testResults').innerHTML = 
+                    `<div class="text-green-400">✅ Logro de test creado: ${data.name}</div>`;
+                    
+                await loadAchievementTypes();
+            } catch (error) {
+                document.getElementById('testResults').innerHTML = 
+                    `<div class="text-red-400">❌ Error creando logro: ${error.message}</div>`;
+            }
+        }
+
+        async function awardTestAchievement() {
+            if (!currentUser) {
+                document.getElementById('testResults').innerHTML = 
+                    '<div class="text-yellow-400">⚠️ Necesitas estar autenticado</div>';
+                return;
+            }
+
+            try {
+                // Obtener primer tipo de logro disponible
+                const { data: types } = await supabaseClient
+                    .from('achievement_types')
+                    .select('*')
+                    .limit(1)
+                    .single();
+
+                if (!types) {
+                    throw new Error('No hay tipos de logros disponibles');
+                }
+
+                // Verificar si ya tiene este logro
+                const { data: existing } = await supabaseClient
+                    .from('user_achievements')
+                    .select('id')
+                    .eq('user_id', currentUser.id)
+                    .eq('achievement_type_id', types.id)
+                    .single();
+
+                if (existing) {
+                    document.getElementById('testResults').innerHTML = 
+                        `<div class="text-yellow-400">⚠️ Ya tienes el logro: ${types.name}</div>`;
+                    return;
+                }
+
+                // Asignar el logro
+                const { data, error } = await supabaseClient
+                    .from('user_achievements')
+                    .insert([{
+                        user_id: currentUser.id,
+                        achievement_type_id: types.id,
+                        awarded_by: currentUser.id,
+                        reason: 'Test manual desde debug'
+                    }])
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                document.getElementById('testResults').innerHTML = 
+                    `<div class="text-green-400">✅ Logro asignado: ${types.name}</div>`;
+                    
+                await loadUserAchievements(currentUser.id);
+            } catch (error) {
+                document.getElementById('testResults').innerHTML = 
+                    `<div class="text-red-400">❌ Error asignando logro: ${error.message}</div>`;
+            }
+        }
+
+        async function checkAutoAchievements() {
+            if (!currentUser) {
+                document.getElementById('testResults').innerHTML = 
+                    '<div class="text-yellow-400">⚠️ Necesitas estar autenticado</div>';
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient
+                    .rpc('check_and_award_achievements', {
+                        p_user_id: currentUser.id
+                    });
+
+                if (error) throw error;
+
+                document.getElementById('testResults').innerHTML = 
+                    `<div class="text-blue-400">🔍 Resultado: ${JSON.stringify(data)}</div>`;
+                    
+                if (data && data.achievements_awarded > 0) {
+                    await loadUserAchievements(currentUser.id);
+                }
+            } catch (error) {
+                document.getElementById('testResults').innerHTML = 
+                    `<div class="text-red-400">❌ Error verificando logros: ${error.message}</div>`;
+            }
+        }
+
+        // Inicializar al cargar la página
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

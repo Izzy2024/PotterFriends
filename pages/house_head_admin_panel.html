@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Administración - Jefe de Casa | Hogwarts Community Hub</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/admin-panel.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Cargar auth.js primero para tener el cliente global -->
+    <script src="../js/auth.js"></script>
+</head>
+<body class="bg-background text-text-primary">
+    <!-- Navigation Header -->
+    <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <svg class="h-10 w-10 text-primary mr-3" viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="font-accent text-xl font-medium text-primary">Panel de Jefe de Casa</span>
+                </div>
+                
+                <!-- Admin Navigation -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="#dashboard" class="text-primary font-medium border-b-2 border-primary pb-1 px-2">Dashboard</a>
+                    <a href="#assign-achievements" class="text-text-secondary hover:text-primary magical-transition px-2 py-1">Asignar Logros</a>
+                    <a href="#manage-activities" class="text-text-secondary hover:text-primary magical-transition px-2 py-1">Actividades</a>
+                    <a href="#statistics" class="text-text-secondary hover:text-primary magical-transition px-2 py-1">Estadísticas</a>
+                    <a href="#moderation" class="text-text-secondary hover:text-primary magical-transition px-2 py-1">Moderación</a>
+                    <button id="logoutBtn" class="btn-secondary text-sm px-4 py-2 ml-4 rounded-lg">Cerrar Sesión</button>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-lg hover:bg-primary/10 magical-transition" id="mobileMenuBtn">
+                    <svg class="h-6 w-6 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- House Header Section -->
+    <section id="houseHeader" class="relative text-white overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-20 h-20 border-2 border-white rounded-full"></div>
+            <div class="absolute top-20 right-20 w-16 h-16 border border-white rounded-full"></div>
+            <div class="absolute bottom-20 left-1/4 w-12 h-12 border border-white rounded-full"></div>
+            <div class="absolute bottom-10 right-1/3 w-8 h-8 border border-white rounded-full"></div>
+        </div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+                <!-- House Crest -->
+                <div class="relative">
+                    <div id="houseCrest" class="w-24 h-24 lg:w-32 lg:h-32 bg-white/20 backdrop-blur-sm rounded-full border-4 border-white shadow-elevated flex items-center justify-center">
+                        <svg class="w-16 h-16 lg:w-20 lg:h-20 text-white" fill="currentColor" viewBox="0 0 100 100">
+                            <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
+                        </svg>
+                    </div>
+                    <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-secondary rounded-full border-4 border-white flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- House Info -->
+                <div class="flex-1 text-center lg:text-left">
+                    <div class="flex items-center justify-center lg:justify-start mb-2">
+                        <h1 id="houseTitle" class="font-headline text-3xl lg:text-4xl font-medium mr-4">Casa</h1>
+                        <div class="flex items-center bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+                            <div class="w-3 h-3 bg-secondary rounded-full mr-2"></div>
+                            <span id="adminRole" class="font-cta text-sm font-semibold">JEFE DE CASA</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-white/90 text-lg mb-6">
+                        Panel de administración y gestión de <span id="houseName">Casa</span>
+                    </p>
+                    
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
+                            <div id="totalMembers" class="font-headline text-2xl font-medium text-secondary">0</div>
+                            <div class="text-white/80 text-sm">Miembros</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
+                            <div id="totalPoints" class="font-headline text-2xl font-medium text-secondary">0</div>
+                            <div class="text-white/80 text-sm">Puntos</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
+                            <div id="activeMembers" class="font-headline text-2xl font-medium text-secondary">0</div>
+                            <div class="text-white/80 text-sm">Activos</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
+                            <div id="monthlyAchievements" class="font-headline text-2xl font-medium text-secondary">0</div>
+                            <div class="text-white/80 text-sm">Logros</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Quick Actions -->
+        <section class="mb-8">
+            <h2 class="font-headline text-2xl font-medium text-text-primary mb-6">Acciones Rápidas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Assign Achievement -->
+                <div class="bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer" id="quickAssignAchievement">
+                    <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-medal fa-2x"></i>
+                    </div>
+                    <h3 class="font-accent text-lg font-medium text-text-primary mb-2">Asignar Logro</h3>
+                    <p class="text-text-secondary text-sm">Reconoce los logros de tus estudiantes</p>
+                </div>
+
+                <!-- Manage Activities -->
+                <div class="bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-calendar-alt fa-2x"></i>
+                    </div>
+                    <h3 class="font-accent text-lg font-medium text-text-primary mb-2">Gestionar Actividades</h3>
+                    <p class="text-text-secondary text-sm">Organiza eventos y desafíos para tu casa</p>
+                </div>
+
+                <!-- View Statistics -->
+                <div class="bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-bar fa-2x"></i>
+                    </div>
+                    <h3 class="font-accent text-lg font-medium text-text-primary mb-2">Ver Estadísticas</h3>
+                    <p class="text-text-secondary text-sm">Analiza el rendimiento de tu casa</p>
+                </div>
+
+                <!-- Moderation Tools -->
+                <div class="bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer">
+                    <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-red-600 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-shield-alt fa-2x"></i>
+                    </div>
+                    <h3 class="font-accent text-lg font-medium text-text-primary mb-2">Herramientas de Moderación</h3>
+                    <p class="text-text-secondary text-sm">Mantén el orden en tu comunidad</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- House Members -->
+            <div class="lg:col-span-2">
+                <div class="bg-surface rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-headline text-xl font-medium text-text-primary">Miembros de la Casa</h3>
+                        <div class="flex items-center space-x-4">
+                            <input type="text" id="memberSearch" placeholder="Buscar miembro..." 
+                                   class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <div id="houseMembersContainer" class="space-y-3">
+                        <!-- Los miembros se cargarán dinámicamente -->
+                        <div class="text-center text-text-secondary py-8">
+                            <div class="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+                            <p>Cargando miembros de la casa...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="lg:col-span-1">
+                <div class="bg-surface rounded-xl p-6">
+                    <h3 class="font-headline text-xl font-medium text-text-primary mb-6">Actividad Reciente</h3>
+                    <div id="recentActivityContainer" class="space-y-4">
+                        <!-- La actividad se cargará dinámicamente -->
+                        <div class="text-center text-text-secondary py-8">
+                            <div class="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+                            <p>Cargando actividad...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 text-center">
+            <div class="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p class="text-text-primary">Cargando panel de administración...</p>
+        </div>
+    </div>
+
+    <!-- Achievement Assignment Modal Container -->
+    <div id="modalContainer"></div>
+
+    <!-- Scripts -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/achievement-tracker.js"></script>
+    <script src="../js/house-head-admin.js"></script>
+    
+    <!-- Script para aplicar colores dinámicos de casa -->
+    <script>
+        // Función para aplicar colores de casa dinámicamente
+        function applyHouseColors(house) {
+            const houseHeader = document.getElementById('houseHeader');
+            const houseColors = {
+                gryffindor: 'linear-gradient(135deg, #b91c1c, #991b1b, #7f1d1d)',
+                hufflepuff: 'linear-gradient(135deg, #d97706, #b45309, #92400e)',
+                ravenclaw: 'linear-gradient(135deg, #1d4ed8, #1e40af, #1e3a8a)',
+                slytherin: 'linear-gradient(135deg, #15803d, #166534, #14532d)'
+            };
+            
+            if (houseHeader && houseColors[house]) {
+                houseHeader.style.background = houseColors[house];
+            }
+        }
+        
+        // Observar cambios en el currentHouse del admin
+        if (window.houseAdmin) {
+            const originalUpdateUserInfo = window.houseAdmin.updateUserInfo;
+            window.houseAdmin.updateUserInfo = function() {
+                originalUpdateUserInfo.call(this);
+                if (this.currentHouse) {
+                    applyHouseColors(this.currentHouse);
+                }
+            };
+        }
+        
+        // También aplicar cuando se cargue la página
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (window.houseAdmin && window.houseAdmin.currentHouse) {
+                    applyHouseColors(window.houseAdmin.currentHouse);
+                }
+            }, 1000);
+            
+            // Backup adicional para asegurar que los colores se apliquen
+            setTimeout(() => {
+                if (window.houseAdmin && window.houseAdmin.currentHouse) {
+                    applyHouseColors(window.houseAdmin.currentHouse);
+                    console.log('🎨 Backup color application for:', window.houseAdmin.currentHouse);
+                }
+            }, 2000);
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

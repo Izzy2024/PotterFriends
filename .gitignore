@@ -1,0 +1,12 @@
+.DS_Store
+node_modules
+.idea
+package-lock.json
+# Editor and local settings
+.vscode/
+.kiro/
+.kilocode/
+
+# Tests and temporary debug files (may contain tokens)
+tests/
+tmp_*
