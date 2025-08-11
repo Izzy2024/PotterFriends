@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Servidor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        ul {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>¡Hola! El servidor está funcionando correctamente</h1>
+    
+    <div class="success">
+        <p>✅ Si puedes ver esta página, el servidor HTTP está funcionando correctamente.</p>
+    </div>
+    
+    <h2>Enlaces de prueba:</h2>
+    
+    <ul>
+        <li><a href="/">Raíz del sitio</a></li>
+        <li><a href="/index.html">Página de inicio</a></li>
+        <li><a href="/pages/user_registration.html">Registro de usuario</a></li>
+        <li><a href="/pages/user_login.html">Inicio de sesión</a></li>
+        <li><a href="/test-page.html">Página de prueba</a></li>
+    </ul>
+    
+    <h2>Información del servidor:</h2>
+    <p>Fecha y hora: <span id="datetime"></span></p>
+    <p>URL actual: <span id="currentUrl"></span></p>
+    
+    <script>
+        document.getElementById('datetime').textContent = new Date().toString();
+        document.getElementById('currentUrl').textContent = window.location.href;
+    </script>
+<script id="dhws-dataInjector" src="/public/dhws-data-injector.js"></script>
+</body>
+</html>

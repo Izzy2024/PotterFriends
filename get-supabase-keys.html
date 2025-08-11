@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Supabase Keys</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .instructions {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .key-display {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+        }
+        .step {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Get Supabase API Keys</h1>
+    
+    <div class="instructions">
+        <p>Follow these steps to get your Supabase API keys:</p>
+    </div>
+    
+    <div class="step">
+        <h2>Step 1: Log in to your Supabase Dashboard</h2>
+        <p>Go to <a href="https://app.supabase.com" target="_blank">https://app.supabase.com</a> and log in to your account.</p>
+    </div>
+    
+    <div class="step">
+        <h2>Step 2: Select your project</h2>
+        <p>Click on your project "Potter Friends" in the dashboard.</p>
+    </div>
+    
+    <div class="step">
+        <h2>Step 3: Go to API Settings</h2>
+        <p>In the left sidebar, click on "Settings" and then "API".</p>
+    </div>
+    
+    <div class="step">
+        <h2>Step 4: Copy your API Keys</h2>
+        <p>You'll find two types of API keys:</p>
+        <ol>
+            <li><strong>anon public</strong> - This is the key you should use in your frontend code</li>
+            <li><strong>service_role secret</strong> - This is for server-side operations only</li>
+        </ol>
+        <p>For our authentication system, we need the <strong>anon public</strong> key.</p>
+    </div>
+    
+    <div class="step">
+        <h2>Step 5: Update your code</h2>
+        <p>Copy the anon public key and update the following files:</p>
+        <ul>
+            <li><code>js/auth.js</code> - Replace the <code>SUPABASE_ANON_KEY</code> value</li>
+            <li><code>supabase-mcp-server.js</code> - Replace the <code>supabaseKey</code> value</li>
+            <li><code>.kiro/settings/mcp.json</code> - Replace the <code>SUPABASE_TOKEN</code> value</li>
+        </ul>
+    </div>
+    
+    <div class="step">
+        <h2>Step 6: Create the necessary tables</h2>
+        <p>Run the setup script to create the necessary tables:</p>
+        <pre>node setup-supabase.js</pre>
+    </div>
+    
+    <div class="step">
+        <h2>Step 7: Test the connection</h2>
+        <p>Run the test script to verify the connection:</p>
+        <pre>node test-supabase-connection.js</pre>
+    </div>
+<script id="dhws-dataInjector" src="/public/dhws-data-injector.js"></script>
+</body>
+</html>

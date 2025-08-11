@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Foro Interactivo - Hogwarts Community Hub</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+</head>
+<body class="bg-background text-text-primary">
+    <!-- Navigation Header -->
+    <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <svg class="h-10 w-10 text-primary mr-3" viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="font-accent text-xl font-medium text-primary">Hogwarts Community Hub</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="homepage_sorting_hat_experience.html" class="text-text-secondary hover:text-primary magical-transition">Inicio</a>
+                    <a href="house_selection_portal_sorting_hat_quiz.html" class="text-text-secondary hover:text-primary magical-transition">Selección</a>
+                    <a href="interactive_forum_hub.html" class="text-primary font-medium border-b-2 border-primary pb-1">Foro</a>
+                    <a href="user_profile_achievement_system.html" class="text-text-secondary hover:text-primary magical-transition">Perfil</a>
+                    <a href="community_events_challenges_center.html" class="text-text-secondary hover:text-primary magical-transition">Eventos</a>
+                    <a href="house_common_rooms_personalized_dashboards.html" class="btn-primary text-sm px-4 py-2" id="navAuthButton">Mi Casa</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-lg hover:bg-primary/10 magical-transition">
+                    <svg class="h-6 w-6 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Forum Header Section -->
+    <section class="bg-gradient-to-r from-primary/10 via-accent/10 to-secondary/10 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8">
+                <h1 class="font-headline text-4xl md:text-5xl font-medium text-text-primary mb-4">
+                    Foro de la Comunidad
+                </h1>
+                <p class="font-body text-lg text-text-secondary max-w-2xl mx-auto">
+                    Únete a las discusiones más fascinantes del mundo mágico. Comparte teorías, arte, fanfiction y conecta con magos de todas las casas.
+                </p>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+                <div class="bg-surface/80 backdrop-blur-sm rounded-lg p-4 text-center border border-white/20">
+                    <div class="font-headline text-2xl font-medium text-primary">1,847</div>
+                    <div class="text-text-secondary text-sm">Discusiones Activas</div>
+                </div>
+                <div class="bg-surface/80 backdrop-blur-sm rounded-lg p-4 text-center border border-white/20">
+                    <div class="font-headline text-2xl font-medium text-secondary">23,456</div>
+                    <div class="text-text-secondary text-sm">Mensajes Hoy</div>
+                </div>
+                <div class="bg-surface/80 backdrop-blur-sm rounded-lg p-4 text-center border border-white/20">
+                    <div class="font-headline text-2xl font-medium text-accent">892</div>
+                    <div class="text-text-secondary text-sm">Miembros Online</div>
+                </div>
+                <div class="bg-surface/80 backdrop-blur-sm rounded-lg p-4 text-center border border-white/20">
+                    <div class="font-headline text-2xl font-medium text-success">156</div>
+                    <div class="text-text-secondary text-sm">Nuevos Hoy</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Forum Content -->
+    <section class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-4 gap-8">
+                <!-- Sidebar Filters -->
+                <div class="lg:col-span-1">
+                    <div class="card p-6 sticky top-24">
+                        <h3 class="font-headline text-xl font-medium mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/>
+                            </svg>
+                            Filtros
+                        </h3>
+                        
+                        <!-- House Filter -->
+                        <div class="mb-6">
+                            <h4 class="font-cta font-semibold text-sm text-text-primary mb-3">Por Casa</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-gryffindor focus:ring-gryffindor mr-2" />
+                                    <div class="w-3 h-3 bg-gryffindor rounded-full mr-2"></div>
+                                    <span class="text-sm">Gryffindor</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-slytherin focus:ring-slytherin mr-2" />
+                                    <div class="w-3 h-3 bg-slytherin rounded-full mr-2"></div>
+                                    <span class="text-sm">Slytherin</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-ravenclaw focus:ring-ravenclaw mr-2" />
+                                    <div class="w-3 h-3 bg-ravenclaw rounded-full mr-2"></div>
+                                    <span class="text-sm">Ravenclaw</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-hufflepuff focus:ring-hufflepuff mr-2" />
+                                    <div class="w-3 h-3 bg-hufflepuff rounded-full mr-2"></div>
+                                    <span class="text-sm">Hufflepuff</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Sort Options -->
+                        <div class="mb-6">
+                            <h4 class="font-cta font-semibold text-sm text-text-primary mb-3">Ordenar por</h4>
+                            <select class="input-field w-full text-sm">
+                                <option>Más Reciente</option>
+                                <option>Más Popular</option>
+                                <option>Más Comentado</option>
+                                <option>Mejor Valorado</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Reset Filters -->
+                        <button class="btn-secondary w-full text-sm py-2 flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                            </svg>
+                            Limpiar Filtros
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Main Content Area -->
+                <div class="lg:col-span-3">
+                    <!-- Search and New Post -->
+                    <div class="card p-6 mb-6">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-1 relative">
+                                <input type="text" placeholder="Buscar discusiones..." class="input-field w-full pl-10 pr-4" />
+                                <svg class="w-5 h-5 text-text-secondary absolute left-3 top-1/2 transform -translate-y-1/2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <button class="btn-primary px-6 py-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Nueva Discusión
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Featured Discussions Carousel -->
+                    <div class="card p-6 mb-8">
+                        <h3 class="font-headline text-xl font-medium mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-secondary" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            Discusiones Destacadas
+                        </h3>
+                        
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-gradient-to-r from-gryffindor/10 to-gryffindor/5 p-4 rounded-lg border-l-4 border-gryffindor hover-scale magical-transition">
+                                <div class="flex items-center mb-2">
+                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?q=80&w=400&auto=format&fit=crop" alt="María González" class="w-8 h-8 object-cover rounded-full mr-3" onerror="this.src='https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
+                                    <div>
+                                        <div class="font-cta font-semibold text-sm">María González</div>
+                                        <div class="flex items-center">
+                                            <div class="w-2 h-2 bg-gryffindor rounded-full mr-1"></div>
+                                            <span class="text-xs text-gryffindor">Gryffindor • Nivel 15</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h4 class="font-headline font-medium mb-2">¿Por qué Snape realmente protegió a Harry?</h4>
+                                <p class="text-sm text-text-secondary mb-3">Una teoría profunda sobre las verdaderas motivaciones de Severus Snape más allá del amor por Lily...</p>
+                                <div class="flex items-center justify-between text-xs text-text-secondary">
+                                    <span>847 respuestas • 2.3k vistas</span>
+                                    <span>Hace 2 horas</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-r from-ravenclaw/10 to-ravenclaw/5 p-4 rounded-lg border-l-4 border-ravenclaw hover-scale magical-transition">
+                                <div class="flex items-center mb-2">
+                                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop" alt="Ana Rodríguez" class="w-8 h-8 object-cover rounded-full mr-3" onerror="this.src='https://images.pixabay.com/photo-2016/11/21/12/42/beard-1845166_1280.jpg'; this.onerror=null;" />
+                                    <div>
+                                        <div class="font-cta font-semibold text-sm">Ana Rodríguez</div>
+                                        <div class="flex items-center">
+                                            <div class="w-2 h-2 bg-ravenclaw rounded-full mr-1"></div>
+                                            <span class="text-xs text-ravenclaw">Ravenclaw • Nivel 22</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h4 class="font-headline font-medium mb-2">Análisis: La Magia de los Horrocruxes</h4>
+                                <p class="text-sm text-text-secondary mb-3">Un estudio detallado sobre la magia oscura detrás de los Horrocruxes y sus implicaciones...</p>
+                                <div class="flex items-center justify-between text-xs text-text-secondary">
+                                    <span>1.2k respuestas • 5.7k vistas</span>
+                                    <span>Hace 4 horas</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Forum Categories -->
+                    <div class="space-y-6">
+                        <!-- Teorías y Análisis -->
+                        <div class="card p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-accent" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-headline text-xl font-medium">Teorías y Análisis</h3>
+                                        <p class="text-text-secondary text-sm">Discusiones profundas sobre el mundo mágico</p>
+                                    </div>
+                                </div>
+                                <div class="text-right text-sm text-text-secondary">
+                                    <div>342 temas</div>
+                                    <div>5.2k mensajes</div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-surface/50 rounded-lg hover:bg-surface magical-transition">
+                                    <div class="flex items-center">
+                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop" alt="Diego Morales" class="w-10 h-10 object-cover rounded-full mr-3" onerror="this.src='https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
+                                        <div>
+                                            <h4 class="font-medium text-sm">La verdadera naturaleza de los Dementores</h4>
+                                            <div class="flex items-center text-xs text-text-secondary">
+                                                <div class="w-2 h-2 bg-slytherin rounded-full mr-1"></div>
+                                                <span class="mr-2">Diego Morales</span>
+                                                <span>•</span>
+                                                <span class="ml-2">156 respuestas</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-text-secondary">
+                                        <div>Hace 1 hora</div>
+                                        <div class="flex items-center">
+                                            <svg class="w-3 h-3 mr-1 text-secondary" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                            <span>+25 pts</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-surface/50 rounded-lg hover:bg-surface magical-transition">
+                                    <div class="flex items-center">
+                                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop" alt="Ana Rodríguez" class="w-10 h-10 object-cover rounded-full mr-3" onerror="this.src='https://images.pixabay.com/photo-2017/06/26/02/47/man-2442565_1280.jpg'; this.onerror=null;" />
+                                        <div>
+                                            <h4 class="font-medium text-sm">¿Podría existir magia sin varita?</h4>
+                                            <div class="flex items-center text-xs text-text-secondary">
+                                                <div class="w-2 h-2 bg-ravenclaw rounded-full mr-1"></div>
+                                                <span class="mr-2">Ana Rodríguez</span>
+                                                <span>•</span>
+                                                <span class="ml-2">89 respuestas</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-text-secondary">
+                                        <div>Hace 3 horas</div>
+                                        <div class="flex items-center">
+                                            <svg class="w-3 h-3 mr-1 text-secondary" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                            <span>+18 pts</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Fanfiction -->
+                        <div class="card p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-secondary" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
+                                            <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-headline text-xl font-medium">Fanfiction</h3>
+                                        <p class="text-text-secondary text-sm">Historias originales del mundo mágico</p>
+                                    </div>
+                                </div>
+                                <div class="text-right text-sm text-text-secondary">
+                                    <div>189 historias</div>
+                                    <div>3.1k comentarios</div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-surface/50 rounded-lg hover:bg-surface magical-transition">
+                                    <div class="flex items-center">
+                                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?q=80&w=400&auto=format&fit=crop" alt="Laura Vega" class="w-10 h-10 object-cover rounded-full mr-3" onerror="this.src='https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
+                                        <div>
+                                            <h4 class="font-medium text-sm">Los Merodeadores: Años Perdidos</h4>
+                                            <div class="flex items-center text-xs text-text-secondary">
+                                                <div class="w-2 h-2 bg-gryffindor rounded-full mr-1"></div>
+                                                <span class="mr-2">Laura Vega</span>
+                                                <span>•</span>
+                                                <span class="ml-2">Capítulo 12 publicado</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-text-secondary">
+                                        <div>Hace 2 horas</div>
+                                        <div class="flex items-center">
+                                            <svg class="w-3 h-3 mr-1 text-warning" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                                            </svg>
+                                            <span>234 likes</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-surface/50 rounded-lg hover:bg-surface magical-transition">
+                                    <div class="flex items-center">
+                                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop" alt="Carlos Mendoza" class="w-10 h-10 object-cover rounded-full mr-3" onerror="this.src='https://images.pixabay.com/photo-2016/11/21/12/42/beard-1845166_1280.jpg'; this.onerror=null;" />
+                                        <div>
+                                            <h4 class="font-medium text-sm">Hogwarts: Una Nueva Era</h4>
+                                            <div class="flex items-center text-xs text-text-secondary">
+                                                <div class="w-2 h-2 bg-hufflepuff rounded-full mr-1"></div>
+                                                <span class="mr-2">Carlos Mendoza</span>
+                                                <span>•</span>
+                                                <span class="ml-2">Historia completa</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-text-secondary">
+                                        <div>Hace 1 día</div>
+                                        <div class="flex items-center">
+                                            <svg class="w-3 h-3 mr-1 text-warning" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                                            </svg>
+                                            <span>189 likes</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Arte y Creatividad -->
+                        <div class="card p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-warning" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-headline text-xl font-medium">Arte y Creatividad</h3>
+                                        <p class="text-text-secondary text-sm">Fanart, ilustraciones y creaciones visuales</p>
+                                    </div>
+                                </div>
+                                <div class="text-right text-sm text-text-secondary">
+                                    <div>267 obras</div>
+                                    <div>1.8k comentarios</div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid md:grid-cols-2 gap-3">
+                                <div class="flex items-center p-3 bg-surface/50 rounded-lg hover:bg-surface magical-transition">
+                                    <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=400&auto=format&fit=crop" alt="Artwork" class="w-16 h-16 object-cover rounded-lg mr-3" onerror="this.src='https://images.pexels.com/photos/1266808/pexels-photo-1266808.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
+                                    <div>
+                                        <h4 class="font-medium text-sm">Retrato de Hermione</h4>
+                                        <div class="flex items-center text-xs text-text-secondary">
+                                            <div class="w-2 h-2 bg-ravenclaw rounded-full mr-1"></div>
+                                            <span>Elena Ruiz</span>
+                                        </div>
+                                        <div class="flex items-center text-xs text-text-secondary mt-1">
+                                            <svg class="w-3 h-3 mr-1 text-warning" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                                            </svg>
+                                            <span>127 likes</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-surface/50 rounded-lg hover:bg-surface magical-transition">
+                                    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=400&auto=format&fit=crop" alt="Artwork" class="w-16 h-16 object-cover rounded-lg mr-3" onerror="this.src='https://images.pixabay.com/photo-2017/01/31/13/05/castle-2023112_1280.jpg'; this.onerror=null;" />
+                                    <div>
+                                        <h4 class="font-medium text-sm">Hogwarts al Atardecer</h4>
+                                        <div class="flex items-center text-xs text-text-secondary">
+                                            <div class="w-2 h-2 bg-hufflepuff rounded-full mr-1"></div>
+                                            <span>Miguel Torres</span>
+                                        </div>
+                                        <div class="flex items-center text-xs text-text-secondary mt-1">
+                                            <svg class="w-3 h-3 mr-1 text-warning" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                                            </svg>
+                                            <span>203 likes</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Debates Mágicos -->
+                        <div class="card p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-error/10 rounded-lg flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-error" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-headline text-xl font-medium">Debates Mágicos</h3>
+                                        <p class="text-text-secondary text-sm">Discusiones acaloradas sobre temas controvertidos</p>
+                                    </div>
+                                </div>
+                                <div class="text-right text-sm text-text-secondary">
+                                    <div>156 debates</div>
+                                    <div>4.7k argumentos</div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-surface/50 rounded-lg hover:bg-surface magical-transition">
+                                    <div class="flex items-center">
+                                        <div class="flex -space-x-2 mr-3">
+                                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop" alt="Participante 1" class="w-8 h-8 object-cover rounded-full border-2 border-white" onerror="this.src='https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
+                                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?q=80&w=400&auto=format&fit=crop" alt="Participante 2" class="w-8 h-8 object-cover rounded-full border-2 border-white" onerror="this.src='https://images.pixabay.com/photo-2016/11/21/12/42/beard-1845166_1280.jpg'; this.onerror=null;" />
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-sm">¿Snape era realmente un héroe?</h4>
+                                            <div class="flex items-center text-xs text-text-secondary">
+                                                <span class="mr-2">Debate activo</span>
+                                                <span>•</span>
+                                                <span class="ml-2">78 argumentos</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-text-secondary">
+                                        <div>Hace 30 min</div>
+                                        <div class="flex items-center">
+                                            <div class="w-2 h-2 bg-error rounded-full mr-1 animate-pulse"></div>
+                                            <span>En vivo</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-surface/50 rounded-lg hover:bg-surface magical-transition">
+                                    <div class="flex items-center">
+                                        <div class="flex -space-x-2 mr-3">
+                                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop" alt="Participante 1" class="w-8 h-8 object-cover rounded-full border-2 border-white" onerror="this.src='https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
+                                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop" alt="Participante 2" class="w-8 h-8 object-cover rounded-full border-2 border-white" onerror="this.src='https://images.pixabay.com/photo-2017/06/26/02/47/man-2442565_1280.jpg'; this.onerror=null;" />
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-sm">¿Cuál es la casa más poderosa?</h4>
+                                            <div class="flex items-center text-xs text-text-secondary">
+                                                <span class="mr-2">Debate cerrado</span>
+                                                <span>•</span>
+                                                <span class="ml-2">234 argumentos</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-text-secondary">
+                                        <div>Hace 2 días</div>
+                                        <div class="flex items-center">
+                                            <svg class="w-3 h-3 mr-1 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                            </svg>
+                                            <span>Resuelto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ayuda y Preguntas -->
+                        <div class="card p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-headline text-xl font-medium">Ayuda y Preguntas</h3>
+                                        <p class="text-text-secondary text-sm">Soporte de la comunidad y preguntas generales</p>
+                                    </div>
+                                </div>
+                                <div class="text-right text-sm text-text-secondary">
+                                    <div>89 preguntas</div>
+                                    <div>456 respuestas</div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-surface/50 rounded-lg hover:bg-surface magical-transition">
+                                    <div class="flex items-center">
+                                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop" alt="Nuevo usuario" class="w-10 h-10 object-cover rounded-full mr-3" onerror="this.src='https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
+                                        <div>
+                                            <h4 class="font-medium text-sm">¿Cómo cambio mi casa asignada?</h4>
+                                            <div class="flex items-center text-xs text-text-secondary">
+                                                <span class="mr-2">Nuevo usuario</span>
+                                                <span>•</span>
+                                                <span class="ml-2">3 respuestas</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-text-secondary">
+                                        <div>Hace 1 hora</div>
+                                        <div class="flex items-center">
+                                            <div class="w-2 h-2 bg-warning rounded-full mr-1"></div>
+                                            <span>Sin resolver</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-surface/50 rounded-lg hover:bg-surface magical-transition">
+                                    <div class="flex items-center">
+                                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop" alt="Usuario experimentado" class="w-10 h-10 object-cover rounded-full mr-3" onerror="this.src='https://images.pixabay.com/photo-2016/11/21/12/42/beard-1845166_1280.jpg'; this.onerror=null;" />
+                                        <div>
+                                            <h4 class="font-medium text-sm">Guía para nuevos miembros</h4>
+                                            <div class="flex items-center text-xs text-text-secondary">
+                                                <div class="w-2 h-2 bg-ravenclaw rounded-full mr-1"></div>
+                                                <span class="mr-2">Ana Rodríguez</span>
+                                                <span>•</span>
+                                                <span class="ml-2">Guía oficial</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-text-secondary">
+                                        <div>Fijado</div>
+                                        <div class="flex items-center">
+                                            <svg class="w-3 h-3 mr-1 text-secondary" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/>
+                                            </svg>
+                                            <span>Destacado</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Load More Button -->
+                    <div class="text-center mt-8">
+                        <button class="btn-secondary px-8 py-3 rounded-lg hover-scale magical-transition">
+                            Cargar Más Discusiones
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Collapsible Online Members Sidebar -->
+    <div id="onlineMembersSidebar" class="fixed right-4 top-1/2 transform -translate-y-1/2 z-30">
+        <!-- Toggle Button -->
+        <button id="toggleMembersBtn" class="absolute left-0 top-0 transform -translate-x-full bg-primary text-white p-2 rounded-l-lg shadow-elevated focus:outline-none" onclick="toggleOnlineMembers()">
+            <svg id="showIcon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+            </svg>
+            <svg id="hideIcon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+        </button>
+        
+        <!-- Members Panel -->
+        <div id="membersPanel" class="card p-4 w-64 shadow-elevated transition-all duration-300 ease-in-out transform translate-x-0 opacity-0 invisible">
+            <h4 class="font-cta font-semibold text-sm mb-3 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-2 h-2 bg-success rounded-full mr-2 animate-pulse"></div>
+                    <span>Miembros Online (892)</span>
+                </div>
+            </h4>
+            
+            <div class="space-y-2 max-h-96 overflow-y-auto">
+                <div class="flex items-center p-2 rounded-lg hover:bg-surface/50 magical-transition">
+                    <img src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400" alt="María González" class="w-8 h-8 object-cover rounded-full mr-2" />
+                    <div>
+                        <div class="font-medium text-xs">María González</div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-gryffindor rounded-full mr-1"></div>
+                            <span class="text-xs text-gryffindor">Gryffindor</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center p-2 rounded-lg hover:bg-surface/50 magical-transition">
+                    <img src="https://images.pixabay.com/photo-2016/11/21/12/42/beard-1845166_1280.jpg" alt="Diego Morales" class="w-8 h-8 object-cover rounded-full mr-2" />
+                    <div>
+                        <div class="font-medium text-xs">Diego Morales</div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-slytherin rounded-full mr-1"></div>
+                            <span class="text-xs text-slytherin">Slytherin</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center p-2 rounded-lg hover:bg-surface/50 magical-transition">
+                    <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Ana Rodríguez" class="w-8 h-8 object-cover rounded-full mr-2" />
+                    <div>
+                        <div class="font-medium text-xs">Ana Rodríguez</div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-ravenclaw rounded-full mr-1"></div>
+                            <span class="text-xs text-ravenclaw">Ravenclaw</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center p-2 rounded-lg hover:bg-surface/50 magical-transition">
+                    <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Carlos Mendoza" class="w-8 h-8 object-cover rounded-full mr-2" />
+                    <div>
+                        <div class="font-medium text-xs">Carlos Mendoza</div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-hufflepuff rounded-full mr-1"></div>
+                            <span class="text-xs text-hufflepuff">Hufflepuff</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center pt-2">
+                    <button class="text-xs text-primary hover:text-primary-700 magical-transition">
+                        Ver todos los miembros online
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript for toggle functionality -->
+    <script>
+        // Check if panel should be open based on localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const isOpen = localStorage.getItem('onlineMembersPanelOpen') === 'true';
+            if (isOpen) {
+                openOnlineMembers();
+            }
+        });
+        
+        function toggleOnlineMembers() {
+            const panel = document.getElementById('membersPanel');
+            const showIcon = document.getElementById('showIcon');
+            const hideIcon = document.getElementById('hideIcon');
+            
+            if (panel.classList.contains('invisible')) {
+                openOnlineMembers();
+                localStorage.setItem('onlineMembersPanelOpen', 'true');
+            } else {
+                closeOnlineMembers();
+                localStorage.setItem('onlineMembersPanelOpen', 'false');
+            }
+        }
+        
+        function openOnlineMembers() {
+            const panel = document.getElementById('membersPanel');
+            const showIcon = document.getElementById('showIcon');
+            const hideIcon = document.getElementById('hideIcon');
+            
+            panel.classList.remove('invisible', 'opacity-0');
+            panel.classList.add('opacity-100');
+            showIcon.classList.add('hidden');
+            hideIcon.classList.remove('hidden');
+        }
+        
+        function closeOnlineMembers() {
+            const panel = document.getElementById('membersPanel');
+            const showIcon = document.getElementById('showIcon');
+            const hideIcon = document.getElementById('hideIcon');
+            
+            panel.classList.remove('opacity-100');
+            panel.classList.add('opacity-0');
+            
+            // Añadir un pequeño retraso antes de ocultar completamente el panel
+            setTimeout(() => {
+                panel.classList.add('invisible');
+            }, 300);
+            
+            showIcon.classList.remove('hidden');
+            hideIcon.classList.add('hidden');
+        }
+    </script>
+    </div>
+
+    <!-- Mobile Quick Actions -->
+    <div class="fixed bottom-4 right-4 md:hidden z-40">
+        <div class="flex flex-col space-y-2">
+            <button class="btn-primary w-12 h-12 rounded-full flex items-center justify-center shadow-elevated">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+            <button class="btn-secondary w-12 h-12 rounded-full flex items-center justify-center shadow-elevated">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Brand -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <svg class="h-8 w-8 text-secondary mr-3" viewBox="0 0 100 100" fill="currentColor">
+                            <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
+                            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span class="font-accent text-xl font-medium">Hogwarts Community Hub</span>
+                    </div>
+                    <p class="text-gray-300 mb-4 max-w-md">
+                        La comunidad mágica más grande de habla hispana. Donde los fans de Harry Potter 
+                        encuentran su verdadero hogar mágico.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clip-rule="evenodd"/>
+                            </svg>
+                        </a>
+                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"/>
+                            </svg>
+                        </a>
+                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12.017 0C18.624 0 20 1.376 20 8.017v3.966C20 18.624 18.624 20 12.017 20H7.983C1.376 20 0 18.624 0 11.983V8.017C0 1.376 1.376 0 7.983 0h4.034zm0 1.8H7.983C2.276 1.8 1.8 2.276 1.8 7.983v4.034c0 5.707.476 6.183 6.183 6.183h4.034c5.707 0 6.183-.476 6.183-6.183V7.983c0-5.707-.476-6.183-6.183-6.183zM10 5.4a4.6 4.6 0 110 9.2 4.6 4.6 0 010-9.2zm0 1.8a2.8 2.8 0 100 5.6 2.8 2.8 0 000-5.6zm5.4-3.6a1.1 1.1 0 110 2.2 1.1 1.1 0 010-2.2z" clip-rule="evenodd"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-cta font-semibold mb-4">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="house_selection_portal_sorting_hat_quiz.html" class="text-gray-300 hover:text-secondary magical-transition">Selección de Casa</a></li>
+                        <li><a href="interactive_forum_hub.html" class="text-gray-300 hover:text-secondary magical-transition">Foro Principal</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Biblioteca Digital</a></li>
+                        <li><a href="community_events_challenges_center.html" class="text-gray-300 hover:text-secondary magical-transition">Eventos</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Community -->
+                <div>
+                    <h4 class="font-cta font-semibold mb-4">Comunidad</h4>
+                    <ul class="space-y-2">
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Normas de la Comunidad</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Ayuda y Soporte</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Contacto</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Política de Privacidad</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">
+                    © 2025 Hogwarts Community Hub. Todos los derechos reservados. 
+                    <span class="text-gray-500">Creado con magia por fans, para fans.</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript for Forum Functionality -->
+    <script>
+        // Forum interaction functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter functionality
+            const filterCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            const sortSelect = document.querySelector('select');
+            
+            filterCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    // Simulate filtering (in real app, this would filter content)
+                    console.log('Filter applied:', this.nextElementSibling.textContent);
+                });
+            });
+            
+            sortSelect.addEventListener('change', function() {
+                // Simulate sorting (in real app, this would sort content)
+                console.log('Sort applied:', this.value);
+            });
+            
+            // Reset filters
+            const resetButton = document.querySelector('button:has(svg)');
+            if (resetButton) {
+                resetButton.addEventListener('click', function() {
+                    filterCheckboxes.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    sortSelect.selectedIndex = 0;
+                    console.log('Filters reset');
+                });
+            }
+            
+            // Animate discussion cards on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe forum category cards
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                observer.observe(card);
+            });
+            
+            // Search functionality
+            const searchInput = document.querySelector('input[placeholder="Buscar discusiones..."]');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    // Simulate search (in real app, this would search content)
+                    console.log('Searching for:', this.value);
+                });
+            }
+            
+            // Mobile quick actions
+            const mobileButtons = document.querySelectorAll('.fixed.bottom-4.right-4 button');
+            mobileButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Simulate mobile actions
+                    console.log('Mobile action triggered');
+                });
+            });
+        });
+    </script>
+
+    <!-- Universal Navigation -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/universal-nav.js"></script>
+    
+    <!-- Forum functionality -->
+    <script type="module" src="../js/forum.js"></script>
+    <script type="module" src="../js/forum-diagnostic.js"></script>
+    
+    <!-- Check Forum Tables Script -->
+    <script type="module">
+        import { checkForumTables } from '../js/check-forum-tables.js';
+        import { checkPosts } from '../js/check-posts.js';
+        window.checkForumTables = checkForumTables;
+        window.checkPosts = checkPosts;
+        console.log('🔍 Para verificar las tablas del foro, ejecuta: checkForumTables()');
+        console.log('📝 Para verificar los posts, ejecuta: checkPosts()');
+    </script>
+
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>
