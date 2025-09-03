@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Evento - Hogwarts Community Hub</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>
+<body class="bg-background text-text-primary">
+    <!-- Navigation Header -->
+    <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <svg class="h-10 w-10 text-primary mr-3" viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="font-accent text-xl font-medium text-primary">Hogwarts Community Hub</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="homepage_sorting_hat_experience.html" class="text-text-secondary hover:text-primary magical-transition">Inicio</a>
+                    <a href="house_selection_portal_sorting_hat_quiz.html" class="text-text-secondary hover:text-primary magical-transition">Selección</a>
+                    <a href="interactive_forum_hub.html" class="text-text-secondary hover:text-primary magical-transition">Foro</a>
+                    <a href="user_profile_achievement_system.html" class="text-text-secondary hover:text-primary magical-transition">Perfil</a>
+                    <a href="community_events_challenges_center.html" class="text-primary font-medium border-b-2 border-primary pb-1">Eventos</a>
+                    <a href="house_common_rooms_personalized_dashboards.html" class="btn-primary text-sm px-4 py-2" id="navAuthButton">Mi Casa</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-lg hover:bg-primary/10 magical-transition">
+                    <svg class="h-6 w-6 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <section class="bg-surface py-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="community_events_challenges_center.html" class="text-text-secondary hover:text-primary">Eventos</a>
+                <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span id="breadcrumb-event-title" class="text-text-primary font-medium">Cargando...</span>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Event Hero Section -->
+    <section class="relative py-16 bg-gradient-to-br from-gray-900 via-gray-800 to-background overflow-hidden">
+        <!-- Background image container -->
+        <div id="event-bg-image" class="absolute inset-0 bg-cover bg-center">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
+        </div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Event Details -->
+                <div class="lg:col-span-2">
+                    <!-- Event Type Badge -->
+                    <div class="flex items-center mb-6">
+                        <span id="event-type-badge" class="bg-primary text-white px-4 py-2 rounded-full text-sm font-cta font-semibold mr-4">
+                            EVENTO
+                        </span>
+                        <span id="event-status" class="bg-success text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            ACTIVO
+                        </span>
+                    </div>
+                    
+                    <h1 id="event-title" class="font-headline text-4xl md:text-5xl font-medium text-white mb-6">
+                        Cargando evento...
+                    </h1>
+                    
+                    <p id="event-description" class="font-body text-xl text-gray-300 mb-8 leading-relaxed">
+                        Cargando descripción del evento...
+                    </p>
+                    
+                    <!-- Event Stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-surface/20 backdrop-blur-sm rounded-lg p-4 border border-white/10 text-center">
+                            <div id="event-participants" class="font-headline text-2xl font-medium text-secondary">0</div>
+                            <div class="text-gray-300 text-sm">Participantes</div>
+                        </div>
+                        <div class="bg-surface/20 backdrop-blur-sm rounded-lg p-4 border border-white/10 text-center">
+                            <div id="event-reward-points" class="font-headline text-2xl font-medium text-secondary">0</div>
+                            <div class="text-gray-300 text-sm">Puntos</div>
+                        </div>
+                        <div class="bg-surface/20 backdrop-blur-sm rounded-lg p-4 border border-white/10 text-center">
+                            <div id="event-days-remaining" class="font-headline text-2xl font-medium text-secondary">0</div>
+                            <div class="text-gray-300 text-sm">Días Restantes</div>
+                        </div>
+                        <div class="bg-surface/20 backdrop-blur-sm rounded-lg p-4 border border-white/10 text-center">
+                            <div id="event-submissions" class="font-headline text-2xl font-medium text-secondary">0</div>
+                            <div class="text-gray-300 text-sm">Envíos</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Panel -->
+                <div class="lg:col-span-1">
+                    <div class="bg-surface/90 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+                        <h3 class="font-headline text-xl font-medium text-white mb-4">Participación</h3>
+                        
+                        <!-- Participation Status -->
+                        <div id="participation-status" class="mb-6">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div id="action-buttons" class="space-y-3">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                        
+                        <!-- Event Timeline -->
+                        <div class="mt-6 pt-6 border-t border-white/20">
+                            <h4 class="font-cta font-semibold text-white mb-3">Cronograma</h4>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-300">Inicio:</span>
+                                    <span id="event-start-date" class="text-white">--</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-300">Cierre:</span>
+                                    <span id="event-end-date" class="text-white">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Content Tabs -->
+    <section class="py-16 bg-background">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Tab Navigation -->
+            <div class="flex flex-wrap border-b border-gray-200 mb-8">
+                <button class="tab-button active px-6 py-3 font-cta font-semibold text-sm border-b-2 border-primary text-primary" data-tab="details">
+                    Detalles
+                </button>
+                <button class="tab-button px-6 py-3 font-cta font-semibold text-sm border-b-2 border-transparent text-text-secondary hover:text-primary" data-tab="participants">
+                    Participantes
+                </button>
+                <button class="tab-button px-6 py-3 font-cta font-semibold text-sm border-b-2 border-transparent text-text-secondary hover:text-primary" data-tab="submissions">
+                    Envíos
+                </button>
+                <button class="tab-button px-6 py-3 font-cta font-semibold text-sm border-b-2 border-transparent text-text-secondary hover:text-primary" data-tab="leaderboard">
+                    Clasificación
+                </button>
+            </div>
+            
+            <!-- Tab Content -->
+            <div id="tab-content">
+                <!-- Details Tab -->
+                <div id="details-tab" class="tab-content">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="font-headline text-2xl font-medium text-text-primary mb-4">Información del Evento</h3>
+                            <div id="event-details-content" class="prose prose-lg max-w-none">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-headline text-2xl font-medium text-text-primary mb-4">Reglas y Requisitos</h3>
+                            <div id="event-rules-content" class="prose prose-lg max-w-none">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Participants Tab -->
+                <div id="participants-tab" class="tab-content hidden">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="participants-grid">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Submissions Tab -->
+                <div id="submissions-tab" class="tab-content hidden">
+                    <div id="submissions-content">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Leaderboard Tab -->
+                <div id="leaderboard-tab" class="tab-content hidden">
+                    <div id="leaderboard-content">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Participation Modal -->
+    <div id="participation-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-surface rounded-xl max-w-md w-full p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-headline text-xl font-medium text-text-primary">Unirse al Evento</h3>
+                    <button id="close-modal" class="text-text-secondary hover:text-text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="modal-content">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submission Modal -->
+    <div id="submission-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-surface rounded-xl max-w-lg w-full p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-headline text-xl font-medium text-text-primary">Enviar Participación</h3>
+                    <button id="close-submission-modal" class="text-text-secondary hover:text-text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="submission-modal-content">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Brand -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <svg class="h-8 w-8 text-secondary mr-3" viewBox="0 0 100 100" fill="currentColor">
+                            <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
+                            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span class="font-accent text-xl font-medium">Hogwarts Community Hub</span>
+                    </div>
+                    <p class="text-gray-300 mb-4 max-w-md">
+                        La comunidad mágica más grande de habla hispana. Donde los fans de Harry Potter 
+                        encuentran su verdadero hogar mágico.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-cta font-semibold mb-4">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="house_selection_portal_sorting_hat_quiz.html" class="text-gray-300 hover:text-secondary magical-transition">Selección de Casa</a></li>
+                        <li><a href="interactive_forum_hub.html" class="text-gray-300 hover:text-secondary magical-transition">Foro Principal</a></li>
+                        <li><a href="community_events_challenges_center.html" class="text-gray-300 hover:text-secondary magical-transition">Eventos</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Community -->
+                <div>
+                    <h4 class="font-cta font-semibold mb-4">Comunidad</h4>
+                    <ul class="space-y-2">
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Normas de la Comunidad</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Ayuda y Soporte</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Contacto</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">
+                    © 2025 Hogwarts Community Hub. Todos los derechos reservados. 
+                    <span class="text-gray-500">Creado con magia por fans, para fans.</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/universal-nav.js"></script>
+    <script src="../js/community-events-init.js"></script>
+    <script src="../js/event-detail.js"></script>
+</body>
+</html>

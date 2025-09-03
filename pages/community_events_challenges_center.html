@@ -436,21 +436,21 @@
                         <h3 class="font-headline text-xl font-medium text-text-primary mb-4">Acciones Rápidas</h3>
                         
                         <div class="space-y-3">
-                            <button class="btn-primary w-full text-left flex items-center hover-scale magical-transition">
+                            <a href="event-admin.html" class="btn-primary w-full text-left flex items-center hover-scale magical-transition">
                                 <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
                                 </svg>
                                 Crear Evento
-                            </button>
+                            </a>
                             
-                            <button class="btn-secondary w-full text-left flex items-center hover-scale magical-transition">
+                            <button class="btn-secondary w-full text-left flex items-center hover-scale magical-transition" onclick="showMyParticipations()">
                                 <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 Mis Participaciones
                             </button>
                             
-                            <button class="btn-secondary w-full text-left flex items-center hover-scale magical-transition">
+                            <button class="btn-secondary w-full text-left flex items-center hover-scale magical-transition" onclick="showLeaderboard()">
                                 <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                 </svg>
@@ -1033,6 +1033,9 @@
     <script src="../js/auth.js"></script>
     <script src="../js/universal-nav.js"></script>
 
+    <!-- Community Events initialization and debugging -->
+    <script src="../js/community-events-init.js"></script>
+    <script src="../js/community-events-debug.js"></script>
     <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
     <script type="module" src="../js/community-events.js"></script>
 </body>

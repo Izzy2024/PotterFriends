@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Dashboard</title>
+    <!-- Cargar Supabase desde CDN ANTES que cualquier otro script -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: monospace;
+            margin: 20px;
+            background: #000;
+            color: #0f0;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background: #111;
+        }
+        .error {
+            color: #f00;
+        }
+        .success {
+            color: #0f0;
+        }
+        .warning {
+            color: #ff0;
+        }
+        pre {
+            background: #222;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+        button {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Dashboard Debug Console</h1>
+    
+    <div class="section">
+        <h2>1. Verificación de Autenticación</h2>
+        <button onclick="checkAuth()">Verificar Auth</button>
+        <div id="auth-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>2. Verificación de Tablas</h2>
+        <button onclick="checkTables()">Verificar Estructura de Tablas</button>
+        <div id="tables-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>3. Debug House Standings</h2>
+        <button onclick="debugHouseStandings()">Probar House Standings</button>
+        <div id="standings-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>4. Debug House Activity</h2>
+        <button onclick="debugHouseActivity()">Probar House Activity (Casa 1)</button>
+        <div id="activity-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>5. Debug User Achievements</h2>
+        <button onclick="debugUserAchievements()">Probar User Achievements</button>
+        <div id="achievements-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>6. Debug House Members</h2>
+        <button onclick="debugHouseMembers()">Probar House Members (Casa 1)</button>
+        <div id="members-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>7. Debug Upcoming Events</h2>
+        <button onclick="debugUpcomingEvents()">Probar Upcoming Events</button>
+        <div id="events-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>8. Insertar Datos de Prueba</h2>
+        <button onclick="insertTestData()">Insertar Datos de Prueba</button>
+        <div id="testdata-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>9. Debug Funciones RPC</h2>
+        <button onclick="testRPCFunctions()">Probar Funciones RPC</button>
+        <div id="rpc-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>10. Crear Usuario de Prueba</h2>
+        <button onclick="createTestUser()">Crear Profile de Prueba</button>
+        <div id="testuser-result"></div>
+    </div>
+
+    <script type="module">
+        // Configuración de Supabase
+        const supabaseUrl = 'https://vdcclritlgnwwdxloayt.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E';
+        
+        // Inicializar Supabase directamente
+        let supabase;
+        let dashboardAPI;
+        let currentUser = null;
+        let currentUserHouse = null;
+
+        // Función para inicializar Supabase
+        async function initializeSupabase() {
+            try {
+                if (window.supabase && window.supabase.createClient) {
+                    supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+                    console.log('✅ Supabase inicializado correctamente');
+                    return true;
+                } else {
+                    console.error('❌ Librería de Supabase no está disponible');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Error inicializando Supabase:', error);
+                return false;
+            }
+        }
+
+        // Función para inicializar Dashboard API
+        async function initializeDashboardAPI() {
+            try {
+                const { dashboardAPI: api } = await import('./js/services/dashboardApi.js');
+                dashboardAPI = api;
+                console.log('✅ Dashboard API cargado');
+                return true;
+            } catch (error) {
+                console.error('❌ Error cargando Dashboard API:', error);
+                return false;
+            }
+        }
+
+        // Exponer variables globalmente para las funciones onclick
+        window.supabase = null;
+        window.dashboardAPI = null;
+
+        // Funciones de debug
+        window.checkAuth = async function() {
+            const resultDiv = document.getElementById('auth-result');
+            resultDiv.innerHTML = '<div class="warning">Verificando autenticación...</div>';
+            
+            try {
+                if (!supabase) {
+                    resultDiv.innerHTML = '<div class="error">❌ Supabase no está inicializado. Recarga la página.</div>';
+                    return;
+                }
+
+                const { data: { user }, error } = await supabase.auth.getUser();
+                
+                if (error) throw error;
+                
+                if (user) {
+                    currentUser = user;
+                    
+                    // Obtener perfil del usuario desde tabla profiles
+                    const { data: profile, error: profileError } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', user.id)
+                        .single();
+                    
+                    if (profileError) {
+                        resultDiv.innerHTML = `
+                            <div class="success">✅ Usuario autenticado: ${user.email}</div>
+                            <div class="warning">⚠️ Sin perfil en tabla 'profiles': ${profileError.message}</div>
+                            <div class="warning">Puedes crear un perfil usando el botón "Crear Profile de Prueba"</div>
+                            <pre>User: ${JSON.stringify(user, null, 2)}</pre>
+                        `;
+                    } else {
+                        currentUserHouse = profile.house_id;
+                        resultDiv.innerHTML = `
+                            <div class="success">✅ Usuario autenticado: ${user.email}</div>
+                            <div class="success">✅ Perfil encontrado en tabla 'profiles'</div>
+                            <div class="success">Casa ID: ${profile.house_id || 'No asignada'}</div>
+                            <div class="success">Username: ${profile.username || 'No definido'}</div>
+                            <pre>Profile: ${JSON.stringify(profile, null, 2)}</pre>
+                        `;
+                    }
+                } else {
+                    resultDiv.innerHTML = '<div class="error">❌ Usuario no autenticado</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Error checking auth:', error);
+            }
+        };
+
+        window.checkTables = async function() {
+            const resultDiv = document.getElementById('tables-result');
+            resultDiv.innerHTML = '<div class="warning">Verificando estructura de tablas...</div>';
+            
+            try {
+                if (!supabase) {
+                    resultDiv.innerHTML = '<div class="error">❌ Supabase no está inicializado</div>';
+                    return;
+                }
+
+                const tables = [
+                    'houses',
+                    'profiles', 
+                    'user_profiles',
+                    'house_points_ledger',
+                    'user_points_ledger',
+                    'posts',
+                    'categories',
+                    'comments',
+                    'achievement_types',
+                    'user_achievements',
+                    'events',
+                    'event_participants',
+                    'challenges',
+                    'polls',
+                    'votes',
+                    'forum_user_stats'
+                ];
+                
+                let results = '<h3>📊 Estado de Tablas:</h3>';
+                let existingTables = [];
+                let missingTables = [];
+                
+                for (const table of tables) {
+                    try {
+                        const { count, error } = await supabase
+                            .from(table)
+                            .select('*', { count: 'exact', head: true });
+                        
+                        if (error) {
+                            results += `<div class="error">❌ ${table}: ${error.message}</div>`;
+                            missingTables.push(table);
+                        } else {
+                            results += `<div class="success">✅ ${table}: ${count} registros</div>`;
+                            existingTables.push({ name: table, count: count });
+                        }
+                    } catch (err) {
+                        results += `<div class="error">❌ ${table}: ${err.message}</div>`;
+                        missingTables.push(table);
+                    }
+                }
+                
+                results += '<br><h3>📋 Resumen:</h3>';
+                results += `<div class="success">✅ Tablas existentes: ${existingTables.length}</div>`;
+                results += `<div class="error">❌ Tablas faltantes: ${missingTables.length}</div>`;
+                
+                if (existingTables.length > 0) {
+                    results += '<br><h3>📈 Tablas con datos:</h3>';
+                    existingTables.forEach(table => {
+                        if (table.count > 0) {
+                            results += `<div class="success">📊 ${table.name}: ${table.count} registros</div>`;
+                        } else {
+                            results += `<div class="warning">⚠️ ${table.name}: Tabla vacía</div>`;
+                        }
+                    });
+                }
+                
+                if (missingTables.length > 0) {
+                    results += '<br><h3>🔧 Tablas que necesitan creación:</h3>';
+                    missingTables.forEach(table => {
+                        results += `<div class="error">🛠️ ${table}</div>`;
+                    });
+                }
+                
+                resultDiv.innerHTML = results;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Error checking tables:', error);
+            }
+        };
+
+        window.debugHouseStandings = async function() {
+            const resultDiv = document.getElementById('standings-result');
+            resultDiv.innerHTML = '<div class="warning">Probando house standings...</div>';
+            
+            try {
+                if (!dashboardAPI) {
+                    resultDiv.innerHTML = '<div class="error">❌ Dashboard API no está cargado</div>';
+                    return;
+                }
+
+                const result = await dashboardAPI.getHouseStandings();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ House standings obtenido correctamente</div>
+                        <pre>${JSON.stringify(result.data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ Error en house standings: ${result.error}</div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Error debugging house standings:', error);
+            }
+        };
+
+        window.debugHouseActivity = async function() {
+            const resultDiv = document.getElementById('activity-result');
+            resultDiv.innerHTML = '<div class="warning">Probando house activity...</div>';
+            
+            try {
+                const houseId = currentUserHouse || 1; // Default a casa 1 si no hay usuario
+                const result = await dashboardAPI.getHouseActivity(houseId);
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ House activity obtenido correctamente (Casa ${houseId})</div>
+                        <div class="success">Total de actividades: ${result.data.length}</div>
+                        <pre>${JSON.stringify(result.data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ Error en house activity: ${result.error}</div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Error debugging house activity:', error);
+            }
+        };
+
+        window.debugUserAchievements = async function() {
+            const resultDiv = document.getElementById('achievements-result');
+            resultDiv.innerHTML = '<div class="warning">Probando user achievements...</div>';
+            
+            try {
+                if (!currentUser) {
+                    resultDiv.innerHTML = '<div class="error">❌ Primero ejecuta "Verificar Auth"</div>';
+                    return;
+                }
+                
+                const result = await dashboardAPI.getUserAchievements(currentUser.id);
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ User achievements obtenido correctamente</div>
+                        <div class="success">Logros obtenidos: ${result.data.earned.length}</div>
+                        <div class="success">Logros disponibles: ${result.data.available.length}</div>
+                        <div class="success">Total points: ${result.data.total_points}</div>
+                        <pre>${JSON.stringify(result.data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ Error en user achievements: ${result.error}</div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Error debugging user achievements:', error);
+            }
+        };
+
+        window.debugHouseMembers = async function() {
+            const resultDiv = document.getElementById('members-result');
+            resultDiv.innerHTML = '<div class="warning">Probando house members...</div>';
+            
+            try {
+                const houseId = currentUserHouse || 1; // Default a casa 1 si no hay usuario
+                const result = await dashboardAPI.getHouseMembers(houseId);
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ House members obtenido correctamente (Casa ${houseId})</div>
+                        <div class="success">Total de miembros: ${result.data.length}</div>
+                        <pre>${JSON.stringify(result.data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ Error en house members: ${result.error}</div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Error debugging house members:', error);
+            }
+        };
+
+        window.debugUpcomingEvents = async function() {
+            const resultDiv = document.getElementById('events-result');
+            resultDiv.innerHTML = '<div class="warning">Probando upcoming events...</div>';
+            
+            try {
+                const result = await dashboardAPI.getUpcomingEvents();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ Upcoming events obtenido correctamente</div>
+                        <div class="success">Total de eventos: ${result.data.length}</div>
+                        <pre>${JSON.stringify(result.data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">❌ Error en upcoming events: ${result.error}</div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Error debugging upcoming events:', error);
+            }
+        };
+
+        window.testRPCFunctions = async function() {
+            const resultDiv = document.getElementById('rpc-result');
+            resultDiv.innerHTML = '<div class="warning">Probando funciones RPC...</div>';
+            
+            try {
+                if (!supabase) {
+                    resultDiv.innerHTML = '<div class="error">❌ Supabase no está inicializado</div>';
+                    return;
+                }
+
+                let results = '<h3>🔧 Funciones RPC Disponibles:</h3>';
+                
+                // Test leaderboard_houses
+                try {
+                    const { data: houseLeaderboard, error: houseError } = await supabase
+                        .rpc('leaderboard_houses', { in_period: 'all' });
+                    
+                    if (houseError) {
+                        results += `<div class="error">❌ leaderboard_houses: ${houseError.message}</div>`;
+                    } else {
+                        results += `<div class="success">✅ leaderboard_houses: ${houseLeaderboard?.length || 0} casas</div>`;
+                        if (houseLeaderboard && houseLeaderboard.length > 0) {
+                            results += `<pre>${JSON.stringify(houseLeaderboard, null, 2)}</pre>`;
+                        }
+                    }
+                } catch (err) {
+                    results += `<div class="error">❌ leaderboard_houses: ${err.message}</div>`;
+                }
+                
+                // Test leaderboard_users
+                try {
+                    const { data: userLeaderboard, error: userError } = await supabase
+                        .rpc('leaderboard_users', { in_period: 'all' });
+                    
+                    if (userError) {
+                        results += `<div class="error">❌ leaderboard_users: ${userError.message}</div>`;
+                    } else {
+                        results += `<div class="success">✅ leaderboard_users: ${userLeaderboard?.length || 0} usuarios</div>`;
+                        if (userLeaderboard && userLeaderboard.length > 0) {
+                            results += `<pre>${JSON.stringify(userLeaderboard.slice(0, 3), null, 2)}</pre>`;
+                        }
+                    }
+                } catch (err) {
+                    results += `<div class="error">❌ leaderboard_users: ${err.message}</div>`;
+                }
+                
+                // Test get_polls_active
+                try {
+                    const { data: activePolls, error: pollsError } = await supabase
+                        .rpc('get_polls_active');
+                    
+                    if (pollsError) {
+                        results += `<div class="error">❌ get_polls_active: ${pollsError.message}</div>`;
+                    } else {
+                        results += `<div class="success">✅ get_polls_active: ${activePolls?.length || 0} encuestas</div>`;
+                    }
+                } catch (err) {
+                    results += `<div class="error">❌ get_polls_active: ${err.message}</div>`;
+                }
+                
+                resultDiv.innerHTML = results;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Error testing RPC functions:', error);
+            }
+        };
+
+        window.createTestUser = async function() {
+            const resultDiv = document.getElementById('testuser-result');
+            resultDiv.innerHTML = '<div class="warning">Creando usuario de prueba...</div>';
+            
+            try {
+                if (!currentUser) {
+                    resultDiv.innerHTML = '<div class="error">❌ Primero ejecuta "Verificar Auth"</div>';
+                    return;
+                }
+                
+                const supabaseClient = await supabase;
+                
+                // Crear perfil en tabla profiles si no existe
+                const { data: existingProfile } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', currentUser.id)
+                    .single();
+                
+                if (existingProfile) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ Profile ya existe</div>
+                        <pre>${JSON.stringify(existingProfile, null, 2)}</pre>
+                    `;
+                    return;
+                }
+                
+                // Crear nuevo perfil
+                const { data: newProfile, error: profileError } = await supabaseClient
+                    .from('profiles')
+                    .insert([{
+                        id: currentUser.id,
+                        username: currentUser.email.split('@')[0],
+                        house_id: 1, // Gryffindor por defecto
+                        avatar_url: null
+                    }])
+                    .select()
+                    .single();
+                
+                if (profileError) {
+                    resultDiv.innerHTML = `<div class="error">❌ Error creando profile: ${profileError.message}</div>`;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ Profile creado exitosamente</div>
+                        <pre>${JSON.stringify(newProfile, null, 2)}</pre>
+                    `;
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Error creating test user:', error);
+            }
+        };
+
+        // Inicialización al cargar la página
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Iniciando Debug Dashboard...');
+            
+            // Paso 1: Inicializar Supabase
+            const supabaseOK = await initializeSupabase();
+            if (!supabaseOK) {
+                document.body.innerHTML = `
+                    <div style="color: red; text-align: center; padding: 50px;">
+                        <h1>❌ Error de Inicialización</h1>
+                        <p>No se pudo cargar Supabase. Verifica tu conexión e intenta de nuevo.</p>
+                        <button onclick="location.reload()">Recargar Página</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Exponer globalmente
+            window.supabase = supabase;
+            
+            // Paso 2: Inicializar Dashboard API
+            const apiOK = await initializeDashboardAPI();
+            if (apiOK) {
+                window.dashboardAPI = dashboardAPI;
+            }
+            
+            console.log('✅ Debug Dashboard inicializado correctamente');
+            
+            // Auto-verificar autenticación
+            setTimeout(() => {
+                checkAuth();
+            }, 500);
+        });
+
+        window.insertTestData = async function() {
+            const resultDiv = document.getElementById('testdata-result');
+            resultDiv.innerHTML = '<div class="warning">Insertando datos de prueba...</div>';
+            
+            try {
+                const supabaseClient = await supabase;
+                let results = '<h3>📊 Insertando Datos de Prueba:</h3>';
+                
+                // Insertar puntos de casa de prueba (esto fallará por RLS, pero está bien)
+                try {
+                    const { error: pointsError } = await supabaseClient
+                        .from('house_points_ledger')
+                        .insert([
+                            { house_id: 1, points: 50, source: 'forum', note: 'Participación activa en foro' },
+                            { house_id: 2, points: 30, source: 'event', note: 'Participación en evento' },
+                            { house_id: 3, points: 40, source: 'challenge', note: 'Completó desafío' },
+                            { house_id: 4, points: 35, source: 'vote', note: 'Contribución destacada' }
+                        ]);
+                    
+                    if (pointsError) {
+                        results += `<div class="warning">⚠️ house_points_ledger: ${pointsError.message} (Esperado - usar RPC)</div>`;
+                    } else {
+                        results += `<div class="success">✅ Puntos de casa insertados</div>`;
+                    }
+                } catch (err) {
+                    results += `<div class="warning">⚠️ house_points_ledger: ${err.message} (Esperado - usar RPC)</div>`;
+                }
+                
+                // Insertar eventos de prueba
+                try {
+                    const futureDate = new Date();
+                    futureDate.setDate(futureDate.getDate() + 7);
+                    
+                    const { error: eventError } = await supabaseClient
+                        .from('events')
+                        .insert([{
+                            slug: 'torneo-quidditch-debug',
+                            title: 'Torneo de Quidditch Debug',
+                            description: 'Evento de prueba para debug del dashboard',
+                            type: 'tournament',
+                            start_at: futureDate.toISOString(),
+                            end_at: new Date(futureDate.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                            status: 'active',
+                            reward_points: 100
+                        }]);
+                    
+                    if (eventError) {
+                        results += `<div class="error">❌ Error insertando evento: ${eventError.message}</div>`;
+                    } else {
+                        results += `<div class="success">✅ Evento de prueba insertado</div>`;
+                    }
+                } catch (err) {
+                    results += `<div class="error">❌ Error insertando evento: ${err.message}</div>`;
+                }
+                
+                results += '<br><div class="success">🎯 Datos de prueba procesados. Revisa los logs para más detalles.</div>';
+                resultDiv.innerHTML = results;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Error inserting test data:', error);
+            }
+        };
+
+        // Función auxiliar para obtener house ID
+        function getHouseId(houseName) {
+            const houseMap = {
+                'gryffindor': 1,
+                'slytherin': 2,
+                'ravenclaw': 3,
+                'hufflepuff': 4
+            };
+            return houseMap[houseName?.toLowerCase()] || 1;
+        }
+    </script>
+</body>
+</html>

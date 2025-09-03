@@ -852,23 +852,53 @@
         });
     </script>
 
-    <!-- Universal Navigation -->
+    <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Universal Navigation -->
     <script src="../js/auth.js"></script>
     <script src="../js/universal-nav.js"></script>
     
     <!-- Forum functionality -->
-    <script type="module" src="../js/forum.js"></script>
-    <script type="module" src="../js/forum-diagnostic.js"></script>
-    
-    <!-- Check Forum Tables Script -->
     <script type="module">
-        import { checkForumTables } from '../js/check-forum-tables.js';
-        import { checkPosts } from '../js/check-posts.js';
-        window.checkForumTables = checkForumTables;
-        window.checkPosts = checkPosts;
-        console.log('🔍 Para verificar las tablas del foro, ejecuta: checkForumTables()');
-        console.log('📝 Para verificar los posts, ejecuta: checkPosts()');
+        // Importar y configurar el foro cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🎯 Inicializando foro...');
+            
+            try {
+                // Importar el controlador del foro
+                const { ForumController } = await import('../js/forum.js');
+                
+                // Crear instancia del controlador del foro
+                window.forumController = new ForumController();
+                console.log('✅ Foro inicializado correctamente');
+                
+                // Funciones de diagnóstico para la consola
+                window.checkForumTables = async () => {
+                    const { checkForumTables } = await import('../js/check-forum-tables.js');
+                    return checkForumTables();
+                };
+                
+                window.checkPosts = async () => {
+                    const { checkPosts } = await import('../js/check-posts.js');
+                    return checkPosts();
+                };
+                
+                console.log('🔍 Para verificar las tablas del foro, ejecuta: checkForumTables()');
+                console.log('📝 Para verificar los posts, ejecuta: checkPosts()');
+                
+            } catch (error) {
+                console.error('❌ Error inicializando el foro:', error);
+                
+                // Mostrar mensaje de error al usuario
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'fixed top-4 right-4 bg-error text-white p-4 rounded-lg shadow-lg z-50';
+                errorMsg.textContent = 'Error cargando el foro. Intenta recargar la página.';
+                document.body.appendChild(errorMsg);
+                
+                setTimeout(() => errorMsg.remove(), 5000);
+            }
+        });
     </script>
 
 <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>

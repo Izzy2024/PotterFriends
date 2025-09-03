@@ -13,14 +13,15 @@ function safeNumber(n) {
 
 async function ensureClient() {
   if (window.supabaseClient) return window.supabaseClient;
-  if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
-    window.supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-    return window.supabaseClient;
+  
+  // Wait for auth.js to initialize Supabase
+  for (let i = 0; i < 20; i++) {
+    if (window.supabaseClient) return window.supabaseClient;
+    await new Promise(r => setTimeout(r, 100));
   }
-  console.warn('[community-events] Supabase client no disponible aún');
-  // small wait-retry once
-  await new Promise(r => setTimeout(r, 300));
-  return window.supabaseClient || null;
+  
+  console.warn('[community-events] Supabase client no disponible después de 2 segundos');
+  return null;
 }
 
 async function fetchQuickStats() {
@@ -69,6 +70,21 @@ function renderFeaturedEvents(items) {
   const html = items.map(ev => {
     const days = typeof ev.ends_in_days === 'number' ? `${ev.ends_in_days} días restantes` : '';
     const participants = typeof ev.participants_count === 'number' ? `${ev.participants_count} participantes` : '';
+    
+    // Get the right button text and URL based on event type
+    let buttonText = 'Ver Detalles';
+    let buttonClass = 'btn-secondary';
+    if (ev.type === 'tournament') {
+      buttonText = 'Participar Ahora';
+      buttonClass = 'btn-primary';
+    } else if (ev.type === 'contest') {
+      buttonText = 'Ver Detalles';
+      buttonClass = 'btn-secondary';
+    } else if (ev.type === 'celebration') {
+      buttonText = 'Comenzar Historia';
+      buttonClass = 'btn-secondary';
+    }
+    
     return `
     <div class="card overflow-hidden hover-scale group">
       <div class="relative h-48 overflow-hidden">
@@ -94,7 +110,7 @@ function renderFeaturedEvents(items) {
             <span>${ev.reward_points || 0} puntos</span>
           </div>
         </div>
-        <button data-slug="${ev.slug}" class="btn-primary w-full hover-scale magical-transition js-join-event">Participar Ahora</button>
+        <a href="event-detail.html?event=${ev.slug}" class="${buttonClass} w-full hover-scale magical-transition text-center block">${buttonText}</a>
       </div>
     </div>`;
   }).join('');
@@ -329,21 +345,21 @@ async function fetchPastEvents(limit = 9) {
 function renderPastEvents(items) {
   const grid = document.getElementById('past-events-grid');
   if (!grid || !items || items.length === 0) return;
-  const html = items.map(ev = 3e `
-     3cdiv class="card overflow-hidden hover-scale group" 3e
-       3cdiv class="relative h-48 overflow-hidden" 3e
-         3cimg src="${ev.cover_url || ''}" alt="${ev.title || ''}" class="w-full h-full object-cover group-hover:scale-105 magical-transition" / 3e
-         3cdiv class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" 3e 3c/div 3e
-         3cdiv class="absolute top-4 left-4" 3e
-           3cspan class="bg-success text-white px-3 py-1 rounded-full text-sm font-cta font-semibold" 3eCOMPLETADO 3c/span 3e
-         3c/div 3e
-       3c/div 3e
-       3cdiv class="p-6" 3e
-         3ch3 class="font-headline text-xl font-medium text-text-primary mb-3" 3e${ev.title} 3c/h3 3e
-         3cp class="text-text-secondary mb-4 text-sm" 3eFinalizado: ${new Date(ev.end_at).toLocaleDateString()} 3c/p 3e
-         3cbutton class="btn-secondary w-full hover-scale magical-transition" 3eVer Detalles 3c/button 3e
-       3c/div 3e
-     3c/div 3e`).join('');
+  const html = items.map(ev => `
+    <div class="card overflow-hidden hover-scale group">
+      <div class="relative h-48 overflow-hidden">
+        <img src="${ev.cover_url || ''}" alt="${ev.title || ''}" class="w-full h-full object-cover group-hover:scale-105 magical-transition" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        <div class="absolute top-4 left-4">
+          <span class="bg-success text-white px-3 py-1 rounded-full text-sm font-cta font-semibold">COMPLETADO</span>
+        </div>
+      </div>
+      <div class="p-6">
+        <h3 class="font-headline text-xl font-medium text-text-primary mb-3">${ev.title}</h3>
+        <p class="text-text-secondary mb-4 text-sm">Finalizado: ${new Date(ev.end_at).toLocaleDateString()}</p>
+        <button class="btn-secondary w-full hover-scale magical-transition">Ver Detalles</button>
+      </div>
+    </div>`).join('');
   grid.insertAdjacentHTML('afterbegin', html);
 }
 
@@ -351,11 +367,11 @@ async function fetchCalendar(month, year) {
   const client = await ensureClient();
   if (!client) return [];
   try {
-    const { data, error } = await client.rpc('list_calendar_events', { in_month: month, in_year: year });
+    const { data, error } = await client.rpc('list_calendar_events_detailed', { in_month: month, in_year: year });
     if (error) throw error;
     return Array.isArray(data) ? data : [];
   } catch (e) {
-    console.error('[community-events] list_calendar_events error', e);
+    console.error('[community-events] list_calendar_events_detailed error', e);
     return [];
   }
 }
@@ -365,21 +381,135 @@ function setCalendarMonthLabel(month, year) {
   if (!label) return;
   const dt = new Date(year, month - 1, 1);
   const formatter = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' });
-  label.textContent = formatter.format(dt).replace(/^\w/, c = 3e c.toUpperCase());
+  label.textContent = formatter.format(dt).replace(/^\w/, c => c.toUpperCase());
 }
 
 function markCalendarDays(events) {
-  // Very lightweight: add a small dot to days that have events.
-  const dayCells = document.querySelectorAll('.grid.grid-cols-7  3e div');
-  const daysWithEvents = new Set(events.map(e = 3e new Date(e.event_date).getDate()));
-  dayCells.forEach(cell = 3e {
-    const d = parseInt(cell.textContent.trim(), 10);
-    if (!isNaN(d)  26 26 daysWithEvents.has(d)) {
-      cell.classList.add('bg-secondary/20');
-    } else {
-      // keep existing styling for non-event days
+  // Clear previous markings
+  const dayCells = document.querySelectorAll('.grid.grid-cols-7 > div');
+  dayCells.forEach(cell => {
+    cell.classList.remove('bg-secondary/20', 'bg-warning/20', 'bg-success/20');
+    const existingDot = cell.querySelector('.absolute.bottom-0');
+    if (existingDot) existingDot.remove();
+  });
+  
+  // Group events by date
+  const eventsByDate = {};
+  events.forEach(event => {
+    const date = new Date(event.event_date).getDate();
+    if (!eventsByDate[date]) {
+      eventsByDate[date] = [];
+    }
+    eventsByDate[date].push(event);
+  });
+  
+  // Mark days with events
+  dayCells.forEach(cell => {
+    const dayText = cell.textContent.trim();
+    const dayNumber = parseInt(dayText, 10);
+    
+    if (!isNaN(dayNumber) && eventsByDate[dayNumber]) {
+      const dayEvents = eventsByDate[dayNumber];
+      
+      // Get predominant event type for coloring
+      const typeCount = {};
+      dayEvents.forEach(event => {
+        typeCount[event.type] = (typeCount[event.type] || 0) + 1;
+      });
+      
+      const predominantType = Object.keys(typeCount).reduce((a, b) => 
+        typeCount[a] > typeCount[b] ? a : b
+      );
+      
+      // Apply styling based on event type
+      let bgClass = 'bg-secondary/20';
+      let dotColor = 'bg-secondary';
+      
+      if (predominantType === 'tournament') {
+        bgClass = 'bg-secondary/20';
+        dotColor = 'bg-secondary';
+      } else if (predominantType === 'contest') {
+        bgClass = 'bg-warning/20';
+        dotColor = 'bg-warning';
+      } else if (predominantType === 'celebration') {
+        bgClass = 'bg-success/20';
+        dotColor = 'bg-success';
+      }
+      
+      cell.classList.add(bgClass);
+      cell.style.position = 'relative';
+      cell.style.cursor = 'pointer';
+      
+      // Add dot indicator
+      const dot = document.createElement('div');
+      dot.className = `absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 ${dotColor} rounded-full`;
+      cell.appendChild(dot);
+      
+      // Add click handler to show events for this day
+      cell.addEventListener('click', () => showDayEvents(dayNumber, dayEvents));
     }
   });
+}
+
+function showDayEvents(day, events) {
+  // Create or update modal to show events for the selected day
+  let modal = document.getElementById('day-events-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'day-events-modal';
+    modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden';
+    modal.innerHTML = `
+      <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-surface rounded-xl max-w-md w-full p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 id="day-events-title" class="font-headline text-xl font-medium text-text-primary"></h3>
+            <button id="close-day-events" class="text-text-secondary hover:text-text-primary">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <div id="day-events-list"></div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Add close handler
+    modal.querySelector('#close-day-events').addEventListener('click', () => {
+      modal.classList.add('hidden');
+    });
+  }
+  
+  // Update modal content
+  const title = modal.querySelector('#day-events-title');
+  const list = modal.querySelector('#day-events-list');
+  
+  title.textContent = `Eventos del día ${day}`;
+  
+  list.innerHTML = events.map(event => {
+    const typeConfig = {
+      'tournament': { name: 'Torneo', color: 'text-ravenclaw', bg: 'bg-ravenclaw/10' },
+      'contest': { name: 'Concurso', color: 'text-hufflepuff', bg: 'bg-hufflepuff/10' },
+      'celebration': { name: 'Celebración', color: 'text-success', bg: 'bg-success/10' }
+    };
+    
+    const config = typeConfig[event.type] || typeConfig['contest'];
+    
+    return `
+      <div class="border rounded-lg p-3 mb-3 hover:bg-gray-50 cursor-pointer" onclick="window.location.href='event-detail.html?event=${event.slug}'">
+        <div class="flex items-center mb-2">
+          <span class="${config.bg} ${config.color} px-2 py-1 rounded text-xs font-semibold">
+            ${config.name}
+          </span>
+        </div>
+        <h4 class="font-medium text-text-primary">${event.title}</h4>
+      </div>
+    `;
+  }).join('');
+  
+  // Show modal
+  modal.classList.remove('hidden');
 }
 
 async function init() {
@@ -417,21 +547,207 @@ async function init() {
 
   const prev = document.getElementById('calendar-prev');
   const next = document.getElementById('calendar-next');
-  if (prev  26 26 next) {
-    prev.addEventListener('click', async () = 3e {
+  if (prev && next) {
+    prev.addEventListener('click', async () => {
       currentMonth -= 1;
-      if (currentMonth  3c 1) { currentMonth = 12; currentYear -= 1; }
+      if (currentMonth < 1) { currentMonth = 12; currentYear -= 1; }
       setCalendarMonthLabel(currentMonth, currentYear);
       const data = await fetchCalendar(currentMonth, currentYear);
       markCalendarDays(data);
     });
-    next.addEventListener('click', async () = 3e {
+    next.addEventListener('click', async () => {
       currentMonth += 1;
-      if (currentMonth  3e 12) { currentMonth = 1; currentYear += 1; }
+      if (currentMonth > 12) { currentMonth = 1; currentYear += 1; }
       setCalendarMonthLabel(currentMonth, currentYear);
       const data = await fetchCalendar(currentMonth, currentYear);
       markCalendarDays(data);
     });
+  }
+  
+  // Make functions available globally for button clicks
+  window.showMyParticipations = showMyParticipations;
+  window.showLeaderboard = showLeaderboard;
+}
+
+// Show user's participations modal
+async function showMyParticipations() {
+  const client = await ensureClient();
+  if (!client) {
+    alert('Por favor, inicia sesión para ver tus participaciones');
+    return;
+  }
+  
+  try {
+    const { data: participations, error } = await client.rpc('my_participations');
+    if (error) throw error;
+    
+    // Create or update modal
+    let modal = document.getElementById('participations-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'participations-modal';
+      modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden';
+      modal.innerHTML = `
+        <div class="flex items-center justify-center min-h-screen p-4">
+          <div class="bg-surface rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="font-headline text-xl font-medium text-text-primary">Mis Participaciones</h3>
+              <button id="close-participations" class="text-text-secondary hover:text-text-primary">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            <div id="participations-list"></div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      
+      modal.querySelector('#close-participations').addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+    }
+    
+    const list = modal.querySelector('#participations-list');
+    
+    if (!participations || participations.length === 0) {
+      list.innerHTML = `
+        <div class="text-center py-8">
+          <p class="text-text-secondary">No tienes participaciones aún</p>
+          <p class="text-sm text-text-secondary mt-2">¡Únete a algunos eventos para comenzar!</p>
+        </div>
+      `;
+    } else {
+      list.innerHTML = participations.map(p => {
+        const statusConfig = {
+          'joined': { name: 'Participando', color: 'text-blue-600', bg: 'bg-blue-50' },
+          'submitted': { name: 'Enviado', color: 'text-success', bg: 'bg-success/10' },
+          'winner': { name: 'Ganador', color: 'text-secondary', bg: 'bg-secondary/10' },
+          'disqualified': { name: 'Descalificado', color: 'text-error', bg: 'bg-error/10' }
+        };
+        
+        const config = statusConfig[p.status] || statusConfig['joined'];
+        const endDate = new Date(p.end_at);
+        const isActive = endDate > new Date();
+        
+        return `
+          <div class="border rounded-lg p-4 mb-3 hover:bg-gray-50">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="font-medium text-text-primary">${p.title}</h4>
+              <span class="${config.bg} ${config.color} px-2 py-1 rounded text-xs font-semibold">
+                ${config.name}
+              </span>
+            </div>
+            <div class="flex items-center justify-between text-sm text-text-secondary">
+              <span>${new Date(p.start_at).toLocaleDateString()} - ${endDate.toLocaleDateString()}</span>
+              <a href="event-detail.html?event=${p.slug}" class="text-primary hover:underline">Ver Evento</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    modal.classList.remove('hidden');
+    
+  } catch (error) {
+    console.error('Error fetching participations:', error);
+    alert('Error al cargar tus participaciones');
+  }
+}
+
+// Show leaderboard modal
+async function showLeaderboard() {
+  const client = await ensureClient();
+  if (!client) return;
+  
+  try {
+    const [housesData, usersData] = await Promise.all([
+      client.rpc('leaderboard_houses', { in_period: 'month' }),
+      client.rpc('leaderboard_users', { in_period: 'month' })
+    ]);
+    
+    if (housesData.error) throw housesData.error;
+    if (usersData.error) throw usersData.error;
+    
+    // Create or update modal
+    let modal = document.getElementById('leaderboard-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'leaderboard-modal';
+      modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden';
+      modal.innerHTML = `
+        <div class="flex items-center justify-center min-h-screen p-4">
+          <div class="bg-surface rounded-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="font-headline text-xl font-medium text-text-primary">Tabla de Posiciones</h3>
+              <button id="close-leaderboard" class="text-text-secondary hover:text-text-primary">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h4 class="font-semibold text-text-primary mb-4">Ranking por Casas</h4>
+                <div id="houses-leaderboard"></div>
+              </div>
+              <div>
+                <h4 class="font-semibold text-text-primary mb-4">Top Usuarios</h4>
+                <div id="users-leaderboard"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      
+      modal.querySelector('#close-leaderboard').addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+    }
+    
+    const housesContainer = modal.querySelector('#houses-leaderboard');
+    const usersContainer = modal.querySelector('#users-leaderboard');
+    
+    // Render houses leaderboard
+    const houseColors = {
+      'Gryffindor': 'text-gryffindor',
+      'Ravenclaw': 'text-ravenclaw',
+      'Hufflepuff': 'text-hufflepuff',
+      'Slytherin': 'text-slytherin'
+    };
+    
+    housesContainer.innerHTML = (housesData.data || []).map((house, index) => `
+      <div class="flex items-center justify-between p-3 rounded-lg ${index === 0 ? 'bg-secondary/10' : 'hover:bg-gray-50'}">
+        <div class="flex items-center">
+          <span class="font-bold text-lg ${houseColors[house.house_name] || 'text-text-primary'} mr-3">
+            ${index + 1}
+          </span>
+          <span class="font-medium ${houseColors[house.house_name] || 'text-text-primary'}">
+            ${house.house_name}
+          </span>
+        </div>
+        <span class="font-semibold text-secondary">${house.points} pts</span>
+      </div>
+    `).join('');
+    
+    // Render users leaderboard
+    usersContainer.innerHTML = (usersData.data || []).slice(0, 10).map((user, index) => `
+      <div class="flex items-center justify-between p-3 rounded-lg ${index === 0 ? 'bg-secondary/10' : 'hover:bg-gray-50'}">
+        <div class="flex items-center">
+          <span class="font-bold text-lg text-text-primary mr-3">${index + 1}</span>
+          <span class="font-medium text-text-primary">${user.username || 'Usuario'}</span>
+        </div>
+        <span class="font-semibold text-secondary">${user.points} pts</span>
+      </div>
+    `).join('');
+    
+    modal.classList.remove('hidden');
+    
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+    alert('Error al cargar la tabla de posiciones');
   }
 }
 

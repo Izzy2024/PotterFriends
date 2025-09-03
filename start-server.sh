@@ -14,5 +14,5 @@ npx http-server . -p 8080
 # Si npx no está disponible, intentar con python
 if [ $? -ne 0 ]; then
   echo "Intentando con Python..."
-  python -m http.server 8080 || python3 -m http.server 8080
+  python3 -m http.server 8080
 fi

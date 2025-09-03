@@ -232,6 +232,30 @@ UNIQUE(user_id, achievement_type_id)
 
 ## 🐛 DEBUGGING TIPS
 
+### 2025-09-01 - Mejora Sala Común (dashboard) y Supabase client
+- Corregido mapeo de IDs de casas (1=gryffindor, 2=hufflepuff, 3=ravenclaw, 4=slytherin).
+- Se evitó el error 400 al leer `user_profiles`:
+  - Se dejó de ordenar por `created_at` (no existe en algunos esquemas).
+  - Lecturas tolerantes: `profiles` → `public_profiles` → `user_profiles`.
+- “Compañeros de Casa Destacados” ahora usa fuente tolerante y no falla sin `created_at`.
+- “Logros Recientes” ahora se pinta y evita joins que causaban 400:
+  - Primero obtiene IDs de miembros de la casa.
+  - Luego consulta `user_achievements` por esos IDs (con `achievement_types`).
+  - Finalmente resuelve nombres/avatares.
+- Se añadió fallback de fecha para nuevos miembros en el feed para evitar “Invalid Date”.
+- Se unificó el cliente de Supabase:
+  - `js/supabase-client.js` ahora reutiliza `window.supabaseClient` (creado en `auth.js`) y no crea nuevos clientes.
+  - Esto elimina el warning: “Multiple GoTrueClient instances detected …”.
+
+Archivos modificados:
+- `pages/house_common_rooms_personalized_dashboards.html` (previo)
+- `js/services/dashboardApi.js` (actividad, logros recientes, miembros; fallbacks y tolerancia)
+- `js/supabase-client.js` (unificación de cliente)
+
+Impacto:
+- Secciones que se quedaban en “Cargando…” ahora muestran datos o mensajes vacíos claros.
+- Menos ruido en consola y comportamiento estable con RLS/variaciones de esquema.
+
 ### Console Commands Útiles
 ```javascript
 // Verificar usuario actual
