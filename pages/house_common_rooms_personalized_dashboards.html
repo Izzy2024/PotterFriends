@@ -139,15 +139,15 @@
                         <div class="space-y-3">
                             <div class="flex justify-between items-center">
                                 <span class="text-text-secondary">Puntos Personales:</span>
-                                <span class="font-semibold text-gryffindor">1,247</span>
+                                <span id="userPersonalPoints" class="font-semibold text-gryffindor">Cargando...</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-text-secondary">Rango en Casa:</span>
-                                <span class="font-semibold">#23</span>
+                                <span id="userHouseRank" class="font-semibold">Cargando...</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-text-secondary">Logros:</span>
-                                <span class="font-semibold">18</span>
+                                <span id="userAchievementsCount" class="font-semibold">Cargando...</span>
                             </div>
                         </div>
                         <button onclick="showHouseModal()" class="w-full mt-4 btn-secondary text-sm py-2 rounded-lg">
@@ -198,27 +198,9 @@
                     <!-- House Calendar -->
                     <div class="card p-6">
                         <h4 class="font-headline text-lg font-medium mb-4">Calendario de Casa</h4>
-                        <div class="space-y-3">
-                            <div class="flex items-start">
-                                <div class="w-2 h-2 bg-gryffindor rounded-full mt-2 mr-3"></div>
-                                <div>
-                                    <p class="text-sm font-medium">Torneo de Quidditch</p>
-                                    <p class="text-xs text-text-secondary">20 Jul - 15:00</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <div class="w-2 h-2 bg-secondary rounded-full mt-2 mr-3"></div>
-                                <div>
-                                    <p class="text-sm font-medium">Reunión de Casa</p>
-                                    <p class="text-xs text-text-secondary">22 Jul - 19:00</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <div class="w-2 h-2 bg-accent rounded-full mt-2 mr-3"></div>
-                                <div>
-                                    <p class="text-sm font-medium">Desafío de Conocimiento</p>
-                                    <p class="text-xs text-text-secondary">25 Jul - 20:00</p>
-                                </div>
+                        <div id="upcomingEventsContainer" class="space-y-3">
+                            <div class="text-center text-text-secondary py-4">
+                                <p>Cargando eventos...</p>
                             </div>
                         </div>
                     </div>
@@ -260,69 +242,19 @@
                         <!-- Current Standings -->
                         <div>
                             <h3 class="font-cta font-semibold text-text-primary mb-4">Posiciones Actuales</h3>
-                            <div class="space-y-3">
-                                <div
-                                    class="flex items-center justify-between p-3 rounded-lg bg-gryffindor/5 border border-gryffindor/20">
-                                    <div class="flex items-center">
-                                        <span class="text-lg font-bold text-gryffindor mr-3">#1</span>
-                                        <div class="w-3 h-3 bg-gryffindor rounded-full mr-3"></div>
-                                        <span class="font-medium text-gryffindor">Gryffindor</span>
-                                    </div>
-                                    <span class="font-bold text-gryffindor">8,547</span>
-                                </div>
-                                <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                                    <div class="flex items-center">
-                                        <span class="text-lg font-bold text-slytherin mr-3">#2</span>
-                                        <div class="w-3 h-3 bg-slytherin rounded-full mr-3"></div>
-                                        <span class="font-medium text-slytherin">Slytherin</span>
-                                    </div>
-                                    <span class="font-bold text-slytherin">8,203</span>
-                                </div>
-                                <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                                    <div class="flex items-center">
-                                        <span class="text-lg font-bold text-ravenclaw mr-3">#3</span>
-                                        <div class="w-3 h-3 bg-ravenclaw rounded-full mr-3"></div>
-                                        <span class="font-medium text-ravenclaw">Ravenclaw</span>
-                                    </div>
-                                    <span class="font-bold text-ravenclaw">7,891</span>
-                                </div>
-                                <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                                    <div class="flex items-center">
-                                        <span class="text-lg font-bold text-hufflepuff mr-3">#4</span>
-                                        <div class="w-3 h-3 bg-hufflepuff rounded-full mr-3"></div>
-                                        <span class="font-medium text-hufflepuff">Hufflepuff</span>
-                                    </div>
-                                    <span class="font-bold text-hufflepuff">7,652</span>
+                            <div id="houseStandingsContainer" class="space-y-3">
+                                <div class="text-center text-text-secondary">
+                                    <p>Cargando clasificación...</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Points Breakdown -->
                         <div>
-                            <h3 class="font-cta font-semibold text-text-primary mb-4">Desglose de Puntos (Gryffindor)
-                            </h3>
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-text-secondary">Foro y Discusiones:</span>
-                                    <span class="font-semibold text-gryffindor">2,847</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-text-secondary">Desafíos Completados:</span>
-                                    <span class="font-semibold text-gryffindor">2,156</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-text-secondary">Contribuciones:</span>
-                                    <span class="font-semibold text-gryffindor">1,923</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-text-secondary">Eventos Especiales:</span>
-                                    <span class="font-semibold text-gryffindor">1,621</span>
-                                </div>
-                                <div class="border-t pt-3 mt-3">
-                                    <div class="flex justify-between items-center">
-                                        <span class="font-semibold text-text-primary">Total:</span>
-                                        <span class="font-bold text-gryffindor text-lg">8,547</span>
-                                    </div>
+                            <h3 class="font-cta font-semibold text-text-primary mb-4">Desglose de Puntos (<span id="currentHouseName">Mi Casa</span>)</h3>
+                            <div id="pointsBreakdownContainer" class="space-y-3">
+                                <div class="text-center text-text-secondary">
+                                    <p>Cargando desglose...</p>
                                 </div>
                             </div>
                         </div>
@@ -333,82 +265,12 @@
                 <div class="card p-6 mb-8">
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="font-headline text-2xl font-medium text-text-primary">Actividad de la Casa</h2>
-                        <button class="btn-secondary text-sm px-4 py-2 rounded-lg">Ver Todo</button>
+                        <button class="btn-secondary text-sm px-4 py-2 rounded-lg" onclick="loadMoreActivity()">Ver Todo</button>
                     </div>
 
-                    <div class="space-y-4">
-                        <!-- Activity Item 1 -->
-                        <div class="flex items-start p-4 rounded-lg bg-gryffindor/5 border border-gryffindor/20">
-                            <img src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400"
-                                alt="María González" class="w-10 h-10 object-cover rounded-full mr-4" />
-                            <div class="flex-1">
-                                <div class="flex items-center mb-2">
-                                    <span class="font-medium text-text-primary mr-2">María González</span>
-                                    <span
-                                        class="text-xs text-gryffindor font-semibold bg-gryffindor/10 px-2 py-1 rounded">+50
-                                        PUNTOS</span>
-                                </div>
-                                <p class="text-text-secondary text-sm mb-2">Completó el desafío "Coraje en la
-                                    Adversidad" y compartió una reflexión inspiradora sobre el valor de defender lo
-                                    correcto.</p>
-                                <div class="flex items-center text-xs text-text-secondary">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    <span>Hace 15 minutos</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Activity Item 2 -->
-                        <div class="flex items-start p-4 rounded-lg hover:bg-gray-50 magical-transition">
-                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop"
-                                alt="Carlos Mendoza" class="w-10 h-10 object-cover rounded-full mr-4"
-                                onerror="this.src='https://images.pixabay.com/photo-2016/11/21/12/42/beard-1845166_1280.jpg'; this.onerror=null;" />
-                            <div class="flex-1">
-                                <div class="flex items-center mb-2">
-                                    <span class="font-medium text-text-primary mr-2">Carlos Mendoza</span>
-                                    <span
-                                        class="text-xs text-secondary font-semibold bg-secondary/10 px-2 py-1 rounded">NUEVO
-                                        MIEMBRO</span>
-                                </div>
-                                <p class="text-text-secondary text-sm mb-2">Se unió a Gryffindor tras completar la
-                                    selección. ¡Démosle la bienvenida a nuestro nuevo compañero de casa!</p>
-                                <div class="flex items-center text-xs text-text-secondary">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    <span>Hace 1 hora</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Activity Item 3 -->
-                        <div class="flex items-start p-4 rounded-lg hover:bg-gray-50 magical-transition">
-                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop"
-                                alt="Ana Rodríguez" class="w-10 h-10 object-cover rounded-full mr-4"
-                                onerror="this.src='https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
-                            <div class="flex-1">
-                                <div class="flex items-center mb-2">
-                                    <span class="font-medium text-text-primary mr-2">Ana Rodríguez</span>
-                                    <span
-                                        class="text-xs text-accent font-semibold bg-accent/10 px-2 py-1 rounded">DISCUSIÓN</span>
-                                </div>
-                                <p class="text-text-secondary text-sm mb-2">Inició una fascinante discusión sobre "El
-                                    verdadero significado del coraje según Dumbledore" en el foro de casa.</p>
-                                <div class="flex items-center text-xs text-text-secondary">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    <span>Hace 2 horas</span>
-                                </div>
-                            </div>
+                    <div id="houseActivityContainer" class="space-y-4">
+                        <div class="text-center text-text-secondary py-8">
+                            <p>Cargando actividad de la casa...</p>
                         </div>
                     </div>
                 </div>
@@ -418,38 +280,9 @@
                     <!-- Recent Accomplishments -->
                     <div class="card p-6">
                         <h3 class="font-headline text-xl font-medium text-text-primary mb-4">Logros Recientes</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center p-3 rounded-lg bg-gryffindor/5 border border-gryffindor/20">
-                                <div
-                                    class="w-12 h-12 bg-gryffindor/20 rounded-full flex items-center justify-center mr-4">
-                                    <svg class="w-6 h-6 text-gryffindor" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
-                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium text-text-primary">Coraje Colectivo</h4>
-                                    <p class="text-sm text-text-secondary">Toda la casa trabajó junta para superar el
-                                        desafío mensual</p>
-                                    <span class="text-xs text-gryffindor font-semibold">+200 puntos para todos</span>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center p-3 rounded-lg hover:bg-gray-50 magical-transition">
-                                <div
-                                    class="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center mr-4">
-                                    <svg class="w-6 h-6 text-secondary" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium text-text-primary">Espíritu Indomable</h4>
-                                    <p class="text-sm text-text-secondary">15 miembros completaron el reto de valentía
-                                        personal</p>
-                                    <span class="text-xs text-secondary font-semibold">Hace 3 días</span>
-                                </div>
+                        <div id="recentAchievementsContainer" class="space-y-4">
+                            <div class="text-center text-text-secondary py-4">
+                                <p>Cargando logros recientes...</p>
                             </div>
                         </div>
                     </div>
@@ -458,60 +291,13 @@
                     <div class="card p-6">
                         <h3 class="font-headline text-xl font-medium text-text-primary mb-4">Compañeros de Casa
                             Destacados</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center">
-                                <img src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400"
-                                    alt="María González" class="w-12 h-12 object-cover rounded-full mr-4" />
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <h4 class="font-medium text-text-primary">María González</h4>
-                                        <span class="text-xs text-gryffindor font-semibold">1,247 pts</span>
-                                    </div>
-                                    <p class="text-sm text-text-secondary">Especialista en Defensa Contra las Artes
-                                        Oscuras</p>
-                                    <div class="flex items-center mt-1">
-                                        <div class="w-2 h-2 bg-success rounded-full mr-2"></div>
-                                        <span class="text-xs text-success">En línea</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center">
-                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop"
-                                    alt="Carlos Mendoza" class="w-12 h-12 object-cover rounded-full mr-4"
-                                    onerror="this.src='https://images.pixabay.com/photo-2016/11/21/12/42/beard-1845166_1280.jpg'; this.onerror=null;" />
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <h4 class="font-medium text-text-primary">Carlos Mendoza</h4>
-                                        <span class="text-xs text-gryffindor font-semibold">892 pts</span>
-                                    </div>
-                                    <p class="text-sm text-text-secondary">Experto en Historia de la Magia</p>
-                                    <div class="flex items-center mt-1">
-                                        <div class="w-2 h-2 bg-warning rounded-full mr-2"></div>
-                                        <span class="text-xs text-warning">Ausente</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center">
-                                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop"
-                                    alt="Ana Rodríguez" class="w-12 h-12 object-cover rounded-full mr-4"
-                                    onerror="this.src='https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <h4 class="font-medium text-text-primary">Ana Rodríguez</h4>
-                                        <span class="text-xs text-gryffindor font-semibold">1,156 pts</span>
-                                    </div>
-                                    <p class="text-sm text-text-secondary">Maestra en Transformaciones</p>
-                                    <div class="flex items-center mt-1">
-                                        <div class="w-2 h-2 bg-success rounded-full mr-2"></div>
-                                        <span class="text-xs text-success">En línea</span>
-                                    </div>
-                                </div>
+                        <div id="houseMembersContainer" class="space-y-4">
+                            <div class="text-center text-text-secondary py-4">
+                                <p>Cargando miembros de la casa...</p>
                             </div>
                         </div>
 
-                        <button class="w-full mt-4 btn-secondary text-sm py-2 rounded-lg">
+                        <button class="w-full mt-4 btn-secondary text-sm py-2 rounded-lg" onclick="loadAllMembers()">
                             Ver Todos los Miembros
                         </button>
                     </div>
@@ -520,73 +306,22 @@
                 <!-- Achievement Badges -->
                 <div class="card p-6">
                     <h3 class="font-headline text-xl font-medium text-text-primary mb-4">Mis Logros de Casa</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <!-- Badge 1 -->
-                        <div class="text-center p-4 rounded-lg bg-gryffindor/5 border border-gryffindor/20">
-                            <div
-                                class="w-16 h-16 bg-gryffindor/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <svg class="w-8 h-8 text-gryffindor" fill="currentColor" viewBox="0 0 20 20">
-                                    <path
-                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                </svg>
-                            </div>
-                            <h4 class="font-cta font-semibold text-sm text-gryffindor mb-1">Corazón Valiente</h4>
-                            <p class="text-xs text-text-secondary">Completó 10 desafíos de coraje</p>
-                        </div>
-
-                        <!-- Badge 2 -->
-                        <div class="text-center p-4 rounded-lg bg-secondary/5 border border-secondary/20">
-                            <div
-                                class="w-16 h-16 bg-secondary/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <svg class="w-8 h-8 text-secondary" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <h4 class="font-cta font-semibold text-sm text-secondary mb-1">Cronista</h4>
-                            <p class="text-xs text-text-secondary">Contribuyó 25 artículos</p>
-                        </div>
-
-                        <!-- Badge 3 -->
-                        <div class="text-center p-4 rounded-lg bg-accent/5 border border-accent/20">
-                            <div
-                                class="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <svg class="w-8 h-8 text-accent" fill="currentColor" viewBox="0 0 20 20">
-                                    <path
-                                        d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-                                </svg>
-                            </div>
-                            <h4 class="font-cta font-semibold text-sm text-accent mb-1">Mentor</h4>
-                            <p class="text-xs text-text-secondary">Ayudó a 5 nuevos miembros</p>
-                        </div>
-
-                        <!-- Badge 4 (Locked) -->
-                        <div class="text-center p-4 rounded-lg bg-gray-50 border border-gray-200 opacity-50">
-                            <div
-                                class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <h4 class="font-cta font-semibold text-sm text-gray-400 mb-1">Líder de Casa</h4>
-                            <p class="text-xs text-gray-400">Próximamente...</p>
+                    <div id="userAchievementBadges" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="text-center text-text-secondary py-4">
+                            <p>Cargando logros...</p>
                         </div>
                     </div>
 
                     <!-- Progress to Next Badge -->
-                    <div class="bg-gryffindor/5 rounded-lg p-4 border border-gryffindor/20">
+                    <div id="nextAchievementProgress" class="bg-gryffindor/5 rounded-lg p-4 border border-gryffindor/20" style="display: none;">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="font-medium text-text-primary">Progreso hacia "Líder de Casa"</span>
-                            <span class="text-sm text-gryffindor font-semibold">7/10</span>
+                            <span class="font-medium text-text-primary">Progreso hacia próximo logro</span>
+                            <span class="text-sm text-gryffindor font-semibold" id="progressText">0/10</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-gryffindor h-2 rounded-full" style="width: 70%"></div>
+                            <div class="bg-gryffindor h-2 rounded-full" id="progressBar" style="width: 0%"></div>
                         </div>
-                        <p class="text-xs text-text-secondary mt-2">Organiza 3 eventos más para desbloquear este logro
-                        </p>
+                        <p class="text-xs text-text-secondary mt-2" id="progressDescription">Cargando...</p>
                     </div>
                 </div>
             </div>
@@ -867,6 +602,7 @@
     <!-- Auth Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/auth.js"></script>
+    <script type="module" src="../js/services/dashboardApi.js"></script>
     <script>
         // Handle logout using Supabase
         async function handleLogout() {
@@ -891,32 +627,660 @@
             }
         });
 
+        // DASHBOARD FUNCTIONALITY WITH REAL DATA
+        let dashboardAPI;
+        let currentUserHouse = null;
+        let currentUserId = null;
+
+        // Import dashboard API
+        async function initializeDashboardAPI() {
+            try {
+                const { dashboardAPI: api } = await import('../js/services/dashboardApi.js');
+                dashboardAPI = api;
+                console.log('✅ Dashboard API loaded successfully');
+                return true;
+            } catch (error) {
+                console.error('❌ Error loading Dashboard API:', error);
+                return false;
+            }
+        }
+
         // Update user info in navigation using Supabase
         async function updateUserInfo() {
-            const authenticated = await window.HogwartsAuth.isAuthenticated();
-            if (authenticated) {
-                const user = await window.HogwartsAuth.getCurrentUser();
-                
-                // Update house name in button
-                const userHouseName = document.getElementById('userHouseName');
-                const userHouse = await window.HogwartsAuth.getUserHouse();
-                if (userHouseName && userHouse) {
-                    userHouseName.textContent = userHouse.charAt(0).toUpperCase() + userHouse.slice(1);
+            try {
+                console.log('[DASHBOARD] Actualizando información del usuario...');
+                const authenticated = await window.HogwartsAuth.isAuthenticated();
+                if (authenticated) {
+                    const user = await window.HogwartsAuth.getCurrentUser();
+                    currentUserId = user?.id;
+                    console.log('[DASHBOARD] Current User ID:', currentUserId);
+                    
+                    // Update house name in button
+                    const userHouseName = document.getElementById('userHouseName');
+                    const userHouse = await window.HogwartsAuth.getUserHouse();
+                    currentUserHouse = userHouse;
+                    console.log('[DASHBOARD] Current User House:', currentUserHouse);
+                    
+                    if (userHouseName && userHouse) {
+                        userHouseName.textContent = userHouse.charAt(0).toUpperCase() + userHouse.slice(1);
+                    }
+                    
+                    // Update user info in dropdown
+                    const userWizardName = document.getElementById('userWizardName');
+                    const userEmail = document.getElementById('userEmail');
+                    
+                    if (userWizardName) userWizardName.textContent = user?.wizard_name || user?.user_metadata?.wizard_name || 'Mago';
+                    if (userEmail) userEmail.textContent = user?.email || '';
+                    
+                    // Update welcome message
+                    const userWelcome = document.getElementById('userWelcome');
+                    if (userWelcome) {
+                        const displayName = user?.wizard_name || user?.user_metadata?.wizard_name || 'Mago';
+                        userWelcome.textContent = `¡Bienvenido/a, ${displayName}!`;
+                    }
+                    
+                    return { success: true, userId: currentUserId, house: currentUserHouse };
                 }
+                return { success: false, error: 'No authenticated' };
+            } catch (error) {
+                console.error('[DASHBOARD] ❌ Error en updateUserInfo:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Update house standings with real data
+        async function updateHouseStandings() {
+            const container = document.getElementById('houseStandingsContainer');
+            if (!container || !dashboardAPI) return;
+
+            console.log('[DASHBOARD] Iniciando carga de House Standings...');
+            container.innerHTML = '<div class="text-center text-gray-500">Cargando clasificación...</div>';
+
+            try {
+                const result = await dashboardAPI.getHouseStandings();
+                console.log('[DASHBOARD] Resultado de House Standings:', result);
                 
-                // Update user info in dropdown
-                const userWizardName = document.getElementById('userWizardName');
-                const userEmail = document.getElementById('userEmail');
-                
-                if (userWizardName) userWizardName.textContent = user?.wizard_name || user?.user_metadata?.wizard_name || 'Mago';
-                if (userEmail) userEmail.textContent = user?.email || '';
-                
-                // Update welcome message
-                const userWelcome = document.getElementById('userWelcome');
-                if (userWelcome) {
-                    const displayName = user?.wizard_name || user?.user_metadata?.wizard_name || 'Mago';
-                    userWelcome.textContent = `¡Bienvenido/a, ${displayName}!`;
+                if (result.success) {
+                    const standings = result.data;
+                    container.innerHTML = '';
+
+                    standings.forEach((house, index) => {
+                        const isCurrentUserHouse = house.name.toLowerCase() === currentUserHouse;
+                        const houseClass = house.name.toLowerCase();
+                        
+                        const standingElement = document.createElement('div');
+                        standingElement.className = `flex items-center justify-between p-3 rounded-lg ${
+                            isCurrentUserHouse ? `bg-${houseClass}/5 border border-${houseClass}/20` : 'bg-gray-50'
+                        }`;
+                        
+                        standingElement.innerHTML = `
+                            <div class="flex items-center">
+                                <span class="text-lg font-bold text-${houseClass} mr-3">#${index + 1}</span>
+                                <div class="w-3 h-3 bg-${houseClass} rounded-full mr-3"></div>
+                                <span class="font-medium text-${houseClass}">${house.name}</span>
+                            </div>
+                            <span class="font-bold text-${houseClass}">${house.total_points.toLocaleString()}</span>
+                        `;
+                        
+                        container.appendChild(standingElement);
+                    });
+                    console.log('[DASHBOARD] ✅ House Standings cargado exitosamente');
+                } else {
+                    console.error('[DASHBOARD] ❌ Error en House Standings:', result.error);
+                    container.innerHTML = `<div class="text-center text-red-500">Error: ${result.error}</div>`;
                 }
+            } catch (error) {
+                console.error('[DASHBOARD] ❌ Exception en House Standings:', error);
+                container.innerHTML = `<div class="text-center text-red-500">Error crítico: ${error.message}</div>`;
+            }
+        }
+
+        // Update points breakdown with real data
+        async function updatePointsBreakdown() {
+            const container = document.getElementById('pointsBreakdownContainer');
+            const houseName = document.getElementById('currentHouseName');
+            
+            if (!container) {
+                console.error('[DASHBOARD] ❌ Container pointsBreakdownContainer no encontrado');
+                return;
+            }
+            
+            if (!dashboardAPI) {
+                console.error('[DASHBOARD] ❌ dashboardAPI no disponible');
+                container.innerHTML = '<div class="text-center text-red-500">Error: API no disponible</div>';
+                return;
+            }
+            
+            if (!currentUserHouse) {
+                console.error('[DASHBOARD] ❌ currentUserHouse no disponible:', currentUserHouse);
+                container.innerHTML = '<div class="text-center text-red-500">Error: Casa del usuario no disponible</div>';
+                return;
+            }
+
+            console.log('[DASHBOARD] Iniciando carga de Points Breakdown para casa:', currentUserHouse);
+            container.innerHTML = '<div class="text-center text-gray-500">Cargando desglose...</div>';
+
+            // Get house ID
+            const houseId = getHouseId(currentUserHouse);
+            if (!houseId) {
+                console.error('[DASHBOARD] ❌ No se pudo obtener house ID para:', currentUserHouse);
+                container.innerHTML = '<div class="text-center text-red-500">Error: Casa no encontrada</div>';
+                return;
+            }
+
+            try {
+                const result = await dashboardAPI.getHousePointsBreakdown(houseId);
+                console.log('[DASHBOARD] Resultado de Points Breakdown:', result);
+                
+                if (result.success) {
+                    const breakdown = result.data;
+                    const total = Object.values(breakdown).reduce((sum, points) => sum + points, 0);
+                    
+                    if (houseName) {
+                        houseName.textContent = currentUserHouse.charAt(0).toUpperCase() + currentUserHouse.slice(1);
+                    }
+                    
+                    container.innerHTML = '';
+                    
+                    if (Object.keys(breakdown).length === 0) {
+                        container.innerHTML = '<div class="text-center text-gray-500">No hay datos de puntos disponibles</div>';
+                        return;
+                    }
+                    
+                    Object.entries(breakdown).forEach(([source, points]) => {
+                        const item = document.createElement('div');
+                        item.className = 'flex justify-between items-center';
+                        item.innerHTML = `
+                            <span class="text-text-secondary">${source}:</span>
+                            <span class="font-semibold text-${currentUserHouse}">${points.toLocaleString()}</span>
+                        `;
+                        container.appendChild(item);
+                    });
+                    
+                    // Add total
+                    if (total > 0) {
+                        const totalItem = document.createElement('div');
+                        totalItem.className = 'border-t pt-3 mt-3';
+                        totalItem.innerHTML = `
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-text-primary">Total:</span>
+                                <span class="font-bold text-${currentUserHouse} text-lg">${total.toLocaleString()}</span>
+                            </div>
+                        `;
+                        container.appendChild(totalItem);
+                    }
+                    console.log('[DASHBOARD] ✅ Points Breakdown cargado exitosamente');
+                } else {
+                    console.error('[DASHBOARD] ❌ Error en Points Breakdown:', result.error);
+                    container.innerHTML = `<div class="text-center text-red-500">Error: ${result.error}</div>`;
+                }
+            } catch (error) {
+                console.error('[DASHBOARD] ❌ Exception en Points Breakdown:', error);
+                container.innerHTML = `<div class="text-center text-red-500">Error crítico: ${error.message}</div>`;
+            }
+        }
+
+        // Update house activity feed
+        async function updateHouseActivity() {
+            const container = document.getElementById('houseActivityContainer');
+            
+            if (!container) {
+                console.error('[DASHBOARD] ❌ Container houseActivityContainer no encontrado');
+                return;
+            }
+            
+            if (!dashboardAPI) {
+                console.error('[DASHBOARD] ❌ dashboardAPI no disponible para actividad');
+                container.innerHTML = '<div class="text-center text-red-500">Error: API no disponible</div>';
+                return;
+            }
+            
+            if (!currentUserHouse) {
+                console.error('[DASHBOARD] ❌ currentUserHouse no disponible para actividad');
+                container.innerHTML = '<div class="text-center text-red-500">Error: Casa del usuario no disponible</div>';
+                return;
+            }
+
+            console.log('[DASHBOARD] Iniciando carga de House Activity para casa:', currentUserHouse);
+            container.innerHTML = '<div class="text-center text-gray-500">Cargando actividad de la casa...</div>';
+
+            const houseId = getHouseId(currentUserHouse);
+            if (!houseId) {
+                console.error('[DASHBOARD] ❌ No se pudo obtener house ID para actividad:', currentUserHouse);
+                container.innerHTML = '<div class="text-center text-red-500">Error: Casa no encontrada</div>';
+                return;
+            }
+
+            try {
+                const result = await dashboardAPI.getHouseActivity(houseId, 10);
+                console.log('[DASHBOARD] Resultado de House Activity:', result);
+                
+                if (result.success) {
+                    const activities = result.data;
+                    container.innerHTML = '';
+
+                    if (activities.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center text-text-secondary py-8">
+                                <p>No hay actividad reciente en la casa.</p>
+                                <a href="interactive_forum_hub.html" class="btn-primary mt-2 inline-block">
+                                    ¡Sé el primero en participar!
+                                </a>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    activities.forEach(activity => {
+                        const activityElement = document.createElement('div');
+                        const isHighlighted = activity.type === 'achievement';
+                        
+                        activityElement.className = `flex items-start p-4 rounded-lg ${
+                            isHighlighted ? `bg-${currentUserHouse}/5 border border-${currentUserHouse}/20` : 'hover:bg-gray-50'
+                        } magical-transition`;
+                        
+                        const avatarUrl = activity.user?.avatar_url ||
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(activity.user?.wizard_name || 'U')}`;
+                        
+                        let badgeHtml = '';
+                        if (activity.type === 'achievement' && activity.points) {
+                            badgeHtml = `<span class="text-xs text-${currentUserHouse} font-semibold bg-${currentUserHouse}/10 px-2 py-1 rounded">+${activity.points} PUNTOS</span>`;
+                        } else if (activity.type === 'new_member') {
+                            badgeHtml = '<span class="text-xs text-secondary font-semibold bg-secondary/10 px-2 py-1 rounded">NUEVO MIEMBRO</span>';
+                        } else if (activity.type === 'forum_post') {
+                            badgeHtml = '<span class="text-xs text-accent font-semibold bg-accent/10 px-2 py-1 rounded">DISCUSIÓN</span>';
+                        }
+                        
+                        activityElement.innerHTML = `
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-4 bg-${currentUserHouse}/10 text-${currentUserHouse}">
+                                ${activity.icon}
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <span class="font-medium text-text-primary mr-2">${activity.user?.wizard_name || 'Usuario'}</span>
+                                    ${badgeHtml}
+                                </div>
+                                <p class="text-text-secondary text-sm mb-2">${activity.title}</p>
+                                <div class="flex items-center text-xs text-text-secondary">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>${dashboardAPI.getTimeAgo(activity.created_at)}</span>
+                                </div>
+                            </div>
+                        `;
+                        
+                        container.appendChild(activityElement);
+                    });
+                    console.log('[DASHBOARD] ✅ House Activity cargado exitosamente');
+                } else {
+                    console.error('[DASHBOARD] ❌ Error en House Activity:', result.error);
+                    container.innerHTML = '<div class="text-center text-red-500">Error cargando actividad</div>';
+                }
+            } catch (error) {
+                console.error('[DASHBOARD] ❌ Exception en House Activity:', error);
+                container.innerHTML = '<div class="text-center text-red-500">Error cargando actividad</div>';
+            }
+        }
+
+        // Update user stats
+        async function updateUserStats() {
+            if (!dashboardAPI || !currentUserId) return;
+
+            try {
+                // Update personal stats
+                const statsResult = await dashboardAPI.getUserStats(currentUserId);
+                if (statsResult.success) {
+                    const stats = statsResult.data;
+                    
+                    const pointsElement = document.getElementById('userPersonalPoints');
+                    const achievementsElement = document.getElementById('userAchievementsCount');
+                    
+                    if (pointsElement) pointsElement.textContent = stats.house_points?.toLocaleString() || '0';
+                    if (achievementsElement) achievementsElement.textContent = stats.achievements_count || '0';
+                }
+
+                // Update house rank
+                const houseId = getHouseId(currentUserHouse);
+                if (houseId) {
+                    const rankResult = await dashboardAPI.getUserHouseRank(currentUserId, houseId);
+                    if (rankResult.success) {
+                        const rankElement = document.getElementById('userHouseRank');
+                        if (rankElement) {
+                            rankElement.textContent = `#${rankResult.data.rank}`;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating user stats:', error);
+            }
+        }
+
+        // Update user achievements badges
+        async function updateUserAchievements() {
+            const container = document.getElementById('userAchievementBadges');
+            if (!container || !dashboardAPI || !currentUserId) return;
+
+            try {
+                const result = await dashboardAPI.getUserAchievements(currentUserId);
+                if (result.success) {
+                    const { earned, available } = result.data;
+                    container.innerHTML = '';
+
+                    // Show earned achievements
+                    earned.forEach(achievement => {
+                        const badge = createAchievementBadge(achievement, true);
+                        container.appendChild(badge);
+                    });
+
+                    // Show one locked achievement as preview
+                    if (available.length > 0) {
+                        const nextAchievement = available[0];
+                        const badge = createAchievementBadge(nextAchievement, false);
+                        container.appendChild(badge);
+                    }
+
+                    // Fill remaining slots with placeholders if needed
+                    const remainingSlots = 4 - (earned.length + Math.min(available.length, 1));
+                    for (let i = 0; i < remainingSlots; i++) {
+                        const placeholder = createPlaceholderBadge();
+                        container.appendChild(placeholder);
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating user achievements:', error);
+                container.innerHTML = '<div class="text-center text-red-500 col-span-4">Error cargando logros</div>';
+            }
+        }
+
+        // Create achievement badge element
+        function createAchievementBadge(achievement, earned) {
+            const badge = document.createElement('div');
+            badge.className = `text-center p-4 rounded-lg ${
+                earned 
+                    ? `bg-${currentUserHouse}/5 border border-${currentUserHouse}/20` 
+                    : 'bg-gray-50 border border-gray-200 opacity-50'
+            }`;
+            
+            const iconColor = earned ? currentUserHouse : 'gray-400';
+            
+            badge.innerHTML = `
+                <div class="w-16 h-16 bg-${iconColor}/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span class="text-2xl">${achievement.icon || '🏆'}</span>
+                </div>
+                <h4 class="font-cta font-semibold text-sm text-${iconColor} mb-1">${achievement.name}</h4>
+                <p class="text-xs text-text-secondary">${achievement.description}</p>
+                ${earned ? `<span class="text-xs text-${currentUserHouse} font-semibold">+${achievement.points_reward} pts</span>` : ''}
+            `;
+            
+            return badge;
+        }
+
+        // Create placeholder badge
+        function createPlaceholderBadge() {
+            const badge = document.createElement('div');
+            badge.className = 'text-center p-4 rounded-lg bg-gray-50 border border-gray-200 opacity-50';
+            badge.innerHTML = `
+                <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <h4 class="font-cta font-semibold text-sm text-gray-400 mb-1">Bloqueado</h4>
+                <p class="text-xs text-gray-400">Próximamente...</p>
+            `;
+            return badge;
+        }
+
+        // Update recent house achievements (right column block "Logros Recientes")
+        async function updateRecentAchievements() {
+            const container = document.getElementById('recentAchievementsContainer');
+            if (!container || !dashboardAPI || !currentUserHouse) return;
+
+            const houseId = getHouseId(currentUserHouse);
+            if (!houseId) return;
+
+            try {
+                const result = await dashboardAPI.getHouseAchievements(houseId, 5);
+                if (result.success) {
+                    const achievements = result.data;
+                    container.innerHTML = '';
+
+                    if (achievements.length === 0) {
+                        container.innerHTML = '<div class="text-center text-text-secondary py-4">No hay logros recientes</div>';
+                        return;
+                    }
+
+                    achievements.forEach(item => {
+                        const ach = document.createElement('div');
+                        ach.className = `flex items-start p-3 rounded-lg bg-${currentUserHouse}/5 border border-${currentUserHouse}/20`;
+                        ach.innerHTML = `
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 bg-${currentUserHouse}/10">
+                                <span class="text-xl">${item.achievement_types?.icon || '🏆'}</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <p class="font-medium">${item.achievement_types?.name || 'Logro'}</p>
+                                    <span class="text-xs text-${currentUserHouse} font-semibold">+${item.achievement_types?.points_reward || 0} pts</span>
+                                </div>
+                                <p class="text-sm text-text-secondary">${item.user_profiles?.wizard_name || 'Miembro de la casa'}</p>
+                            </div>
+                        `;
+                        container.appendChild(ach);
+                    });
+                } else {
+                    container.innerHTML = '<div class="text-center text-red-500">Error cargando logros recientes</div>';
+                }
+            } catch (error) {
+                console.error('Error updating recent achievements:', error);
+                container.innerHTML = '<div class="text-center text-red-500">Error cargando logros recientes</div>';
+            }
+        }
+
+        // Update house members
+        async function updateHouseMembers() {
+            const container = document.getElementById('houseMembersContainer');
+            if (!container || !dashboardAPI || !currentUserHouse) return;
+
+            const houseId = getHouseId(currentUserHouse);
+            if (!houseId) return;
+
+            try {
+                const result = await dashboardAPI.getHouseMembers(houseId, 3);
+                if (result.success) {
+                    const members = result.data;
+                    container.innerHTML = '';
+
+                    members.forEach(member => {
+                        const memberElement = document.createElement('div');
+                        memberElement.className = 'flex items-center';
+                        
+                        const avatarUrl = member.avatar_url || 
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(member.wizard_name || 'U')}`;
+                        
+                        const statusColor = member.online_status === 'online' ? 'success' : 
+                                           member.online_status === 'away' ? 'warning' : 'gray-400';
+                        const statusText = member.online_status === 'online' ? 'En línea' : 
+                                          member.online_status === 'away' ? 'Ausente' : 'Desconectado';
+                        
+                        memberElement.innerHTML = `
+                            <img src="${avatarUrl}" alt="${member.wizard_name}" 
+                                 class="w-12 h-12 object-cover rounded-full mr-4" />
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-medium text-text-primary">${member.wizard_name}</h4>
+                                    <span class="text-xs text-${currentUserHouse} font-semibold">${member.house_points || 0} pts</span>
+                                </div>
+                                <p class="text-sm text-text-secondary">${member.specialty}</p>
+                                <div class="flex items-center mt-1">
+                                    <div class="w-2 h-2 bg-${statusColor} rounded-full mr-2"></div>
+                                    <span class="text-xs text-${statusColor}">${statusText}</span>
+                                </div>
+                            </div>
+                        `;
+                        
+                        container.appendChild(memberElement);
+                    });
+                } else {
+                    container.innerHTML = '<div class="text-center text-red-500">Error cargando miembros</div>';
+                }
+            } catch (error) {
+                console.error('Error updating house members:', error);
+                container.innerHTML = '<div class="text-center text-red-500">Error cargando miembros</div>';
+            }
+        }
+
+        // Update upcoming events
+        async function updateUpcomingEvents() {
+            const container = document.getElementById('upcomingEventsContainer');
+            if (!container || !dashboardAPI) return;
+
+            try {
+                const result = await dashboardAPI.getUpcomingEvents(3);
+                if (result.success) {
+                    const events = result.data;
+                    container.innerHTML = '';
+
+                    if (events.length === 0) {
+                        container.innerHTML = '<div class="text-center text-text-secondary">No hay eventos próximos</div>';
+                        return;
+                    }
+
+                    events.forEach(event => {
+                        const eventElement = document.createElement('div');
+                        eventElement.className = 'flex items-start';
+                        
+                        const eventDate = new Date(event.start_at);
+                        const colors = ['gryffindor', 'secondary', 'accent'];
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        
+                        eventElement.innerHTML = `
+                            <div class="w-2 h-2 bg-${color} rounded-full mt-2 mr-3"></div>
+                            <div>
+                                <p class="text-sm font-medium">${event.title}</p>
+                                <p class="text-xs text-text-secondary">
+                                    ${eventDate.toLocaleDateString()} - ${eventDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                            </div>
+                        `;
+                        
+                        container.appendChild(eventElement);
+                    });
+                } else {
+                    container.innerHTML = '<div class="text-center text-red-500">Error cargando eventos</div>';
+                }
+            } catch (error) {
+                console.error('Error updating upcoming events:', error);
+                container.innerHTML = '<div class="text-center text-red-500">Error cargando eventos</div>';
+            }
+        }
+
+        // Utility function to get house ID from name
+        function getHouseId(houseName) {
+            // Mapeo unificado con la base de datos (ver tabla public.houses)
+            // Orden de IDs esperado:
+            // 1: gryffindor, 2: hufflepuff, 3: ravenclaw, 4: slytherin
+            const houseIds = {
+                'gryffindor': 1,
+                'hufflepuff': 2,
+                'ravenclaw': 3,
+                'slytherin': 4
+            };
+            return houseIds[houseName?.toLowerCase()];
+        }
+
+        // Button handlers
+        function loadMoreActivity() {
+            window.location.href = 'interactive_forum_hub.html';
+        }
+
+        function loadAllMembers() {
+            // TODO: Implement members page
+            alert('Funcionalidad de miembros en desarrollo');
+        }
+
+        // Setup real-time subscriptions
+        function setupDashboardSubscriptions() {
+            if (!dashboardAPI || !currentUserHouse) return;
+
+            const houseId = getHouseId(currentUserHouse);
+            if (!houseId) return;
+
+            dashboardAPI.subscribeToDashboardUpdates(houseId, (updateType) => {
+                console.log('Dashboard update received:', updateType);
+                
+                switch (updateType) {
+                    case 'points_updated':
+                        updateHouseStandings();
+                        updatePointsBreakdown();
+                        updateUserStats();
+                        break;
+                    case 'achievements_updated':
+                        updateUserAchievements();
+                        updateHouseActivity();
+                        break;
+                    case 'posts_updated':
+                        updateHouseActivity();
+                        break;
+                }
+            });
+        }
+
+        // Initialize all dashboard data
+        async function initializeDashboard() {
+            console.log('🏠 Initializing dashboard with real data...');
+            
+            // Verificar que tenemos los datos del usuario necesarios
+            if (!currentUserId || !currentUserHouse) {
+                console.error('❌ Cannot initialize dashboard without user data. UserId:', currentUserId, 'House:', currentUserHouse);
+                return { success: false, error: 'Missing user data' };
+            }
+            
+            const apiLoaded = await initializeDashboardAPI();
+            if (!apiLoaded) {
+                console.error('❌ Could not load Dashboard API');
+                return { success: false, error: 'Dashboard API failed to load' };
+            }
+
+            console.log('🏠 Cargando secciones del dashboard...');
+
+            // Load dashboard sections sequentially to avoid overwhelming the API
+            try {
+                // Critical sections first
+                console.log('📊 Cargando House Standings...');
+                await updateHouseStandings();
+                
+                console.log('💰 Cargando Points Breakdown...');
+                await updatePointsBreakdown();
+                
+                console.log('👤 Cargando User Stats...');
+                await updateUserStats();
+                
+                // Secondary sections
+                console.log('🏃 Cargando House Activity...');
+                await updateHouseActivity();
+                
+                console.log('🏆 Cargando User Achievements...');
+                await updateUserAchievements();
+
+                console.log('🏅 Cargando Recent House Achievements...');
+                await updateRecentAchievements();
+                
+                console.log('👥 Cargando House Members...');
+                await updateHouseMembers();
+                
+                console.log('📅 Cargando Upcoming Events...');
+                await updateUpcomingEvents();
+
+                // Setup real-time updates
+                console.log('🔔 Configurando subscripciones en tiempo real...');
+                setupDashboardSubscriptions();
+                
+                console.log('✅ Dashboard initialized with real data!');
+                return { success: true };
+            } catch (error) {
+                console.error('❌ Error during dashboard initialization:', error);
+                return { success: false, error: error.message };
             }
         }
 
@@ -935,8 +1299,8 @@
         // Check if user is house head and show admin panel button
         async function checkHouseHeadStatus() {
             try {
-                // Crear cliente Supabase directamente
-                const supabase = window.supabase.createClient(
+                // Reutilizar el cliente Supabase global para evitar múltiples instancias
+                const supabase = window.supabaseClient || window.supabase.createClient(
                     'https://vdcclritlgnwwdxloayt.supabase.co',
                     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E'
                 );
@@ -1013,16 +1377,27 @@
             if (isInitialized) return; // Prevent multiple executions
             isInitialized = true;
             
+            console.log('🚀 Iniciando página del dashboard...');
+            
             // Wait for auth to load
             await new Promise(resolve => setTimeout(resolve, 500));
             
             // Require authentication for this page
             if (!(await requireAuth())) {
+                console.error('❌ Autenticación requerida - redirigiendo...');
                 return;
             }
 
-            // Update user info
-            await updateUserInfo();
+            console.log('✅ Usuario autenticado');
+
+            // Update user info first and wait for completion
+            const userInfoResult = await updateUserInfo();
+            if (!userInfoResult.success) {
+                console.error('❌ Error obteniendo información del usuario:', userInfoResult.error);
+                return;
+            }
+            
+            console.log('✅ Información del usuario actualizada');
             
             // Check if user is house head and show admin panel button
             await checkHouseHeadStatus();
@@ -1034,25 +1409,39 @@
             }
 
             // Handle house selection - get from Supabase first, then fallback to localStorage
-            let userHouse = null;
+            let userHouse = currentUserHouse; // Ya se obtuvo en updateUserInfo
             
-            if (window.HogwartsAuth && window.HogwartsAuth.getUserHouse) {
-                try {
-                    userHouse = await window.HogwartsAuth.getUserHouse();
-                } catch (error) {
-                    console.error('Error getting user house from Supabase:', error);
-                }
-            }
-            
-            // Fallback to localStorage if Supabase fails
+            // Fallback to localStorage if not available from Supabase
             if (!userHouse) {
+                console.log('⚠️ Casa no encontrada en Supabase, buscando en localStorage...');
                 const quizHouse = localStorage.getItem('userHouse');
                 const selectedHouse = localStorage.getItem('selectedHouse');
                 userHouse = quizHouse || selectedHouse;
             }
             
             const finalHouse = userHouse || 'gryffindor';
+            console.log('🏠 Casa final seleccionada:', finalHouse);
+            
+            // Update global variable and theme
+            currentUserHouse = finalHouse;
             updateHouseTheme(finalHouse);
+            
+            // Verificar que tenemos todos los datos necesarios antes de inicializar el dashboard
+            if (!currentUserId || !currentUserHouse) {
+                console.error('❌ Datos insuficientes para inicializar dashboard:', {
+                    currentUserId,
+                    currentUserHouse
+                });
+                return;
+            }
+            
+            // Initialize dashboard with real data
+            console.log('📊 Iniciando carga del dashboard con datos reales...');
+            const dashboardResult = await initializeDashboard();
+            
+            if (dashboardResult && !dashboardResult.success) {
+                console.error('❌ Error inicializando dashboard:', dashboardResult.error);
+            }
             
             // Show house selection modal only if NO house data exists at all
             if (!userHouse) {
@@ -1060,6 +1449,8 @@
                     showHouseModal();
                 }, 1000);
             }
+            
+            console.log('🎉 Inicialización de página completada');
         });
     </script>
 
