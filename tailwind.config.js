@@ -1,5 +1,24 @@
 module.exports = {
-  content: ["./pages/*.{html,js}", "./index.html", "./js/*.js"],
+  content: ["./pages/**/*.html", "./index.html", "./js/**/*.js", "./css/**/*.css"],
+  safelist: [
+    // Dynamic house colors used in JS templates
+    'bg-gryffindor', 'bg-hufflepuff', 'bg-ravenclaw', 'bg-slytherin', 'bg-gray-400',
+    'text-gryffindor', 'text-hufflepuff', 'text-ravenclaw', 'text-slytherin', 'text-secondary',
+    'border-gryffindor', 'border-hufflepuff', 'border-ravenclaw', 'border-slytherin', 'border-secondary',
+    // Gradient utilities with opacity used for featured cards
+    'from-gryffindor/10', 'to-gryffindor/5',
+    'from-hufflepuff/10', 'to-hufflepuff/5',
+    'from-ravenclaw/10', 'to-ravenclaw/5',
+    'from-slytherin/10', 'to-slytherin/5',
+    'from-secondary/10', 'to-secondary/5',
+    // Dynamic background and border alpha variants used across dashboards
+    'bg-gryffindor/10', 'bg-gryffindor/5', 'border-gryffindor/20',
+    'bg-hufflepuff/10', 'bg-hufflepuff/5', 'border-hufflepuff/20',
+    'bg-ravenclaw/10', 'bg-ravenclaw/5', 'border-ravenclaw/20',
+    'bg-slytherin/10', 'bg-slytherin/5', 'border-slytherin/20',
+    // Focus ring colors used in filters
+    'focus:ring-gryffindor', 'focus:ring-hufflepuff', 'focus:ring-ravenclaw', 'focus:ring-slytherin',
+  ],
   theme: {
     extend: {
       colors: {
@@ -128,5 +147,8 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/line-clamp'),
+  ],
 }

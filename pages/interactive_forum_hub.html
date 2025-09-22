@@ -66,7 +66,7 @@
                     <div class="text-text-secondary text-sm">Mensajes Hoy</div>
                 </div>
                 <div class="bg-surface/80 backdrop-blur-sm rounded-lg p-4 text-center border border-white/20">
-                    <div class="font-headline text-2xl font-medium text-accent">892</div>
+                    <div id="onlineMembersCount" class="font-headline text-2xl font-medium text-accent">0</div>
                     <div class="text-text-secondary text-sm">Miembros Online</div>
                 </div>
                 <div class="bg-surface/80 backdrop-blur-sm rounded-lg p-4 text-center border border-white/20">
@@ -168,45 +168,7 @@
                             Discusiones Destacadas
                         </h3>
                         
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="bg-gradient-to-r from-gryffindor/10 to-gryffindor/5 p-4 rounded-lg border-l-4 border-gryffindor hover-scale magical-transition">
-                                <div class="flex items-center mb-2">
-                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?q=80&w=400&auto=format&fit=crop" alt="María González" class="w-8 h-8 object-cover rounded-full mr-3" onerror="this.src='https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
-                                    <div>
-                                        <div class="font-cta font-semibold text-sm">María González</div>
-                                        <div class="flex items-center">
-                                            <div class="w-2 h-2 bg-gryffindor rounded-full mr-1"></div>
-                                            <span class="text-xs text-gryffindor">Gryffindor • Nivel 15</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h4 class="font-headline font-medium mb-2">¿Por qué Snape realmente protegió a Harry?</h4>
-                                <p class="text-sm text-text-secondary mb-3">Una teoría profunda sobre las verdaderas motivaciones de Severus Snape más allá del amor por Lily...</p>
-                                <div class="flex items-center justify-between text-xs text-text-secondary">
-                                    <span>847 respuestas • 2.3k vistas</span>
-                                    <span>Hace 2 horas</span>
-                                </div>
-                            </div>
-                            
-                            <div class="bg-gradient-to-r from-ravenclaw/10 to-ravenclaw/5 p-4 rounded-lg border-l-4 border-ravenclaw hover-scale magical-transition">
-                                <div class="flex items-center mb-2">
-                                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop" alt="Ana Rodríguez" class="w-8 h-8 object-cover rounded-full mr-3" onerror="this.src='https://images.pixabay.com/photo-2016/11/21/12/42/beard-1845166_1280.jpg'; this.onerror=null;" />
-                                    <div>
-                                        <div class="font-cta font-semibold text-sm">Ana Rodríguez</div>
-                                        <div class="flex items-center">
-                                            <div class="w-2 h-2 bg-ravenclaw rounded-full mr-1"></div>
-                                            <span class="text-xs text-ravenclaw">Ravenclaw • Nivel 22</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h4 class="font-headline font-medium mb-2">Análisis: La Magia de los Horrocruxes</h4>
-                                <p class="text-sm text-text-secondary mb-3">Un estudio detallado sobre la magia oscura detrás de los Horrocruxes y sus implicaciones...</p>
-                                <div class="flex items-center justify-between text-xs text-text-secondary">
-                                    <span>1.2k respuestas • 5.7k vistas</span>
-                                    <span>Hace 4 horas</span>
-                                </div>
-                            </div>
-                        </div>
+                        <div id="featuredPostsGrid" class="grid md:grid-cols-2 gap-4"></div>
                     </div>
                     
                     <!-- Forum Categories -->
@@ -565,7 +527,7 @@
     </section>
 
     <!-- Collapsible Online Members Sidebar -->
-    <div id="onlineMembersSidebar" class="fixed right-4 top-1/2 transform -translate-y-1/2 z-30">
+    <div id="onlineMembersSidebar" class="fixed bottom-6 right-6 z-50">
         <!-- Toggle Button -->
         <button id="toggleMembersBtn" class="absolute left-0 top-0 transform -translate-x-full bg-primary text-white p-2 rounded-l-lg shadow-elevated focus:outline-none" onclick="toggleOnlineMembers()">
             <svg id="showIcon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -581,61 +543,11 @@
             <h4 class="font-cta font-semibold text-sm mb-3 flex items-center justify-between">
                 <div class="flex items-center">
                     <div class="w-2 h-2 bg-success rounded-full mr-2 animate-pulse"></div>
-                    <span>Miembros Online (892)</span>
+                    <span id="onlineMembersTitle">Miembros Online (0)</span>
                 </div>
             </h4>
             
-            <div class="space-y-2 max-h-96 overflow-y-auto">
-                <div class="flex items-center p-2 rounded-lg hover:bg-surface/50 magical-transition">
-                    <img src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400" alt="María González" class="w-8 h-8 object-cover rounded-full mr-2" />
-                    <div>
-                        <div class="font-medium text-xs">María González</div>
-                        <div class="flex items-center">
-                            <div class="w-2 h-2 bg-gryffindor rounded-full mr-1"></div>
-                            <span class="text-xs text-gryffindor">Gryffindor</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center p-2 rounded-lg hover:bg-surface/50 magical-transition">
-                    <img src="https://images.pixabay.com/photo-2016/11/21/12/42/beard-1845166_1280.jpg" alt="Diego Morales" class="w-8 h-8 object-cover rounded-full mr-2" />
-                    <div>
-                        <div class="font-medium text-xs">Diego Morales</div>
-                        <div class="flex items-center">
-                            <div class="w-2 h-2 bg-slytherin rounded-full mr-1"></div>
-                            <span class="text-xs text-slytherin">Slytherin</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center p-2 rounded-lg hover:bg-surface/50 magical-transition">
-                    <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Ana Rodríguez" class="w-8 h-8 object-cover rounded-full mr-2" />
-                    <div>
-                        <div class="font-medium text-xs">Ana Rodríguez</div>
-                        <div class="flex items-center">
-                            <div class="w-2 h-2 bg-ravenclaw rounded-full mr-1"></div>
-                            <span class="text-xs text-ravenclaw">Ravenclaw</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center p-2 rounded-lg hover:bg-surface/50 magical-transition">
-                    <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Carlos Mendoza" class="w-8 h-8 object-cover rounded-full mr-2" />
-                    <div>
-                        <div class="font-medium text-xs">Carlos Mendoza</div>
-                        <div class="flex items-center">
-                            <div class="w-2 h-2 bg-hufflepuff rounded-full mr-1"></div>
-                            <span class="text-xs text-hufflepuff">Hufflepuff</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-center pt-2">
-                    <button class="text-xs text-primary hover:text-primary-700 magical-transition">
-                        Ver todos los miembros online
-                    </button>
-                </div>
-            </div>
+            <div id="onlineMembersList" class="space-y-2 max-h-96 overflow-y-auto"></div>
         </div>
     </div>
     
@@ -691,9 +603,9 @@
             hideIcon.classList.add('hidden');
         }
     </script>
-    </div>
+ 
+     <!-- Mobile Quick Actions -->
 
-    <!-- Mobile Quick Actions -->
     <div class="fixed bottom-4 right-4 md:hidden z-40">
         <div class="flex flex-col space-y-2">
             <button class="btn-primary w-12 h-12 rounded-full flex items-center justify-center shadow-elevated">
@@ -777,79 +689,164 @@
         </div>
     </footer>
 
-    <!-- Custom JavaScript for Forum Functionality -->
-    <script>
-        // Forum interaction functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Filter functionality
-            const filterCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-            const sortSelect = document.querySelector('select');
-            
-            filterCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    // Simulate filtering (in real app, this would filter content)
-                    console.log('Filter applied:', this.nextElementSibling.textContent);
-                });
+    <!-- Online Members Presence Script -->
+    <script type="module">
+        import { supabase as supabaseImport } from '../js/supabase-client.js';
+
+        let supabase = supabaseImport;
+        if (supabaseImport instanceof Promise) {
+            supabase = await supabaseImport;
+        }
+
+        const { data: { user: initialUser } } = await supabase.auth.getUser();
+        let presenceKey = initialUser?.id || localStorage.getItem('presence_key') || `anon-${Math.random().toString(36).slice(2)}`;
+        localStorage.setItem('presence_key', presenceKey);
+        const channel = supabase.channel('online-users', { config: { presence: { key: presenceKey } } });
+        let currentUser = null;
+        let presenceSynced = false;
+
+        function getHouseClass(house) {
+            if (!house) return '';
+            const h = String(house).toLowerCase();
+            if (['gryffindor','slytherin','ravenclaw','hufflepuff'].includes(h)) return h;
+            return '';
+        }
+
+        function avatarFallback(name) {
+            const initials = encodeURIComponent((name || 'U').substring(0,2));
+            return `https://ui-avatars.com/api/?name=${initials}`;
+        }
+
+        function renderPresence() {
+            const listEl = document.getElementById('onlineMembersList');
+            const titleEl = document.getElementById('onlineMembersTitle');
+            const quickCountEl = document.getElementById('onlineMembersCount');
+            if (!listEl || !titleEl) return;
+
+            const state = channel.presenceState();
+            const entries = Object.entries(state || {});
+            const occupants = entries.map(([key, arr]) => {
+                const metas = Array.isArray(arr) ? arr.slice() : [];
+                metas.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+                const meta = metas[0] || {};
+                return { key, meta };
             });
-            
-            sortSelect.addEventListener('change', function() {
-                // Simulate sorting (in real app, this would sort content)
-                console.log('Sort applied:', this.value);
-            });
-            
-            // Reset filters
-            const resetButton = document.querySelector('button:has(svg)');
-            if (resetButton) {
-                resetButton.addEventListener('click', function() {
-                    filterCheckboxes.forEach(checkbox => {
-                        checkbox.checked = false;
-                    });
-                    sortSelect.selectedIndex = 0;
-                    console.log('Filters reset');
-                });
+
+            const count = occupants.length;
+
+            // Title + quick stats count
+            titleEl.textContent = `Miembros Online (${count})`;
+            if (quickCountEl) quickCountEl.textContent = String(count);
+
+            // Single-user rule: show only "yo" when the only presence is me (by presenceKey)
+            if (count === 1 && occupants[0]?.key === presenceKey) {
+                listEl.innerHTML = `
+                    <div class="flex items-center p-2 rounded-lg hover:bg-surface/50 magical-transition">
+                        <div class="w-8 h-8 bg-success/20 rounded-full mr-2 flex items-center justify-center">
+                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                        </div>
+                        <div>
+                            <div class="font-medium text-xs">yo</div>
+                            <div class="text-xs text-text-secondary">Conectado</div>
+                        </div>
+                    </div>
+                `;
+                return;
             }
-            
-            // Animate discussion cards on scroll
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+
+            // Build list from occupants (use presence key to identify self)
+            listEl.innerHTML = occupants.map(({ key, meta }) => {
+                const isMe = key === presenceKey || (!!currentUser && meta.id === currentUser.id);
+                const name = isMe ? (meta.wizard_name || meta.email || 'yo') : (meta.wizard_name || meta.email || 'Usuario');
+                const houseClass = getHouseClass(meta.house);
+                const colorClass = houseClass ? `text-${houseClass}` : 'text-text-secondary';
+                const dotClass = houseClass ? `bg-${houseClass}` : 'bg-success';
+                const avatar = meta.avatar_url || avatarFallback(meta.wizard_name || meta.email || name);
+                return `
+                    <div class="flex items-center p-2 rounded-lg hover:bg-surface/50 magical-transition">
+                        <img src="${avatar}" alt="${name}" class="w-8 h-8 object-cover rounded-full mr-2" onerror="this.src='${avatarFallback(name)}'; this.onerror=null;" />
+                        <div>
+                            <div class="font-medium text-xs">${name}</div>
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 ${dotClass} rounded-full mr-1"></div>
+                                ${meta.house ? `<span class="text-xs ${colorClass}">${meta.house}</span>` : '<span class="text-xs text-text-secondary">Conectado</span>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function trackSelf() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                currentUser = user || null;
+                // Attempt to enrich from profiles
+                let profile = null;
+                if (currentUser) {
+                    const { data: p } = await supabase.from('user_profiles').select('wizard_name, avatar_url, house').eq('id', currentUser.id).single();
+                    profile = p || {};
+                }
+                const meta = {
+                    id: currentUser?.id || presenceKey, // keep meta.id aligned with presence key for guests
+                    email: currentUser?.email || undefined,
+                    wizard_name: profile?.wizard_name || currentUser?.user_metadata?.wizard_name || undefined,
+                    avatar_url: profile?.avatar_url || currentUser?.user_metadata?.avatar_url || undefined,
+                    house: profile?.house || currentUser?.user_metadata?.house || localStorage.getItem('userHouse') || undefined,
+                    ts: Date.now()
+                };
+                await channel.track(meta);
+            } catch (e) {
+                console.warn('Presence track failed:', e);
+            }
+        }
+
+        // Join channel with presence
+        channel.on('presence', { event: 'sync' }, () => {
+            presenceSynced = true;
+            renderPresence();
+        });
+        channel.on('presence', { event: 'join' }, () => presenceSynced && renderPresence());
+        channel.on('presence', { event: 'leave' }, () => presenceSynced && renderPresence());
+
+        async function ensureSubscribed(retries = 3) {
+            try {
+                await channel.subscribe(async status => {
+                    if (status === 'SUBSCRIBED') {
+                        await trackSelf();
                     }
                 });
-            }, observerOptions);
-            
-            // Observe forum category cards
-            document.querySelectorAll('.card').forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-                observer.observe(card);
-            });
-            
-            // Search functionality
-            const searchInput = document.querySelector('input[placeholder="Buscar discusiones..."]');
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    // Simulate search (in real app, this would search content)
-                    console.log('Searching for:', this.value);
-                });
+            } catch (e) {
+                if (retries > 0) {
+                    setTimeout(() => ensureSubscribed(retries - 1), 500);
+                } else {
+                    console.warn('Presence subscribe failed:', e);
+                }
             }
-            
-            // Mobile quick actions
-            const mobileButtons = document.querySelectorAll('.fixed.bottom-4.right-4 button');
-            mobileButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    // Simulate mobile actions
-                    console.log('Mobile action triggered');
-                });
-            });
+        }
+
+        await ensureSubscribed();
+
+        // Cleanup and visibility handling
+        const softUntrack = () => { try { channel.untrack(); } catch {} };
+        const hardCleanup = () => { try { channel.untrack(); } catch {} try { channel.unsubscribe(); } catch {} };
+        window.addEventListener('beforeunload', hardCleanup);
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState === 'hidden') {
+                softUntrack();
+            } else if (document.visibilityState === 'visible') {
+                // Re-track on visibility return
+                try {
+                    if (channel.state !== 'joined') {
+                        await channel.subscribe();
+                    }
+                    await trackSelf();
+                } catch {}
+            }
         });
+
+        // Keep panel state consistent on first render
+        renderPresence();
     </script>
 
     <!-- Supabase Client -->

@@ -292,20 +292,25 @@ class SocialConnections {
                 return;
             }
 
-            const friendsHTML = friends.map(friend => `
+            const friendsHTML = friends.map(friend => {
+                const house = ((friend.house || '') + '').toLowerCase();
+                const isHouse = house === 'gryffindor' || house === 'hufflepuff' || house === 'ravenclaw' || house === 'slytherin';
+                const houseClass = isHouse ? house : 'gray-400';
+                return `
                 <div class="friend-card bg-surface p-4 rounded-lg border border-gray-200 hover-scale magical-transition">
                     <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 rounded-full bg-${friend.house || 'gray'} flex items-center justify-center text-white font-bold">
+                        <div class="w-12 h-12 rounded-full bg-${houseClass} flex items-center justify-center text-white font-bold">
                             ${friend.display_name?.charAt(0).toUpperCase() || '?'}
                         </div>
                         <div class="flex-1">
                             <h4 class="font-medium text-text-primary">${friend.display_name || 'Usuario Mágico'}</h4>
                             <p class="text-sm text-text-secondary capitalize">${friend.house || 'Sin casa'}</p>
                         </div>
-                        <div class="w-3 h-3 bg-${friend.house || 'gray'} rounded-full"></div>
+                        <div class="w-3 h-3 bg-${houseClass} rounded-full"></div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
 
             const showMoreButton = friends.length >= 6 ? `
                 <div class="text-center mt-4">

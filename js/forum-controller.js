@@ -48,6 +48,7 @@ export class ForumController {
             await this.loadHouses();
             await this.loadPosts();
             await this.updateForumStats();
+            await this.loadFeaturedPosts();
 
             // Setup event listeners
             this.setupEventListeners();
@@ -136,6 +137,18 @@ export class ForumController {
             });
             console.log('✅ Botón cargar más configurado');
         }
+
+        // Event delegation for navigating to post detail
+        document.addEventListener('click', (e) => {
+            const item = e.target.closest('[data-post-id]');
+            if (item) {
+                const id = item.dataset.postId;
+                if (id) {
+                    window.location.href = `post-detail.html?id=${encodeURIComponent(id)}`;
+                }
+            }
+        });
+        console.log('✅ Navegación por click configurada');
     }
 
     updateHouseFilters() {
@@ -384,13 +397,13 @@ export class ForumController {
         div.innerHTML = `
             <div class="flex items-center">
                 <img src="${post.user?.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.user?.wizard_name || 'U')}" 
-                     alt="${post.user?.wizard_name}" 
+                     alt="${post.user?.wizard_name || 'Usuario'}" 
                      class="w-10 h-10 object-cover rounded-full mr-3" />
                 <div>
                     <h4 class="font-medium text-sm">${this.escapeHtml(post.title)}</h4>
                     <div class="flex items-center text-xs text-text-secondary">
                         ${post.house ? `
-                            <div class="w-2 h-2 bg-${post.house.name.toLowerCase()} rounded-full mr-1"></div>
+                            <div class="w-2 h-2 bg-${(post.house.name || '').toLowerCase()} rounded-full mr-1"></div>
                         ` : ''}
                         <span class="mr-2">${post.user?.wizard_name || 'Usuario'}</span>
                         <span>•</span>
@@ -411,6 +424,67 @@ export class ForumController {
             </div>
         `;
         
+        return div;
+    }
+
+    async loadFeaturedPosts() {
+        try {
+            const grid = document.getElementById('featuredPostsGrid');
+            if (!grid) {
+                console.warn('⚠️ No se encontró el contenedor de destacados');
+                return;
+            }
+            grid.innerHTML = '<div class="text-sm text-text-secondary">Cargando discusiones destacadas...</div>';
+            const result = await forumAPI.getFeaturedPosts(2);
+            if (!result.success) {
+                grid.innerHTML = '<div class="text-sm text-error">Error cargando discusiones destacadas</div>';
+                return;
+            }
+            const posts = result.data || [];
+            if (!posts.length) {
+                grid.innerHTML = '<div class="text-sm text-text-secondary">No hay discusiones destacadas por ahora.</div>';
+                return;
+            }
+            grid.innerHTML = '';
+            posts.forEach(post => {
+                grid.appendChild(this.createFeaturedCard(post));
+            });
+        } catch (error) {
+            const grid = document.getElementById('featuredPostsGrid');
+            if (grid) grid.innerHTML = '<div class="text-sm text-error">Error cargando discusiones destacadas</div>';
+            console.error('Error en loadFeaturedPosts:', error);
+        }
+    }
+
+    createFeaturedCard(post) {
+        const houseName = (post.house?.name || '').toLowerCase();
+        const validHouses = ['gryffindor','slytherin','ravenclaw','hufflepuff'];
+        const theme = validHouses.includes(houseName) ? houseName : 'secondary';
+        const commentsCount = post.comments?.[0]?.count || 0;
+        const views = post.views || post.view_count || 0;
+        const timeAgo = this.getTimeAgo(post.created_at);
+        const div = document.createElement('div');
+        div.className = `bg-gradient-to-r from-${theme}/10 to-${theme}/5 p-4 rounded-lg border-l-4 border-${theme} hover-scale magical-transition cursor-pointer`;
+        div.dataset.postId = post.id;
+        const avatar = post.user?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(post.user?.wizard_name || 'U')}`;
+        div.innerHTML = `
+            <div class="flex items-center mb-2">
+                <img src="${avatar}" alt="${post.user?.wizard_name || 'Usuario'}" class="w-8 h-8 object-cover rounded-full mr-3" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(post.user?.wizard_name || 'U')}'; this.onerror=null;" />
+                <div>
+                    <div class="font-cta font-semibold text-sm">${this.escapeHtml(post.user?.wizard_name || 'Usuario')}</div>
+                    <div class="flex items-center">
+                        ${houseName ? `<div class="w-2 h-2 bg-${theme} rounded-full mr-1"></div>` : ''}
+                        <span class="text-xs ${houseName ? `text-${theme}` : 'text-text-secondary'}">${houseName ? post.house.name : 'Miembro'}</span>
+                    </div>
+                </div>
+            </div>
+            <h4 class="font-headline font-medium mb-2">${this.escapeHtml(post.title)}</h4>
+            <p class="text-sm text-text-secondary mb-3 line-clamp-2">${this.escapeHtml(post.content || '')}</p>
+            <div class="flex items-center justify-between text-xs text-text-secondary">
+                <span>${commentsCount} respuestas • ${views.toLocaleString()} vistas</span>
+                <span>${timeAgo}</span>
+            </div>
+        `;
         return div;
     }
 
