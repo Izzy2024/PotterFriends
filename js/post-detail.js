@@ -75,7 +75,9 @@ class PostDetailController {
                 this.commentsPage = 1;
             }
 
-            const result = await forumAPI.getComments(this.postId, this.commentsPage);
+            // When resetting, load all comments to ensure we see the latest
+            const pageToLoad = reset ? null : this.commentsPage; // null means load all
+            const result = await forumAPI.getComments(this.postId, pageToLoad);
             
             if (result.success) {
                 if (reset) {
