@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply Quick Stats Function</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .status { padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        pre { background-color: #f8f9fa; padding: 20px; border-radius: 5px; overflow-x: auto; max-height: 500px; border: 1px solid #dee2e6; }
+        button { padding: 12px 24px; margin: 10px 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .copy-btn { background-color: #28a745; color: white; }
+        .copy-btn:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+    <h1>Apply Quick Stats Function</h1>
+
+    <div class="status info">
+        <h3>📊 Función get_quick_stats</h3>
+        <p>Esta función calcula las estadísticas que se muestran en la página principal de eventos.</p>
+        <p>Si no existe, las estadísticas mostrarán 0 en lugar de los valores reales.</p>
+    </div>
+
+    <h2>✅ Aplicar Función</h2>
+    <p>Copia y pega el siguiente SQL en el <strong>SQL Editor de Supabase</strong>:</p>
+
+    <ol>
+        <li>Ve a tu <a href="https://supabase.com/dashboard" target="_blank">Supabase Dashboard</a></li>
+        <li>Selecciona tu proyecto</li>
+        <li>Ve a la sección <strong>SQL Editor</strong></li>
+        <li>Crea una nueva query</li>
+        <li>Copia y pega el SQL de abajo</li>
+        <li>Haz clic en <strong>Run</strong></li>
+    </ol>
+
+    <button class="copy-btn" onclick="copyToClipboard()">📋 Copy SQL to Clipboard</button>
+
+    <pre id="sql-content">-- RPC: get_quick_stats
+create or replace function public.get_quick_stats()
+returns jsonb language sql security definer as $$
+with active_events as (
+  select id, reward_points, end_at
+  from public.events
+  where status = 'active' and now() between start_at and end_at
+), participants as (
+  select count(distinct ep.user_id) as c
+  from public.event_participants ep
+  join active_events e on e.id = ep.event_id
+)
+select jsonb_build_object(
+  'active_events_count', (select count(*) from active_events),
+  'active_participants_count', (select c from participants),
+  'points_in_play', coalesce((select sum(reward_points) from active_events), 0),
+  'min_days_remaining', coalesce((select ceil(extract(epoch from min(end_at - now()))/86400.0)::int from active_events), 0)
+);
+$$;
+
+comment on function public.get_quick_stats is 'Returns quick dashboard stats for the community events page.';</pre>
+
+    <h2>🧪 Verificar</h2>
+    <p>Después de aplicar, verifica que funcione:</p>
+
+    <button class="btn-primary" onclick="window.open('diagnose_stats.html', '_blank')">Diagnosticar Estadísticas</button>
+    <button class="btn-primary" onclick="window.open('pages/community_events_challenges_center.html', '_blank')">Ver Página de Eventos</button>
+
+    <h2>🎯 Qué Hace Esta Función</h2>
+    <ul>
+        <li><strong>active_events_count</strong>: Número de eventos activos actualmente</li>
+        <li><strong>active_participants_count</strong>: Total de participantes en eventos activos</li>
+        <li><strong>points_in_play</strong>: Suma total de puntos de recompensa disponibles</li>
+        <li><strong>min_days_remaining</strong>: Días restantes hasta el evento que termina primero</li>
+    </ul>
+
+    <script>
+        function copyToClipboard() {
+            const sqlContent = document.getElementById('sql-content').textContent;
+            navigator.clipboard.writeText(sqlContent).then(() => {
+                alert('✅ SQL copied to clipboard. Now paste it in the Supabase SQL Editor.');
+            }).catch(err => {
+                alert('❌ Error copying: ' + err);
+                // Fallback: select all text
+                const range = document.createRange();
+                range.selectNodeContents(document.getElementById('sql-content'));
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                alert('The text has been selected. Press Ctrl+C to copy.');
+            });
+        }
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">apply_quick_stats_function.html

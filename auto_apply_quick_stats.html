@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Apply Quick Stats</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .status { padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 12px 24px; margin: 10px 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        pre { background-color: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; border: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+    <h1>Auto Apply Quick Stats Function</h1>
+
+    <div class="status info">
+        <h3>🚀 Aplicación Automática</h3>
+        <p>Esta página aplica automáticamente la función get_quick_stats a tu base de datos.</p>
+    </div>
+
+    <h2>⚡ Aplicar Función</h2>
+    <button class="btn-primary" onclick="applyFunction()">Aplicar Función get_quick_stats</button>
+
+    <h2>📊 Resultado</h2>
+    <div id="result"></div>
+
+    <h2>🧪 Probar Función</h2>
+    <button class="btn-secondary" onclick="testFunction()">Probar Función</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseUrl = 'https://vdcclritlgnwwdxloayt.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E';
+
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        const functionSQL = `
+-- RPC: get_quick_stats
+create or replace function public.get_quick_stats()
+returns jsonb language sql security definer as $$
+with active_events as (
+  select id, reward_points, end_at
+  from public.events
+  where status = 'active' and now() between start_at and end_at
+), participants as (
+  select count(distinct ep.user_id) as c
+  from public.event_participants ep
+  join active_events e on e.id = ep.event_id
+)
+select jsonb_build_object(
+  'active_events_count', (select count(*) from active_events),
+  'active_participants_count', (select c from participants),
+  'points_in_play', coalesce((select sum(reward_points) from active_events), 0),
+  'min_days_remaining', coalesce((select ceil(extract(epoch from min(end_at - now()))/86400.0)::int from active_events), 0)
+);
+$$;
+
+comment on function public.get_quick_stats is 'Returns quick dashboard stats for the community events page.';
+        `;
+
+        async function applyFunction() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="status warning">🔄 Aplicando función...</div>';
+
+            try {
+                // Try to execute the SQL directly
+                const { data, error } = await supabase.rpc('exec_sql', { sql: functionSQL });
+
+                if (error) {
+                    // If exec_sql doesn't work, show the SQL for manual application
+                    resultDiv.innerHTML = `
+                        <div class="status error">
+                            <strong>❌ No se pudo aplicar automáticamente</strong>
+                            <p>Copia y pega este SQL en el SQL Editor de Supabase:</p>
+                            <pre>${functionSQL}</pre>
+                            <button class="btn-primary" onclick="copyToClipboard()">Copiar SQL</button>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status success">
+                            <strong>✅ Función aplicada exitosamente</strong>
+                            <p>La función get_quick_stats se ha creado/actualizado.</p>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                resultDiv.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ Error:</strong> ${e.message}
+                        <p>Copia y pega este SQL manualmente en Supabase:</p>
+                        <pre>${functionSQL}</pre>
+                        <button class="btn-primary" onclick="copyToClipboard()">Copiar SQL</button>
+                    </div>
+                `;
+            }
+        }
+
+        async function testFunction() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="status warning">🔄 Probando función...</div>';
+
+            try {
+                const { data, error } = await supabase.rpc('get_quick_stats');
+
+                if (error) {
+                    resultDiv.innerHTML = `
+                        <div class="status error">
+                            <strong>❌ Error en función:</strong> ${error.message}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status success">
+                            <strong>✅ Función funciona correctamente</strong>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                resultDiv.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ Excepción:</strong> ${e.message}
+                    </div>
+                `;
+            }
+        }
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(functionSQL).then(() => {
+                alert('✅ SQL copiado al portapapeles');
+            }).catch(err => {
+                alert('❌ Error al copiar: ' + err);
+                // Fallback: select all text
+                const textArea = document.createElement('textarea');
+                textArea.value = functionSQL;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Texto seleccionado. Presiona Ctrl+C para copiar.');
+            });
+        }
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">auto_apply_quick_stats.html

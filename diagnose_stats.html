@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Estadísticas</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .status { padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        pre { background-color: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; border: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+    <h1>Diagnóstico de Estadísticas</h1>
+
+    <div class="status info">
+        <h3>🔍 Verificando Estadísticas de Eventos</h3>
+        <p>Esta página verifica que las estadísticas se estén cargando correctamente.</p>
+    </div>
+
+    <h2>📊 Estado Actual</h2>
+    <div id="current-stats"></div>
+
+    <h2>🧪 Pruebas de Función</h2>
+    <div id="function-test"></div>
+
+    <h2>🔧 Acciones</h2>
+    <button class="btn-primary" onclick="testStats()">Probar Estadísticas</button>
+    <button class="btn-secondary" onclick="checkDatabase()">Verificar Base de Datos</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseUrl = 'https://vdcclritlgnwwdxloayt.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E';
+
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function testStats() {
+            const testDiv = document.getElementById('function-test');
+            testDiv.innerHTML = '<p>🔄 Probando función get_quick_stats...</p>';
+
+            try {
+                const { data, error } = await supabase.rpc('get_quick_stats');
+
+                if (error) {
+                    testDiv.innerHTML = `
+                        <div class="status error">
+                            <strong>❌ Error en get_quick_stats:</strong> ${error.message}
+                        </div>
+                    `;
+                } else {
+                    testDiv.innerHTML = `
+                        <div class="status success">
+                            <strong>✅ Función get_quick_stats funciona</strong>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                testDiv.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ Excepción:</strong> ${e.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function checkDatabase() {
+            const testDiv = document.getElementById('function-test');
+            testDiv.innerHTML = '<p>🔄 Verificando base de datos...</p>';
+
+            try {
+                // Check events
+                const { data: events, error: eventsError } = await supabase
+                    .from('events')
+                    .select('id, title, status, featured')
+                    .eq('status', 'active');
+
+                if (eventsError) {
+                    testDiv.innerHTML += `
+                        <div class="status error">
+                            <strong>❌ Error consultando eventos:</strong> ${eventsError.message}
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Check participants
+                const { data: participants, error: participantsError } = await supabase
+                    .from('event_participants')
+                    .select('id');
+
+                let html = `
+                    <div class="status success">
+                        <strong>✅ Base de datos accesible</strong>
+                        <p>Eventos activos: ${events ? events.length : 0}</p>
+                        <p>Participantes totales: ${participants ? participants.length : 0}</p>
+                    </div>
+                `;
+
+                if (events && events.length > 0) {
+                    html += '<h4>Eventos activos:</h4><ul>';
+                    events.forEach(event => {
+                        html += `<li>${event.title} (featured: ${event.featured})</li>`;
+                    });
+                    html += '</ul>';
+                }
+
+                testDiv.innerHTML = html;
+
+            } catch (e) {
+                testDiv.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ Error de conexión:</strong> ${e.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Load current displayed stats
+        function loadCurrentStats() {
+            const statsDiv = document.getElementById('current-stats');
+
+            const activeEvents = document.getElementById('stat-active-events')?.textContent || 'N/A';
+            const participants = document.getElementById('stat-active-participants')?.textContent || 'N/A';
+            const points = document.getElementById('stat-points-in-play')?.textContent || 'N/A';
+            const days = document.getElementById('stat-days-remaining')?.textContent || 'N/A';
+
+            statsDiv.innerHTML = `
+                <div class="status info">
+                    <strong>Estadísticas mostradas actualmente:</strong>
+                    <ul>
+                        <li>Eventos Activos: ${activeEvents}</li>
+                        <li>Participantes: ${participants}</li>
+                        <li>Puntos en Juego: ${points}</li>
+                        <li>Días Restantes: ${days}</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadCurrentStats);
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">diagnose_stats.html

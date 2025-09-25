@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicar Funciones RPC de Eventos</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .status { padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        pre { background-color: #f8f9fa; padding: 20px; border-radius: 5px; overflow-x: auto; max-height: 500px; border: 1px solid #dee2e6; }
+        button { padding: 12px 24px; margin: 10px 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        .copy-btn { background-color: #28a745; color: white; }
+        .copy-btn:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+    <h1>Aplicar Funciones RPC de Eventos</h1>
+
+    <div class="status info">
+        <h3>🚨 Problema Detectado</h3>
+        <p>Las funciones RPC <code>create_event</code>, <code>update_event</code>, y <code>delete_event</code> no existen en la base de datos.</p>
+        <p>Esto impide crear nuevos eventos en el Centro de Eventos y Desafíos.</p>
+    </div>
+
+    <h2>✅ Solución: Aplicar el SQL</h2>
+    <p>Copia y pega el siguiente SQL en el <strong>SQL Editor de Supabase</strong>:</p>
+
+    <ol>
+        <li>Ve a tu <a href="https://supabase.com/dashboard" target="_blank">Dashboard de Supabase</a></li>
+        <li>Selecciona tu proyecto: <code>vdcclritlgnwwdxloayt</code></li>
+        <li>Ve a la sección <strong>SQL Editor</strong></li>
+        <li>Crea una nueva consulta</li>
+        <li>Copia y pega todo el SQL de abajo</li>
+        <li>Haz clic en <strong>Run</strong></li>
+    </ol>
+
+    <button class="copy-btn" onclick="copyToClipboard()">📋 Copiar SQL al Portapapeles</button>
+
+    <pre id="sql-content">-- RPC function for creating events (admin/staff functionality)
+CREATE OR REPLACE FUNCTION public.create_event(
+  in_title text,
+  in_slug text,
+  in_description text,
+  in_type text,
+  in_start_at timestamptz,
+  in_end_at timestamptz,
+  in_reward_points int DEFAULT 0,
+  in_status text DEFAULT 'draft',
+  in_cover_url text DEFAULT NULL,
+  in_featured boolean DEFAULT false
+)
+RETURNS uuid LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE
+  v_user uuid := auth.uid();
+  v_event_id uuid;
+BEGIN
+  -- Check if user is authenticated
+  IF v_user IS NULL THEN
+    RAISE EXCEPTION 'Debe iniciar sesión para crear eventos';
+  END IF;
+
+  -- Validate required fields
+  IF in_title IS NULL OR trim(in_title) = '' THEN
+    RAISE EXCEPTION 'El título del evento es obligatorio';
+  END IF;
+
+  IF in_slug IS NULL OR trim(in_slug) = '' THEN
+    RAISE EXCEPTION 'El slug del evento es obligatorio';
+  END IF;
+
+  -- Check if slug is unique
+  IF EXISTS (SELECT 1 FROM public.events WHERE slug = in_slug) THEN
+    RAISE EXCEPTION 'Ya existe un evento con este slug';
+  END IF;
+
+  -- Validate dates
+  IF in_start_at >= in_end_at THEN
+    RAISE EXCEPTION 'La fecha de inicio debe ser anterior a la fecha de fin';
+  END IF;
+
+  -- Insert the event
+  INSERT INTO public.events (
+    title,
+    slug,
+    description,
+    type,
+    reward_points,
+    status,
+    start_at,
+    end_at,
+    cover_url,
+    featured,
+    created_by
+  ) VALUES (
+    trim(in_title),
+    trim(in_slug),
+    trim(in_description),
+    in_type,
+    in_reward_points,
+    in_status,
+    in_start_at,
+    in_end_at,
+    in_cover_url,
+    in_featured,
+    v_user
+  ) RETURNING id INTO v_event_id;
+
+  RETURN v_event_id;
+END;$$;
+
+-- RPC function for updating events
+CREATE OR REPLACE FUNCTION public.update_event(
+  in_event_id uuid,
+  in_title text DEFAULT NULL,
+  in_slug text DEFAULT NULL,
+  in_description text DEFAULT NULL,
+  in_type text DEFAULT NULL,
+  in_reward_points int DEFAULT NULL,
+  in_status text DEFAULT NULL,
+  in_start_at timestamptz DEFAULT NULL,
+  in_end_at timestamptz DEFAULT NULL,
+  in_cover_url text DEFAULT NULL,
+  in_featured boolean DEFAULT NULL
+)
+RETURNS void LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE
+  v_user uuid := auth.uid();
+BEGIN
+  -- Check if user is authenticated
+  IF v_user IS NULL THEN
+    RAISE EXCEPTION 'Debe iniciar sesión para actualizar eventos';
+  END IF;
+
+  -- Check if event exists and user can modify it
+  IF NOT EXISTS (
+    SELECT 1 FROM public.events
+    WHERE id = in_event_id
+    AND (created_by = v_user OR created_by IS NULL)
+  ) THEN
+    RAISE EXCEPTION 'No tiene permisos para modificar este evento';
+  END IF;
+
+  -- Check slug uniqueness if being changed
+  IF in_slug IS NOT NULL AND EXISTS (
+    SELECT 1 FROM public.events
+    WHERE slug = in_slug AND id != in_event_id
+  ) THEN
+    RAISE EXCEPTION 'Ya existe un evento con este slug';
+  END IF;
+
+  -- Update the event
+  UPDATE public.events SET
+    title = COALESCE(in_title, title),
+    slug = COALESCE(in_slug, slug),
+    description = COALESCE(in_description, description),
+    type = COALESCE(in_type, type),
+    reward_points = COALESCE(in_reward_points, reward_points),
+    status = COALESCE(in_status, status),
+    start_at = COALESCE(in_start_at, start_at),
+    end_at = COALESCE(in_end_at, end_at),
+    cover_url = COALESCE(in_cover_url, cover_url),
+    featured = COALESCE(in_featured, featured)
+  WHERE id = in_event_id;
+
+END;$$;
+
+-- RPC function for deleting events
+CREATE OR REPLACE FUNCTION public.delete_event(in_event_id uuid)
+RETURNS void LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE
+  v_user uuid := auth.uid();
+BEGIN
+  -- Check if user is authenticated
+  IF v_user IS NULL THEN
+    RAISE EXCEPTION 'Debe iniciar sesión para eliminar eventos';
+  END IF;
+
+  -- Check if event exists and user can delete it
+  IF NOT EXISTS (
+    SELECT 1 FROM public.events
+    WHERE id = in_event_id
+    AND (created_by = v_user OR created_by IS NULL)
+  ) THEN
+    RAISE EXCEPTION 'No tiene permisos para eliminar este evento';
+  END IF;
+
+  -- Delete the event (cascade will handle related records)
+  DELETE FROM public.events WHERE id = in_event_id;
+
+END;$$;
+
+-- Grant permissions
+GRANT EXECUTE ON FUNCTION public.create_event TO authenticated;
+GRANT EXECUTE ON FUNCTION public.update_event TO authenticated;
+GRANT EXECUTE ON FUNCTION public.delete_event TO authenticated;
+
+-- Add comments
+COMMENT ON FUNCTION public.create_event IS 'Create a new event (authenticated users only)';
+COMMENT ON FUNCTION public.update_event IS 'Update an existing event (creator only)';
+COMMENT ON FUNCTION public.delete_event IS 'Delete an event (creator only)';</pre>
+
+    <h2>🧪 Verificar la Solución</h2>
+    <p>Después de aplicar el SQL, verifica que las funciones funcionen:</p>
+
+    <button class="btn-primary" onclick="window.open('check_event_rpcs.html', '_blank')">Verificar Funciones RPC</button>
+    <button class="btn-secondary" onclick="window.open('test_event_rpcs.html', '_blank')">Probar Funciones RPC</button>
+
+    <h2>🎯 Próximos Pasos</h2>
+    <ul>
+        <li>Una vez aplicadas las funciones, podrás crear eventos desde <code>event-admin.html</code></li>
+        <li>Los eventos aparecerán automáticamente en <code>community_events_challenges_center.html</code></li>
+        <li>Usa <code>test_event_rpcs.html</code> para verificar que todo funciona correctamente</li>
+    </ul>
+
+    <script>
+        function copyToClipboard() {
+            const sqlContent = document.getElementById('sql-content').textContent;
+            navigator.clipboard.writeText(sqlContent).then(() => {
+                alert('✅ SQL copiado al portapapeles. Ahora pégalo en el SQL Editor de Supabase.');
+            }).catch(err => {
+                alert('❌ Error al copiar: ' + err);
+                // Fallback: select all text
+                const range = document.createRange();
+                range.selectNodeContents(document.getElementById('sql-content'));
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                alert('El texto ha sido seleccionado. Presiona Ctrl+C para copiar.');
+            });
+        }
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">apply_event_crud_rpcs.html
