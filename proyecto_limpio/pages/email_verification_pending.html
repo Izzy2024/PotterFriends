@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verificación de Email - Hogwarts Community Hub</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>
+<body class="bg-background text-text-primary">
+    <!-- Navigation Header -->
+    <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <svg class="h-10 w-10 text-primary mr-3" viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="font-accent text-xl font-medium text-primary">Hogwarts Community Hub</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="homepage_sorting_hat_experience.html" class="text-text-secondary hover:text-primary magical-transition">Inicio</a>
+                    <a href="house_selection_portal_sorting_hat_quiz.html" class="text-text-secondary hover:text-primary magical-transition">Selección</a>
+                    <a href="interactive_forum_hub.html" class="text-text-secondary hover:text-primary magical-transition">Foro</a>
+                    <a href="user_profile_achievement_system.html" class="text-text-secondary hover:text-primary magical-transition">Perfil</a>
+                    <a href="community_events_challenges_center.html" class="text-text-secondary hover:text-primary magical-transition">Eventos</a>
+                    <a href="house_common_rooms_personalized_dashboards.html" class="btn-primary text-sm px-4 py-2">Mi Casa</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-lg hover:bg-primary/10 magical-transition" onclick="toggleMobileMenu()">
+                    <svg class="h-6 w-6 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="md:hidden hidden bg-surface border-t border-primary/20">
+            <div class="px-4 py-2 space-y-1">
+                <a href="homepage_sorting_hat_experience.html" class="block px-3 py-2 text-text-secondary hover:text-primary magical-transition">Inicio</a>
+                <a href="house_selection_portal_sorting_hat_quiz.html" class="block px-3 py-2 text-text-secondary hover:text-primary magical-transition">Selección</a>
+                <a href="interactive_forum_hub.html" class="block px-3 py-2 text-text-secondary hover:text-primary magical-transition">Foro</a>
+                <a href="user_profile_achievement_system.html" class="block px-3 py-2 text-text-secondary hover:text-primary magical-transition">Perfil</a>
+                <a href="community_events_challenges_center.html" class="block px-3 py-2 text-text-secondary hover:text-primary magical-transition">Eventos</a>
+                <a href="house_common_rooms_personalized_dashboards.html" class="block px-3 py-2 text-primary font-medium">Mi Casa</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Verification Pending Section -->
+    <section class="py-16 bg-gradient-to-b from-gray-900 via-gray-800 to-background">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8">
+                <div class="mb-6">
+                    <svg class="w-24 h-24 mx-auto text-secondary" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <h1 class="font-headline text-4xl md:text-5xl font-medium text-white mb-4">
+                    Verifica tu Email
+                </h1>
+                <p class="font-body text-xl text-gray-300 max-w-2xl mx-auto mb-8">
+                    Hemos enviado un correo de verificación a tu dirección de email. Por favor, revisa tu bandeja de entrada y haz clic en el enlace de verificación para activar tu cuenta.
+                </p>
+            </div>
+
+            <!-- Verification Info -->
+            <div class="bg-surface/80 backdrop-blur-sm rounded-lg p-8 border border-white/20 shadow-elevated">
+                <div class="space-y-6">
+                    <!-- Steps -->
+                    <div class="space-y-4">
+                        <h3 class="font-headline text-xl font-medium text-text-primary border-b border-primary/20 pb-2">
+                            Pasos para verificar tu cuenta
+                        </h3>
+                        
+                        <ol class="space-y-4">
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 h-6 w-6 rounded-full bg-primary text-white flex items-center justify-center mr-3">
+                                    <span class="text-sm font-medium">1</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Revisa tu bandeja de entrada</p>
+                                    <p class="text-text-secondary text-sm">Busca un email de "Hogwarts Community Hub" con el asunto "Verifica tu cuenta".</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 h-6 w-6 rounded-full bg-primary text-white flex items-center justify-center mr-3">
+                                    <span class="text-sm font-medium">2</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Haz clic en el enlace de verificación</p>
+                                    <p class="text-text-secondary text-sm">Abre el email y haz clic en el botón "Verificar mi cuenta".</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 h-6 w-6 rounded-full bg-primary text-white flex items-center justify-center mr-3">
+                                    <span class="text-sm font-medium">3</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium">¡Listo!</p>
+                                    <p class="text-text-secondary text-sm">Una vez verificada tu cuenta, podrás iniciar sesión y comenzar tu viaje en Hogwarts.</p>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- No Email? -->
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="font-medium mb-2">¿No has recibido el email?</h4>
+                        <p class="text-text-secondary text-sm mb-4">Si no encuentras el email en tu bandeja de entrada, revisa tu carpeta de spam o correo no deseado.</p>
+                        <div id="resendContainer">
+                            <button id="resendButton" class="btn-primary text-sm px-4 py-2 rounded-lg">
+                                Reenviar email de verificación
+                            </button>
+                            <p id="resendMessage" class="hidden text-sm text-success mt-2">
+                                Email reenviado exitosamente. Por favor revisa tu bandeja de entrada.
+                            </p>
+                            <p id="resendError" class="hidden text-sm text-error mt-2">
+                                Error al reenviar el email. Por favor intenta nuevamente.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Return to Login -->
+                    <div class="text-center">
+                        <a href="user_login.html" class="text-primary hover:text-primary-700">
+                            Volver a la página de inicio de sesión
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Brand -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <svg class="h-8 w-8 text-secondary mr-3" viewBox="0 0 100 100" fill="currentColor">
+                            <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
+                            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span class="font-accent text-xl font-medium">Hogwarts Community Hub</span>
+                    </div>
+                    <p class="text-gray-300 mb-4 max-w-md">
+                        La comunidad mágica más grande de habla hispana. Donde los fans de Harry Potter 
+                        encuentran su verdadero hogar mágico.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clip-rule="evenodd"/>
+                            </svg>
+                        </a>
+                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"/>
+                            </svg>
+                        </a>
+                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12.017 0C18.624 0 20 1.376 20 8.017v3.966C20 18.624 18.624 20 12.017 20H7.983C1.376 20 0 18.624 0 11.983V8.017C0 1.376 1.376 0 7.983 0h4.034zm0 1.8H7.983C2.276 1.8 1.8 2.276 1.8 7.983v4.034c0 5.707.476 6.183 6.183 6.183h4.034c5.707 0 6.183-.476 6.183-6.183V7.983c0-5.707-.476-6.183-6.183-6.183zM10 5.4a4.6 4.6 0 110 9.2 4.6 4.6 0 010-9.2zm0 1.8a2.8 2.8 0 100 5.6 2.8 2.8 0 000-5.6zm5.4-3.6a1.1 1.1 0 110 2.2 1.1 1.1 0 010-2.2z" clip-rule="evenodd"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-cta font-semibold mb-4">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="house_selection_portal_sorting_hat_quiz.html" class="text-gray-300 hover:text-secondary magical-transition">Selección de Casa</a></li>
+                        <li><a href="interactive_forum_hub.html" class="text-gray-300 hover:text-secondary magical-transition">Foro Principal</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Biblioteca Digital</a></li>
+                        <li><a href="community_events_challenges_center.html" class="text-gray-300 hover:text-secondary magical-transition">Eventos</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Community -->
+                <div>
+                    <h4 class="font-cta font-semibold mb-4">Comunidad</h4>
+                    <ul class="space-y-2">
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Normas de la Comunidad</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Ayuda y Soporte</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Contacto</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Política de Privacidad</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">
+                    © 2025 Hogwarts Community Hub. Todos los derechos reservados. 
+                    <span class="text-gray-500">Creado con magia por fans, para fans.</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // Resend verification email
+        document.getElementById('resendButton').addEventListener('click', async function() {
+            const button = this;
+            const resendMessage = document.getElementById('resendMessage');
+            const resendError = document.getElementById('resendError');
+            
+            // Get email from localStorage or sessionStorage
+            const email = localStorage.getItem('registeredEmail') || sessionStorage.getItem('registeredEmail');
+            
+            if (!email) {
+                resendError.textContent = 'No se encontró el email registrado. Por favor regístrate nuevamente.';
+                resendError.classList.remove('hidden');
+                resendMessage.classList.add('hidden');
+                return;
+            }
+            
+            // Disable button and show loading state
+            button.disabled = true;
+            button.textContent = 'Enviando...';
+            resendMessage.classList.add('hidden');
+            resendError.classList.add('hidden');
+            
+            try {
+                const response = await fetch('http://localhost:5001/api/auth/resend-verification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resendMessage.classList.remove('hidden');
+                } else {
+                    resendError.textContent = data.message || 'Error al reenviar el email. Por favor intenta nuevamente.';
+                    resendError.classList.remove('hidden');
+                }
+            } catch (error) {
+                resendError.textContent = 'Error de conexión. Por favor verifica tu conexión a internet.';
+                resendError.classList.remove('hidden');
+            } finally {
+                // Reset button state
+                button.disabled = false;
+                button.textContent = 'Reenviar email de verificación';
+            }
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

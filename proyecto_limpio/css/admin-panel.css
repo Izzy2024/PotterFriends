@@ -1,0 +1,439 @@
+/* ADMIN PANEL STYLES - Jefes de Casa */
+/* Hogwarts Community Hub - Panel de Administración */
+
+/* Variables específicas del panel */
+:root {
+    --admin-primary: #059669;
+    --admin-secondary: #6B7280;
+    --admin-success: #059669;
+    --admin-warning: #D97706;
+    --admin-danger: #DC2626;
+    --admin-info: #2563EB;
+    
+    --admin-bg-light: rgba(255, 255, 255, 0.05);
+    --admin-bg-medium: rgba(255, 255, 255, 0.1);
+    --admin-bg-strong: rgba(255, 255, 255, 0.15);
+    
+    --admin-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --admin-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Animaciones específicas del panel */
+@keyframes adminPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes adminSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes adminFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Estilos base del panel */
+.admin-panel {
+    animation: adminFadeIn 0.5s ease-out;
+}
+
+/* Cards de acciones rápidas */
+.admin-quick-action {
+    background: var(--admin-bg-light);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-quick-action::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.admin-quick-action:hover::before {
+    left: 100%;
+}
+
+.admin-quick-action:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--admin-shadow-lg);
+    background: var(--admin-bg-medium);
+    border-color: var(--admin-secondary);
+}
+
+/* Iconos de acciones */
+.admin-action-icon {
+    transition: all 0.3s ease;
+}
+
+.admin-quick-action:hover .admin-action-icon {
+    transform: scale(1.1);
+}
+.admin-quick-action .fa-2x {
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Estadísticas */
+.admin-stat-card {
+    background: var(--admin-bg-light);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.admin-stat-card:hover {
+    background: var(--admin-bg-medium);
+    transform: translateY(-2px);
+}
+
+.admin-stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--admin-secondary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Tabla de miembros */
+.admin-members-table {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--admin-shadow);
+}
+
+.admin-table-header {
+    background: linear-gradient(135deg, var(--admin-primary), var(--admin-primary-800));
+    color: white;
+    font-weight: 600;
+}
+
+.admin-table-row {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.admin-table-row:hover {
+    background: rgba(116, 0, 1, 0.05);
+    transform: scale(1.01);
+}
+
+/* Botones de acción en tabla */
+.admin-action-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.admin-action-btn.assign {
+    background: linear-gradient(135deg, var(--admin-success), #047857);
+    color: white;
+}
+
+.admin-action-btn.assign:hover {
+    background: linear-gradient(135deg, #047857, #065f46);
+    transform: translateY(-1px);
+}
+
+.admin-action-btn.view {
+    background: linear-gradient(135deg, var(--admin-info), #1d4ed8);
+    color: white;
+}
+
+.admin-action-btn.view:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    transform: translateY(-1px);
+}
+
+.admin-action-btn.moderate {
+    background: linear-gradient(135deg, var(--admin-warning), #b45309);
+    color: white;
+}
+
+.admin-action-btn.moderate:hover {
+    background: linear-gradient(135deg, #b45309, #92400e);
+    transform: translateY(-1px);
+}
+
+/* Modal de asignación */
+.admin-modal {
+    backdrop-filter: blur(8px);
+    animation: adminFadeIn 0.3s ease-out;
+}
+
+.admin-modal-content {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: adminSlideIn 0.3s ease-out;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.admin-modal-header {
+    background: linear-gradient(135deg, var(--admin-primary), var(--admin-primary-800));
+    color: white;
+    padding: 1.5rem;
+    border-radius: 16px 16px 0 0;
+}
+
+.admin-modal-body {
+    padding: 1.5rem;
+}
+
+/* Formularios */
+.admin-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.admin-form-label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.admin-form-input,
+.admin-form-select,
+.admin-form-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.admin-form-input:focus,
+.admin-form-select:focus,
+.admin-form-textarea:focus {
+    outline: none;
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 3px rgba(116, 0, 1, 0.1);
+}
+
+/* Selector de logros */
+.admin-achievement-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.admin-achievement-option {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.admin-achievement-option:hover {
+    border-color: var(--admin-secondary);
+    transform: translateY(-2px);
+    box-shadow: var(--admin-shadow);
+}
+
+.admin-achievement-option.selected {
+    border-color: var(--admin-primary);
+    background: rgba(116, 0, 1, 0.05);
+}
+
+.admin-achievement-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.admin-achievement-name {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.25rem;
+}
+
+.admin-achievement-points {
+    color: var(--admin-secondary);
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+/* Notificaciones del sistema */
+.admin-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    box-shadow: var(--admin-shadow-lg);
+    border-left: 4px solid var(--admin-success);
+    animation: adminSlideIn 0.3s ease-out;
+    z-index: 1000;
+    max-width: 400px;
+}
+
+.admin-notification.error {
+    border-left-color: var(--admin-danger);
+}
+
+.admin-notification.warning {
+    border-left-color: var(--admin-warning);
+}
+
+.admin-notification.info {
+    border-left-color: var(--admin-info);
+}
+
+/* Loading states */
+.admin-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e5e7eb;
+    border-top: 2px solid var(--admin-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Skeleton loading para tablas */
+.admin-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.admin-skeleton-row {
+    height: 60px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .admin-modal-content {
+        margin: 1rem;
+        max-height: calc(100vh - 2rem);
+    }
+    
+    .admin-achievement-selector {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-members-table {
+        font-size: 0.875rem;
+    }
+    
+    .admin-action-btn {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Estados de casa específicos */
+.house-gryffindor .admin-stat-card:hover {
+    border-color: #740001;
+}
+
+.house-hufflepuff .admin-stat-card:hover {
+    border-color: #EAB308;
+}
+
+.house-ravenclaw .admin-stat-card:hover {
+    border-color: #1E40AF;
+}
+
+.house-slytherin .admin-stat-card:hover {
+    border-color: #059669;
+}
+
+/* Efectos especiales para logros */
+.achievement-glow {
+    animation: achievementGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes achievementGlow {
+    from {
+        box-shadow: 0 0 5px rgba(201, 169, 97, 0.5);
+    }
+    to {
+        box-shadow: 0 0 20px rgba(201, 169, 97, 0.8), 0 0 30px rgba(201, 169, 97, 0.6);
+    }
+}
+
+/* Transiciones suaves para todo el panel */
+.admin-panel * {
+    transition: all 0.2s ease;
+}
+
+/* Mejoras de accesibilidad */
+.admin-action-btn:focus,
+.admin-form-input:focus,
+.admin-form-select:focus,
+.admin-form-textarea:focus {
+    outline: 2px solid var(--admin-primary);
+    outline-offset: 2px;
+}
+
+/* Indicadores de estado */
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.status-indicator.online {
+    background: var(--admin-success);
+    animation: adminPulse 2s infinite;
+}
+
+.status-indicator.offline {
+    background: #9CA3AF;
+}
+
+.status-indicator.away {
+    background: var(--admin-warning);
+}

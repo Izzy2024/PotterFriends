@@ -24,16 +24,19 @@ supabase db push --file supabase/migrations/20250811_community_events_backend.sq
 echo "⚡ Step 2: Creating RPC functions and triggers..."
 supabase db push --file supabase/migrations/20250811_community_events_rpcs.sql
 
-echo "🔧 Step 3: Adding additional RPC functions..."
+echo "🔧 Step 5: Adding additional RPC functions..."
 supabase db push --file supabase/migrations/20250818_additional_event_rpcs.sql
 
-echo "🌱 Step 4: Seeding initial data..."
+echo "🔧 Step 6: Adding CRUD RPC functions..."
+supabase db push --file supabase/migrations/20250925_event_crud_rpcs.sql
+
+echo "🌱 Step 7: Seeding initial data..."
 supabase db push --file supabase/migrations/20250811_seed_community_events.sql
 
-echo "🔧 Step 5: Adding sample data for testing..."
+echo "🔧 Step 8: Adding sample data for testing..."
 supabase db push --file supabase/migrations/sample_community_events_data.sql
 
-echo "✨ Step 6: Fixing materialized views..."
+echo "✨ Step 9: Fixing materialized views..."
 supabase db push --file supabase/migrations/fix_materialized_views.sql
 
 echo "✅ Enhanced Community Events setup complete!"
