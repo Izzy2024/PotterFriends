@@ -1,0 +1,63 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║                        📖 LÉEME PRIMERO                                   ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+🎯 TU PROBLEMA:
+━━━━━━━━━━━━━━
+  Al crear discusiones o comentarios en el foro, aparece "Usuario Anónimo"
+  en lugar de tu nombre de usuario.
+
+✅ LA SOLUCIÓN:
+━━━━━━━━━━━━━━
+  He modificado el código JavaScript (ya está listo ✓) y creado 3 scripts
+  SQL que debes ejecutar en Supabase.
+
+⚠️  IMPORTANTE:
+━━━━━━━━━━━━━━
+  El primer script que te di tenía errores. He creado nuevos scripts más
+  seguros divididos en 3 pasos.
+
+🚀 QUÉ HACER (3 PASOS SIMPLES):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1️⃣  Abre: GUIA_CORREGIDA.txt
+  
+  2️⃣  Sigue las instrucciones para ejecutar los 3 scripts:
+      • fix_forum_PASO1_agregar_columnas.sql
+      • fix_forum_PASO2_sincronizar_usuarios.sql
+      • fix_forum_PASO3_trigger_y_politicas.sql
+  
+  3️⃣  Recarga tu foro y prueba crear una discusión
+  
+  ¡Listo! ✨
+
+📋 ORDEN DE LECTURA RECOMENDADO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. 📖 LEEME_PRIMERO.txt (este archivo) ← Estás aquí
+  2. 📖 GUIA_CORREGIDA.txt (instrucciones paso a paso)
+  3. ⚙️  Ejecuta los 3 scripts SQL en orden
+  4. 🧪 Prueba tu foro
+
+⏱️  TIEMPO ESTIMADO:
+━━━━━━━━━━━━━━━━━━
+  • Leer guía: 3 minutos
+  • Ejecutar scripts: 5 minutos
+  • Probar: 2 minutos
+  • TOTAL: ~10 minutos
+
+💡 CONSEJO:
+━━━━━━━━━━
+  No te saltes ningún paso. Ejecuta los scripts en orden (PASO 1, 2, 3).
+
+🆘 SI TIENES PROBLEMAS:
+━━━━━━━━━━━━━━━━━━━━
+  Lee la sección "SOLUCIÓN DE PROBLEMAS" en GUIA_CORREGIDA.txt
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║  🎯 SIGUIENTE: Abre GUIA_CORREGIDA.txt                                   ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝

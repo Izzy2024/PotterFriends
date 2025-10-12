@@ -20,7 +20,14 @@ hogwarts_community_hub/
 │   ├── house_selection_portal_sorting_hat_quiz.html
 │   ├── interactive_forum_hub.html
 │   └── user_profile_achievement_system.html
+├── js/                # JavaScript modular
+│   ├── community-events.js    # Sistema de eventos y desafíos
+│   ├── auth.js                # Autenticación con Supabase
+│   ├── supabase-client.js     # Cliente de base de datos
+│   └── [otros módulos...]
 ├── docs/              # Documentación del proyecto
+├── sql/               # Scripts SQL para base de datos
+├── supabase/          # Migraciones y configuración de Supabase
 ├── index.html         # Página de entrada con animación de carga
 ├── package.json       # Dependencias y scripts del proyecto
 └── tailwind.config.js # Configuración personalizada de Tailwind CSS
@@ -35,6 +42,7 @@ hogwarts_community_hub/
 5. **Perfil de Usuario**: `pages/user_profile_achievement_system.html` - Información y logros del usuario
 6. **Foro**: `pages/interactive_forum_hub.html` - Discusiones de la comunidad
 7. **Eventos**: `pages/community_events_challenges_center.html` - Actividades y desafíos
+8. **Administración**: `pages/event-admin.html` - Panel de administración de eventos
 
 ## Stack Tecnológico
 
@@ -45,12 +53,151 @@ hogwarts_community_hub/
 - **JavaScript (ES6+)**: Interactividad y manipulación del DOM
 - **Web Fonts**: Google Fonts (EB Garamond, Lato, Open Sans, Cinzel)
 
+### Backend & Base de Datos
+
+- **Supabase**: Plataforma backend-as-a-service
+- **PostgreSQL**: Base de datos relacional
+- **Row Level Security (RLS)**: Políticas de seguridad a nivel de fila
+- **Real-time subscriptions**: Actualizaciones en tiempo real
+
 ### Herramientas de Desarrollo
 
 - **Node.js**: Entorno de ejecución
 - **npm**: Gestor de paquetes
 - **PostCSS**: Procesamiento de CSS
 - **Tailwind CLI**: Compilación de CSS
+- **Supabase CLI**: Gestión de base de datos
+
+## Sistema de Eventos y Desafíos
+
+### Arquitectura del Sistema
+
+El sistema de eventos es un componente complejo que incluye:
+
+#### Componentes Principales
+
+1. **Centro de Eventos** (`community_events_challenges_center.html`)
+   - Página principal que muestra eventos destacados, próximos eventos y calendario
+   - Secciones dinámicas que se cargan vía JavaScript
+   - Sistema de votación comunitaria
+
+2. **Panel de Administración** (`event-admin.html`)
+   - Interfaz para crear y gestionar eventos
+   - Formulario con validación para nuevos eventos
+   - Gestión de estado (borrador/activo)
+
+3. **Detalle de Eventos** (`event-detail.html`)
+   - Página dinámica para ver detalles individuales de eventos
+   - Sistema de participación y seguimiento
+   - Compartir eventos en redes sociales
+
+#### Funciones de Base de Datos
+
+```sql
+-- Funciones principales del sistema de eventos
+CREATE OR REPLACE FUNCTION public.create_event(...) RETURNS uuid
+CREATE OR REPLACE FUNCTION public.update_event(...) RETURNS void
+CREATE OR REPLACE FUNCTION public.delete_event(...) RETURNS void
+CREATE OR REPLACE FUNCTION public.activate_event(...) RETURNS void
+CREATE OR REPLACE FUNCTION public.list_featured_events(...) RETURNS TABLE(...)
+CREATE OR REPLACE FUNCTION public.list_upcoming_events(...) RETURNS TABLE(...)
+CREATE OR REPLACE FUNCTION public.list_calendar_events_detailed(...) RETURNS TABLE(...)
+```
+
+#### Estructura de Datos
+
+```sql
+-- Tabla principal de eventos
+CREATE TABLE public.events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  slug text UNIQUE NOT NULL,
+  description text,
+  type text CHECK (type IN ('tournament', 'contest', 'celebration')),
+  status text DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'completed')),
+  featured boolean DEFAULT false,
+  start_at timestamptz NOT NULL,
+  end_at timestamptz NOT NULL,
+  reward_points int DEFAULT 0,
+  cover_url text,
+  created_by uuid REFERENCES auth.users(id),
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- Tabla de participantes
+CREATE TABLE public.event_participants (
+  event_id uuid REFERENCES public.events(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  status text DEFAULT 'joined' CHECK (status IN ('joined', 'participating', 'completed')),
+  joined_at timestamptz DEFAULT now(),
+  PRIMARY KEY (event_id, user_id)
+);
+```
+
+### Funcionalidades Implementadas
+
+#### ✅ Sistema de Eventos Completamente Funcional
+
+1. **Creación y Gestión de Eventos**
+   - Formulario de creación con validación
+   - Estados: borrador → activo → completado
+   - Categorías: torneo, concurso, celebración
+   - Sistema de puntos de recompensa
+
+2. **Visualización Dinámica**
+   - Eventos destacados en la página principal
+   - Lista de próximos eventos
+   - Calendario interactivo con marcadores visuales
+   - Eventos pasados en archivo histórico
+
+3. **Sistema de Participación**
+   - Unirse a eventos con un clic
+   - Seguimiento de participación
+   - Sistema de logros y puntos
+   - Tabla de posiciones por usuario y casa
+
+4. **Desafíos Individuales y por Casa**
+   - Desafíos individuales con progreso personal
+   - Desafíos colectivos por casa
+   - Sistema de recompensas
+   - Estadísticas de completación
+
+5. **Sistema de Votación**
+   - Encuestas activas de la comunidad
+   - Votación en tiempo real
+   - Resultados históricos
+   - Estadísticas de participación
+
+6. **Funciones de Compartir**
+   - Compartir eventos en redes sociales
+   - Copiar enlace al portapapeles
+   - Integración con APIs nativas de compartir
+
+#### JavaScript Architecture
+
+```javascript
+// community-events.js - Módulo principal
+async function fetchFeaturedEvents(limit = 6) {
+  // Obtener eventos destacados de Supabase
+}
+
+async function fetchUpcoming(limit = 5) {
+  // Obtener próximos eventos
+}
+
+async function fetchCalendar(month, year) {
+  // Obtener eventos para calendario
+}
+
+function renderFeaturedEvents(items) {
+  // Renderizar eventos destacados
+}
+
+function markCalendarDays(events) {
+  // Marcar días en calendario
+}
+```
 
 ## Configuración del Entorno de Desarrollo
 
@@ -58,6 +205,7 @@ hogwarts_community_hub/
 
 - Node.js v12.x o superior
 - npm o yarn
+- Cuenta de Supabase (para funcionalidades completas)
 
 ### Instalación
 
@@ -72,411 +220,202 @@ npm run dev
 npm run build:css
 ```
 
-### Scripts NPM
+### Configuración de Supabase
 
-- `build:css`: Compila el CSS para producción
-- `watch:css`: Compila el CSS y observa cambios
-- `dev`: Alias para watch:css
+1. Crear proyecto en Supabase
+2. Ejecutar migraciones de base de datos:
+   ```bash
+   supabase db push --file supabase/migrations/20250811_community_events_backend.sql
+   supabase db push --file supabase/migrations/20250925_event_crud_rpcs.sql
+   ```
+3. Aplicar datos de ejemplo:
+   ```bash
+   supabase db push --file supabase/migrations/20250811_seed_community_events.sql
+   ```
 
 ## Componentes Principales
 
 ### Sistema de Navegación
 
-La navegación principal se implementa como un componente responsivo que se adapta a diferentes tamaños de pantalla:
+La navegación principal se implementa como un componente responsivo:
 
 ```html
 <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
-    <!-- Contenido de navegación -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Logo y navegación -->
+        </div>
+    </div>
 </nav>
 ```
 
-**Características**:
-- Barra fija en la parte superior (`sticky top-0`)
-- Fondo semi-transparente con efecto de desenfoque (`bg-surface/95 backdrop-blur-sm`)
-- Menú hamburguesa para dispositivos móviles
-- Indicador visual para la página activa
-
 ### Tarjetas de Contenido
 
-Las tarjetas son un componente fundamental para mostrar información:
-
 ```html
-<div class="card p-6 hover-scale">
-    <!-- Contenido de la tarjeta -->
+<div class="card overflow-hidden hover-scale group">
+    <div class="p-6">
+        <!-- Contenido -->
+    </div>
 </div>
 ```
 
-**Implementación CSS**:
-```css
-.card {
-  background-color: var(--color-surface);
-  border-radius: 8px;
-  box-shadow: var(--shadow-card);
-  transition: var(--transition-gentle);
-}
+### Sistema de Autenticación
 
-.card:hover {
-  transform: scale(var(--scale-hover));
-  box-shadow: var(--shadow-elevated);
-}
-```
+Integración completa con Supabase Auth:
 
-### Botones
-
-El sistema incluye varios estilos de botones:
-
-```html
-<button class="btn-primary px-6 py-3 rounded-lg hover-scale magical-transition">
-    Texto del Botón
-</button>
-```
-
-**Variantes**:
-- `btn-primary`: Botón principal en color primario
-- `btn-secondary`: Botón secundario en color dorado
-- Modificadores: tamaños, bordes redondeados, iconos
-
-### Quiz del Sombrero Seleccionador
-
-El quiz es un componente interactivo complejo que:
-
-1. Presenta preguntas secuencialmente
-2. Registra respuestas del usuario
-3. Calcula la casa más compatible
-4. Muestra una animación de revelación
-5. Proporciona detalles sobre la casa asignada
-
-**Estructura de Datos**:
 ```javascript
-const quizQuestions = [
-    {
-        question: "Pregunta...",
-        answers: [
-            { text: "Respuesta 1", house: "gryffindor", points: 3 },
-            { text: "Respuesta 2", house: "hufflepuff", points: 3 },
-            // Más respuestas...
-        ]
-    },
-    // Más preguntas...
-];
+// auth.js
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+async function signIn(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+  return { data, error };
+}
 ```
 
 ## Sistema de Diseño
 
 ### Variables CSS
 
-El proyecto utiliza variables CSS para mantener la consistencia:
-
 ```css
 :root {
   /* Colores primarios */
   --color-primary: #740001;
-  --color-primary-50: #FEF2F2;
-  /* Más variables... */
+  --color-secondary: #C9A961;
+  --color-accent: #0E1A40;
+
+  /* Espaciado */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+
+  /* Sombras */
+  --shadow-card: 0 4px 12px rgba(44, 44, 44, 0.08);
+  --shadow-elevated: 0 8px 24px rgba(44, 44, 44, 0.12);
 }
 ```
 
-### Tokens de Diseño
+### Tema por Casa
 
-#### Colores
+Clases específicas para cada casa de Hogwarts:
 
-- **Primarios**: Basados en Gryffindor (`#740001`)
-- **Secundarios**: Dorado mágico (`#C9A961`)
-- **Acento**: Azul Ravenclaw (`#0E1A40`)
-- **Fondo**: Pergamino cálido (`#F4F1E8`)
-- **Superficie**: Elevación sutil (`#FEFCF7`)
-- **Texto**: Primario (`#2C2C2C`), Secundario (`#5D5D5D`)
-- **Estado**: Éxito (`#1A472A`), Advertencia (`#FFD800`), Error (`#8B0000`)
-- **Casas**: Gryffindor (`#740001`), Hufflepuff (`#FFD800`), Ravenclaw (`#0E1A40`), Slytherin (`#1A472A`)
-
-#### Tipografía
-
-- **Títulos**: 'EB Garamond', serif
-- **Cuerpo**: 'Lato', sans-serif
-- **CTA**: 'Open Sans', sans-serif
-- **Acento**: 'Cinzel', serif
-
-#### Espaciado
-
-Sistema de espaciado basado en múltiplos de 0.25rem:
-- 4px (0.25rem)
-- 8px (0.5rem)
-- 12px (0.75rem)
-- 16px (1rem)
-- 24px (1.5rem)
-- 32px (2rem)
-- 48px (3rem)
-- 64px (4rem)
-- 72px (4.5rem) - Personalizado como `18`
-- 352px (22rem) - Personalizado como `88`
-
-#### Sombras
-
-- **Sutil**: `0 2px 8px rgba(44, 44, 44, 0.1)`
-- **Tarjeta**: `0 4px 12px rgba(44, 44, 44, 0.08)`
-- **Elevado**: `0 8px 24px rgba(44, 44, 44, 0.12)`
-
-#### Transiciones
-
-- **Duración**: 300ms
-- **Timing**: ease-out
-- **Escala Hover**: 1.02
-
-## Patrones de Implementación
-
-### Diseño Responsivo
-
-El proyecto sigue un enfoque mobile-first con breakpoints de Tailwind:
-
-- `sm`: 640px y superior
-- `md`: 768px y superior
-- `lg`: 1024px y superior
-- `xl`: 1280px y superior
-- `2xl`: 1536px y superior
-
-**Ejemplo**:
-```html
-<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <!-- Contenido que se adapta a diferentes tamaños -->
-</div>
+```css
+.text-gryffindor { color: #740001; }
+.text-hufflepuff { color: #FFD800; }
+.text-ravenclaw { color: #0E1A40; }
+.text-slytherin { color: #1A472A; }
 ```
 
-### Animaciones y Transiciones
+## JavaScript Modular
 
-Las animaciones se implementan mediante:
+### Estructura de Módulos
 
-1. **Clases de Utilidad**:
-   ```html
-   <div class="hover-scale magical-transition">
-       <!-- Contenido con animación -->
-   </div>
-   ```
+- `auth.js` - Autenticación y gestión de usuarios
+- `community-events.js` - Sistema de eventos y desafíos
+- `supabase-client.js` - Cliente de base de datos
+- `universal-nav.js` - Navegación universal
 
-2. **CSS Personalizado**:
-   ```css
-   .magical-transition {
-     transition: var(--transition-gentle);
-   }
-
-   .hover-scale:hover {
-     transform: scale(var(--scale-hover));
-   }
-   ```
-
-3. **Animaciones Keyframe**:
-   ```css
-   @keyframes pulse {
-       0%, 100% { transform: scale(1); }
-       50% { transform: scale(1.05); }
-   }
-   ```
-
-### Tematización por Casa
-
-El sistema permite aplicar estilos específicos por casa:
-
-```html
-<div class="border-l-4 border-gryffindor">
-    <!-- Contenido con tema de Gryffindor -->
-</div>
-```
-
-**Clases de Utilidad**:
-- `.text-gryffindor`, `.bg-gryffindor`, `.border-gryffindor`
-- `.text-hufflepuff`, `.bg-hufflepuff`, `.border-hufflepuff`
-- `.text-ravenclaw`, `.bg-ravenclaw`, `.border-ravenclaw`
-- `.text-slytherin`, `.bg-slytherin`, `.border-slytherin`
-
-## JavaScript
-
-### Funciones Principales
-
-#### Navegación Móvil
+### Patrones de Programación
 
 ```javascript
-function toggleMobileMenu() {
-    const mobileMenu = document.getElementById('mobileMenu');
-    mobileMenu.classList.toggle('hidden');
+// Patrón de módulo con async/await
+async function fetchData() {
+  try {
+    const client = await ensureClient();
+    const { data, error } = await client.rpc('function_name', params);
+    if (error) throw error;
+    return data;
+  } catch (e) {
+    console.error('Error:', e);
+    return null;
+  }
 }
-```
-
-#### Quiz del Sombrero Seleccionador
-
-```javascript
-// Iniciar el quiz
-function startQuiz() {
-    document.getElementById('welcomeScreen').classList.add('hidden');
-    document.getElementById('quizScreen').classList.remove('hidden');
-    loadQuestion(currentQuestionIndex);
-}
-
-// Cargar pregunta
-function loadQuestion(index) {
-    const question = quizQuestions[index];
-    document.getElementById('questionText').textContent = question.question;
-    document.getElementById('currentQuestion').textContent = index + 1;
-    document.getElementById('progressPercent').textContent = Math.round(((index + 1) / quizQuestions.length) * 100);
-    document.getElementById('progressBar').style.width = `${((index + 1) / quizQuestions.length) * 100}%`;
-    
-    // Cargar opciones de respuesta
-    const answerContainer = document.getElementById('answerOptions');
-    answerContainer.innerHTML = '';
-    
-    question.answers.forEach((answer, i) => {
-        const option = document.createElement('div');
-        option.className = 'answer-option bg-surface/30 backdrop-blur-sm rounded-lg p-4 border border-white/10 cursor-pointer hover:bg-surface/50 magical-transition';
-        option.dataset.index = i;
-        option.innerHTML = answer.text;
-        option.addEventListener('click', () => selectAnswer(index, i));
-        answerContainer.appendChild(option);
-    });
-}
-
-// Más funciones del quiz...
 ```
 
 ## Compilación y Despliegue
 
 ### Proceso de Desarrollo
 
-1. Editar archivos fuente (HTML, CSS en `tailwind.css`)
-2. Los cambios en CSS se compilan automáticamente con `npm run dev`
-3. Refrescar el navegador para ver los cambios
+1. Editar archivos fuente
+2. `npm run dev` para desarrollo con hot reload
+3. `npm run build:css` para producción
 
-### Compilación para Producción
+### Despliegue
 
-1. Ejecutar `npm run build:css` para generar CSS optimizado
-2. Los archivos listos para producción son:
-   - Todos los archivos HTML
-   - `css/main.css` (compilado)
-   - Cualquier recurso estático referenciado
+```bash
+# Construir para producción
+npm run build:css
 
-### Consideraciones de Despliegue
+# Desplegar archivos estáticos en cualquier servidor web
+# Los archivos incluyen: HTML, CSS compilado, JS, y recursos
+```
 
-- El proyecto es estático y puede desplegarse en cualquier servidor web
-- No requiere backend para la funcionalidad básica
-- Para características avanzadas (autenticación, persistencia) se necesitaría implementar un backend
+## Solución de Problemas
 
-## Guías de Estilo y Convenciones
+### Problemas Comunes del Sistema de Eventos
 
-### HTML
+#### Eventos no aparecen en la página principal
 
-- Usar elementos semánticos (`nav`, `section`, `article`, etc.)
-- Mantener la indentación consistente (2 espacios)
-- Incluir atributos ARIA para accesibilidad
-- Usar clases de Tailwind para estilos
+**Síntomas**: Se muestra "Cargando eventos..." pero nunca se cargan.
 
-### CSS
+**Soluciones**:
+1. Verificar que las funciones RPC existen en Supabase
+2. Comprobar que hay eventos con `status = 'active'` y `featured = true`
+3. Revisar la consola del navegador para errores de JavaScript
 
-- Seguir la estructura de capas de Tailwind (base, components, utilities)
-- Usar variables CSS para valores reutilizables
-- Minimizar CSS personalizado, favoreciendo clases de utilidad
+#### Calendario no marca los días correctamente
 
-### JavaScript
+**Síntomas**: El calendario se muestra pero los días con eventos no están marcados.
 
-- Usar funciones nombradas para mejor legibilidad
-- Seguir principios de programación funcional cuando sea posible
-- Evitar variables globales innecesarias
-- Comentar código complejo o no obvio
+**Soluciones**:
+1. Verificar que `list_calendar_events_detailed` existe
+2. Comprobar que los eventos tienen fechas válidas
+3. Revisar que el mes/año del calendario es correcto
 
-## Solución de Problemas Comunes
+#### Error al crear eventos
 
-### Estilos No Aplicados
+**Síntomas**: El formulario de creación falla al enviar.
 
-**Problema**: Los estilos de Tailwind no se aplican correctamente.
+**Soluciones**:
+1. Verificar autenticación del usuario
+2. Comprobar permisos de la función `create_event`
+3. Validar que todos los campos requeridos están presentes
 
-**Solución**:
-1. Verificar que `main.css` se ha generado correctamente
-2. Comprobar que la ruta al CSS es correcta en el HTML
-3. Ejecutar `npm run build:css` para regenerar el CSS
-4. Verificar que las clases están escritas correctamente
+### Scripts de Diagnóstico
 
-### Problemas de Responsividad
+- `diagnose_events.html` - Verificar estado de eventos y funciones
+- `check_event_rpcs.html` - Probar funciones RPC manualmente
+- `test_event_rpcs.html` - Ejecutar pruebas automatizadas
 
-**Problema**: El diseño no se adapta correctamente a diferentes tamaños de pantalla.
+## Actualizaciones Recientes
 
-**Solución**:
-1. Verificar el uso de clases responsivas (`sm:`, `md:`, `lg:`, etc.)
-2. Comprobar la estructura de contenedores y grid
-3. Usar herramientas de desarrollo del navegador para inspeccionar en diferentes tamaños
+### ✅ Sistema de Eventos Completamente Implementado
 
-### JavaScript No Funciona
+**Fecha**: Septiembre 2025
 
-**Problema**: Las funcionalidades interactivas no responden.
+**Cambios principales**:
+- ✅ Implementación completa del sistema de eventos
+- ✅ Funciones CRUD para gestión de eventos
+- ✅ Sistema de participación y seguimiento
+- ✅ Calendario interactivo con marcadores visuales
+- ✅ Desafíos individuales y por casa
+- ✅ Sistema de votación comunitaria
+- ✅ Funcionalidades de compartir en redes sociales
+- ✅ Panel de administración de eventos
+- ✅ Páginas de detalle dinámicas
+- ✅ Integración completa con Supabase
 
-**Solución**:
-1. Verificar la consola del navegador para errores
-2. Comprobar que los IDs de los elementos coinciden con los referenciados en JS
-3. Verificar que el script se carga después de los elementos del DOM
-4. Añadir `console.log()` para depurar el flujo de ejecución
-
-## Recursos Adicionales
-
-### Referencias de Tailwind CSS
-
-- [Documentación oficial de Tailwind CSS](https://tailwindcss.com/docs)
-- [Tailwind UI Components](https://tailwindui.com/components)
-- [Tailwind Cheat Sheet](https://nerdcave.com/tailwind-cheat-sheet)
-
-### Herramientas Útiles
-
-- [Tailwind Play](https://play.tailwindcss.com/) - Entorno de pruebas en línea
-- [Heroicons](https://heroicons.com/) - Iconos SVG compatibles con Tailwind
-- [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss) - Extensión para VS Code
-
-### Inspiración de Diseño
-
-- [Dribbble - Harry Potter UI](https://dribbble.com/search/harry-potter)
-- [Behance - Wizarding World Designs](https://www.behance.net/search/projects?search=wizarding%20world)
+**Archivos modificados**:
+- `pages/community_events_challenges_center.html`
+- `pages/event-admin.html`
+- `pages/event-detail.html`
+- `js/community-events.js`
+- `supabase/migrations/20250925_event_crud_rpcs.sql`
+- `supabase/migrations/20250811_seed_community_events.sql`
 
 ## Conclusión
 
-Esta documentación técnica proporciona una visión completa de la arquitectura, componentes y patrones utilizados en el proyecto "Hogwarts Community Hub". Siguiendo estas guías y convenciones, los desarrolladores pueden mantener y extender el proyecto de manera consistente y eficiente.
-## 🐛 
-Solución de Problemas de Navegación
-
-### Errores 404 (Not Found)
-
-**Problema**: Las páginas muestran error 404 o no se cargan.
-
-**Solución**:
-1. Asegúrate de iniciar el servidor HTTP correctamente:
-   ```bash
-   ./start-server.sh
-   ```
-2. Verifica que estés accediendo a la URL correcta: `http://127.0.0.1:8080/index.html`
-3. Si hay problemas con enlaces, ejecuta el script de corrección:
-   ```bash
-   node fix-login-links.js
-   ```
-
-### Redirecciones Incorrectas
-
-**Problema**: Los enlaces redirigen a páginas que no existen (ej: auth_login.html).
-
-**Solución**:
-1. Ejecuta el script de corrección de enlaces:
-   ```bash
-   node fix-login-links.js
-   ```
-2. Usa la página de debug para identificar problemas: `http://127.0.0.1:8080/debug-login.html`
-
-### Problemas de Autenticación
-
-**Problema**: El sistema de login no funciona o redirige incorrectamente.
-
-**Solución**:
-1. Verifica que Supabase esté configurado correctamente:
-   ```bash
-   node test-auth-simple.js
-   ```
-2. Revisa la consola del navegador (F12) para ver errores de JavaScript
-3. Asegúrate de que las tablas estén creadas en Supabase
-4. Verifica que el servidor HTTP esté corriendo desde el directorio correcto
-
-## 📋 Scripts de Diagnóstico
-
-- `debug-login.html` - Página para diagnosticar problemas de navegación
-- `fix-login-links.js` - Script para corregir enlaces incorrectos
-- `test-auth-simple.js` - Prueba básica de autenticación
-- `hello.html` - Página de prueba del servidor HTTP
+Esta documentación técnica proporciona una visión completa de la arquitectura, componentes y patrones utilizados en el proyecto "Hogwarts Community Hub". El sistema de eventos representa una implementación avanzada de funcionalidades interactivas con integración completa de base de datos y UI/UX moderna.

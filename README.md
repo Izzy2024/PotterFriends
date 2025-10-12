@@ -1,82 +1,120 @@
-# PotterFriends
+# Hogwarts PotterFriends
 
-A modern HTML project utilizing Tailwind CSS for building responsive web applications with minimal setup.
+Una plataforma social interactiva inspirada en el mundo de Harry Potter, donde los usuarios pueden unirse a casas, participar en desafíos, ganar logros y conectarse con otros fans.
 
-## 🚀 Features
+## 🏰 Características
 
-- **HTML5** - Modern HTML structure with best practices
-- **Tailwind CSS** - Utility-first CSS framework for rapid UI development
-- **Custom Components** - Pre-built component classes for buttons and containers
-- **NPM Scripts** - Easy-to-use commands for development and building
-- **Responsive Design** - Mobile-first approach for all screen sizes
+- **Sistema de Casas**: Los usuarios son asignados a una de las cuatro casas de Hogwarts
+- **Sistema de Logros**: Completa desafíos y gana insignias especiales
+- **Foro Interactivo**: Participa en discusiones y gana puntos para tu casa
+- **Eventos Comunitarios**: Participa en eventos especiales y desafíos
+- **Panel de Administración**: Gestión de casas, usuarios y eventos
+- **Sistema de Puntos**: Competencia entre casas por la Copa de las Casas
 
-## 📋 Prerequisites
+## 🚀 Estructura del Proyecto
 
-- Node.js (v12.x or higher)
-- npm or yarn
+```
+hogwarts_PotterFriends/
+├── src/                    # Código fuente
+│   ├── components/         # Componentes reutilizables
+│   ├── pages/             # Páginas HTML
+│   ├── scripts/           # Archivos JavaScript
+│   ├── styles/            # Archivos CSS
+│   ├── utils/             # Utilidades y helpers
+│   └── api/               # Clientes API y servicios
+├── public/                # Recursos estáticos
+│   ├── images/            # Imágenes
+│   └── icons/             # Iconos
+├── database/              # Archivos de base de datos
+│   ├── migrations/        # Migraciones de Supabase
+│   └── seeds/             # Datos de prueba
+├── docs/                  # Documentación
+├── tests/                 # Pruebas
+├── tools/                 # Herramientas de desarrollo
+├── scripts/               # Scripts de instalación y configuración
+└── temp/                 # Archivos temporales
+```
 
-## 🛠️ Installation
+## 🛠️ Tecnologías
 
-1. Install dependencies:
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Estilos**: Tailwind CSS
+- **Base de Datos**: Supabase (PostgreSQL)
+- **Autenticación**: Supabase Auth
+- **Testing**: Playwright
+
+## 📦 Instalación
+
+1. Clona el repositorio
+2. Instala las dependencias:
+   ```bash
+   npm install
+   ```
+3. Configura la base de datos:
+   ```bash
+   ./scripts/setup-supabase.sh
+   ```
+4. Inicia el servidor de desarrollo:
+   ```bash
+   npm run dev
+   ```
+
+## 🔧 Configuración
+
+Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+
+```env
+SUPABASE_URL=tu_supabase_url
+SUPABASE_ANON_KEY=tu_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=tu_supabase_service_role_key
+```
+
+## 📚 Documentación
+
+La documentación detallada se encuentra en la carpeta `docs/`:
+
+- `docs/technical_documentation.md` - Documentación técnica
+- `docs/setup/` - Guías de configuración
+- `docs/prd/` - Documentos de requisitos del producto
+- `docs/implementation_summary.md` - Resumen de implementación del sistema de eventos
+- `docs/ARCHIVOS_RECUPERADOS.md` - Información sobre archivos recuperados de proyecto_limpio
+
+### 🎯 Sistema de Eventos
+
+El proyecto incluye un sistema de eventos completamente funcional según la documentación recuperada:
+
+- **Centro de Eventos**: Página principal con eventos destacados y calendario interactivo
+- **Panel de Administración**: Interfaz completa para crear y gestionar eventos
+- **Sistema de Participación**: Unirse a eventos y seguimiento de progreso
+- **Desafíos**: Individuales y por casa con sistema de recompensas
+- **Votación Comunitaria**: Encuestas activas y resultados históricos
+
+### 🚀 Instalación Automatizada
+
+Para una instalación completa del sistema:
 
 ```bash
-npm install
-# or
-yarn install
+# Ejecutar script de instalación automatizada
+chmod +x scripts/setup.sh
+./scripts/setup.sh
 ```
 
-2. Start the development server:
+## 🤝 Contribuir
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+1. Haz un fork del proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Añadir nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Crea un Pull Request
 
-## 📁 Project Structure
+## 📄 Licencia
 
-```
-html_app/
-├── css/
-│   ├── tailwind.css   # Tailwind source file with custom utilities
-│   └── main.css       # Compiled CSS (generated)
-├── pages/             # HTML pages
-├── index.html         # Main entry point
-├── package.json       # Project dependencies and scripts
-└── tailwind.config.js # Tailwind CSS configuration
-```
+Este proyecto está bajo la Licencia MIT - mira el archivo LICENSE para detalles.
 
-## 🎨 Styling
+## 🏆 Créditos
 
-This project uses Tailwind CSS for styling. Custom utility classes include:
+Desarrollado con ❤️ para los fans de Harry Potter
 
-## 🧩 Customization
+---
 
-To customize the Tailwind configuration, edit the `tailwind.config.js` file:
-
-## 📦 Build for Production
-
-Build the CSS for production:
-
-```bash
-npm run build:css
-# or
-yarn build:css
-```
-
-## 📱 Responsive Design
-
-The app is built with responsive design using Tailwind CSS breakpoints:
-
-- `sm`: 640px and up
-- `md`: 768px and up
-- `lg`: 1024px and up
-- `xl`: 1280px and up
-- `2xl`: 1536px and up
-
-## 🙏 Acknowledgments
-
-- Built with [Rocket.new](https://rocket.new)
-- Powered by HTML and Tailwind CSS
-
-Built with ❤️ on Rocket.new
+_¡Las alas de la libertad se rompen con las cadenas de la ignorancia!_
