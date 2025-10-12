@@ -1,0 +1,171 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║     🔧 GUÍA CORREGIDA: SOLUCIONAR "USUARIO ANÓNIMO" (3 PASOS)            ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+⚠️  NOTA IMPORTANTE:
+El script anterior tenía un error porque asumía que las columnas ya existían.
+Ahora he dividido la solución en 3 scripts más simples y seguros.
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  📋 PASO 1: AGREGAR COLUMNAS NECESARIAS                                    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  Archivo: fix_forum_PASO1_agregar_columnas.sql
+
+  ¿Qué hace?
+  • Verifica qué columnas tiene tu tabla user_profiles
+  • Agrega las columnas que faltan (wizard_name, display_name, etc.)
+  • Es seguro ejecutarlo múltiples veces
+
+  INSTRUCCIONES:
+  1. Ve a https://supabase.com
+  2. Abre tu proyecto
+  3. Haz clic en "SQL Editor"
+  4. Haz clic en "+ New query"
+  5. Abre el archivo: fix_forum_PASO1_agregar_columnas.sql
+  6. Copia TODO el contenido
+  7. Pega en Supabase
+  8. Haz clic en "Run"
+  9. ✅ Verifica que diga "Columnas agregadas/verificadas"
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  📋 PASO 2: SINCRONIZAR USUARIOS EXISTENTES                                │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  Archivo: fix_forum_PASO2_sincronizar_usuarios.sql
+
+  ¿Qué hace?
+  • Actualiza perfiles existentes con datos de auth.users
+  • Crea perfiles para usuarios que no tienen uno
+  • Muestra cuántos perfiles fueron creados/actualizados
+
+  INSTRUCCIONES:
+  1. En Supabase SQL Editor
+  2. Haz clic en "+ New query" (nueva consulta)
+  3. Abre el archivo: fix_forum_PASO2_sincronizar_usuarios.sql
+  4. Copia TODO el contenido
+  5. Pega en Supabase
+  6. Haz clic en "Run"
+  7. ✅ Verifica que muestre:
+     • "Perfiles existentes actualizados"
+     • "Nuevos perfiles creados"
+     • "Usuarios sin perfil: 0"
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  📋 PASO 3: CONFIGURAR TRIGGER Y POLÍTICAS                                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  Archivo: fix_forum_PASO3_trigger_y_politicas.sql
+
+  ¿Qué hace?
+  • Crea un trigger para auto-crear perfiles de nuevos usuarios
+  • Configura políticas de seguridad (RLS)
+  • Verifica que todo esté correcto
+
+  INSTRUCCIONES:
+  1. En Supabase SQL Editor
+  2. Haz clic en "+ New query" (nueva consulta)
+  3. Abre el archivo: fix_forum_PASO3_trigger_y_politicas.sql
+  4. Copia TODO el contenido
+  5. Pega en Supabase
+  6. Haz clic en "Run"
+  7. ✅ Verifica que muestre:
+     • "Función handle_new_user() creada"
+     • "Trigger on_auth_user_created creado"
+     • "Políticas RLS configuradas"
+     • "CONFIGURACIÓN COMPLETADA"
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  🧪 PASO 4: PROBAR LA SOLUCIÓN                                             │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  1. Ve a tu aplicación web
+  
+  2. RECARGA LA PÁGINA con caché limpio:
+     • Windows/Linux: Ctrl + Shift + R
+     • Mac: Cmd + Shift + R
+  
+  3. Asegúrate de estar logueado
+  
+  4. Crea una nueva discusión:
+     • Haz clic en "Nueva Discusión"
+     • Llena el formulario
+     • Publica
+  
+  5. ✅ VERIFICA que aparece TU NOMBRE (no "Usuario Anónimo")
+  
+  6. Prueba también crear un comentario
+  
+  7. ✅ VERIFICA que también aparece TU NOMBRE
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  ✅ CHECKLIST                                                               │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  [ ] PASO 1 ejecutado sin errores
+  [ ] PASO 2 ejecutado sin errores  
+  [ ] PASO 3 ejecutado sin errores
+  [ ] Página del foro recargada
+  [ ] Nueva discusión muestra mi nombre
+  [ ] Comentarios muestran mi nombre
+  [ ] ¡TODO FUNCIONA! 🎉
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  ❓ SOLUCIÓN DE PROBLEMAS                                                   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  PROBLEMA: Error en PASO 1
+  ═════════════════════════
+  • Lee el mensaje de error específico
+  • Si dice "permission denied", verifica permisos de admin
+  • Si dice "column already exists", está bien, continúa
+
+  PROBLEMA: Error en PASO 2
+  ═════════════════════════
+  • Asegúrate de haber ejecutado PASO 1 primero
+  • Verifica que PASO 1 se completó sin errores
+
+  PROBLEMA: Sigue apareciendo "Usuario Anónimo"
+  ═════════════════════════════════════════════
+  1. Limpia caché del navegador (Ctrl+Shift+Delete)
+  2. Cierra sesión y vuelve a entrar
+  3. Verifica en Supabase que tu perfil existe:
+     
+     SELECT * FROM user_profiles WHERE id = auth.uid();
+  
+  4. Si no aparece tu perfil, vuelve a ejecutar PASO 2
+
+  PROBLEMA: Error "auth.uid() does not exist"
+  ═══════════════════════════════════════════
+  • Ejecuta la consulta en "SQL Editor" (no en otra pestaña)
+  • Asegúrate de estar en el proyecto correcto
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║  💡 DIFERENCIA CON EL SCRIPT ANTERIOR                                     ║
+║                                                                            ║
+║  Antes: Un solo script que asumía que las columnas existían              ║
+║  Ahora: 3 scripts separados que verifican y crean lo necesario           ║
+║                                                                            ║
+║  Esto es más seguro y fácil de debuggear si algo falla                   ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║  📁 ARCHIVOS INCLUIDOS                                                     ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+  ✓ fix_forum_PASO1_agregar_columnas.sql       (2.5 KB)
+  ✓ fix_forum_PASO2_sincronizar_usuarios.sql   (3.2 KB)
+  ✓ fix_forum_PASO3_trigger_y_politicas.sql    (3.9 KB)
+  ✓ GUIA_CORREGIDA.txt                         (este archivo)
+
+  Los archivos antiguos también están disponibles:
+  • fix_forum_user_display.sql (versión original con error)
+  • fix_forum_user_display_v2.sql (versión alternativa)
+
+  Usa los nuevos archivos PASO1, PASO2, PASO3 - son más seguros.
+
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛

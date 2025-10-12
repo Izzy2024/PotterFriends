@@ -1,0 +1,193 @@
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                          ┃
+┃  ✅ CHECKLIST: SOLUCIONAR "USUARIO ANÓNIMO" EN EL FORO                  ┃
+┃                                                                          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+INSTRUCCIONES: Marca cada paso cuando lo completes con [X]
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  PARTE 1: PREPARACIÓN (Ya está hecho)                                   │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  [X] Código JavaScript actualizado
+  [X] Script SQL creado
+  [X] Documentación generada
+  
+  ✅ Esta parte ya está completa - no necesitas hacer nada aquí
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  PARTE 2: EJECUTAR SCRIPT SQL (TÚ DEBES HACER ESTO)                     │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  [ ] 1. Abrir navegador web
+  
+  [ ] 2. Ir a https://supabase.com
+  
+  [ ] 3. Iniciar sesión en tu cuenta
+  
+  [ ] 4. Seleccionar proyecto "hogwarts_PotterFriends"
+  
+  [ ] 5. Hacer clic en "SQL Editor" (menú izquierdo)
+  
+  [ ] 6. Hacer clic en "+ New query"
+  
+  [ ] 7. Abrir archivo: fix_forum_user_display.sql
+          (Ubicación: carpeta raíz del proyecto)
+  
+  [ ] 8. Copiar TODO el contenido del archivo
+          (Ctrl+A, Ctrl+C o Cmd+A, Cmd+C)
+  
+  [ ] 9. Pegar en el editor SQL de Supabase
+          (Ctrl+V o Cmd+V)
+  
+  [ ] 10. Hacer clic en botón "Run"
+           (o presionar Ctrl+Enter / Cmd+Enter)
+  
+  [ ] 11. Esperar a que termine (5-10 segundos)
+  
+  [ ] 12. Verificar en los resultados que muestre:
+          • "Tabla user_profiles ya existe" o "creada"
+          • "Total de perfiles creados: X"
+          • "Usuarios sin perfil: 0"
+          • Sin errores en rojo
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  PARTE 3: PROBAR LA SOLUCIÓN                                             │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  [ ] 13. Ir a tu aplicación web
+  
+  [ ] 14. Recargar página del foro (Ctrl+Shift+R o Cmd+Shift+R)
+  
+  [ ] 15. Verificar que estás logueado
+          Si no: Inicia sesión primero
+  
+  [ ] 16. Hacer clic en "Nueva Discusión"
+  
+  [ ] 17. Llenar formulario:
+          • Título: "Prueba - mi nombre"
+          • Categoría: Cualquiera
+          • Contenido: "Probando solución"
+  
+  [ ] 18. Hacer clic en "Publicar"
+  
+  [ ] 19. VERIFICAR: ¿Aparece tu nombre en lugar de "Usuario Anónimo"?
+          ✓ Sí → ¡Perfecto! Continúa
+          ✗ No → Ve a "SOLUCIÓN DE PROBLEMAS" más abajo
+  
+  [ ] 20. Probar comentario:
+          • Abrir una discusión
+          • Escribir comentario
+          • Publicar
+  
+  [ ] 21. VERIFICAR: ¿Aparece tu nombre en el comentario?
+          ✓ Sí → ¡Excelente!
+          ✗ No → Ve a "SOLUCIÓN DE PROBLEMAS" más abajo
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  PARTE 4: VERIFICACIÓN FINAL                                             │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  [ ] 22. Tu nombre aparece en discusiones nuevas
+  
+  [ ] 23. Tu nombre aparece en comentarios nuevos
+  
+  [ ] 24. Avatar se muestra (si lo tienes configurado)
+  
+  [ ] 25. Todo funciona correctamente
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  🎉 ¡FELICITACIONES!                                                     │
+│  Si todos los pasos están marcados, el problema está solucionado        │
+└─────────────────────────────────────────────────────────────────────────┘
+
+╔═════════════════════════════════════════════════════════════════════════╗
+║  SOLUCIÓN DE PROBLEMAS                                                  ║
+╚═════════════════════════════════════════════════════════════════════════╝
+
+❌ PROBLEMA: Sigue apareciendo "Usuario Anónimo"
+
+   TRY #1: Limpia caché del navegador
+   ───────────────────────────────────
+   [ ] Presiona Ctrl+Shift+Delete (Cmd+Shift+Delete en Mac)
+   [ ] Marca "Imágenes y archivos en caché"
+   [ ] Haz clic en "Limpiar datos"
+   [ ] Recarga la página del foro
+   [ ] Prueba de nuevo
+
+   TRY #2: Verifica ejecución del script
+   ─────────────────────────────────────
+   [ ] Ve a Supabase → SQL Editor
+   [ ] Ejecuta esta consulta:
+       
+       SELECT * FROM user_profiles 
+       WHERE id = auth.uid();
+   
+   [ ] ¿Aparece tu registro?
+       ✓ Sí → Continúa con TRY #3
+       ✗ No → Vuelve a ejecutar el script SQL completo
+
+   TRY #3: Cierra sesión y vuelve a entrar
+   ────────────────────────────────────────
+   [ ] Haz clic en "Cerrar sesión"
+   [ ] Inicia sesión nuevamente
+   [ ] Ve al foro
+   [ ] Prueba crear una discusión
+
+   TRY #4: Verifica tu sesión actual
+   ─────────────────────────────────
+   [ ] Abre consola del navegador (F12)
+   [ ] Ve a pestaña "Console"
+   [ ] Copia y pega esto:
+       
+       const { data } = await window.supabaseClient.auth.getUser();
+       console.log('User:', data.user);
+       console.log('Metadata:', data.user.user_metadata);
+   
+   [ ] Verifica que aparezca tu información
+
+❌ PROBLEMA: Error al ejecutar script SQL
+
+   [ ] Lee el mensaje de error
+   [ ] ¿Dice "permission denied"?
+       → Verifica que tienes permisos de admin en Supabase
+   
+   [ ] ¿Dice "table already exists"?
+       → Esto está bien, continúa ejecutando el resto
+   
+   [ ] ¿Otro error?
+       → Copia el mensaje de error y búscalo en Google
+       → O contacta soporte de Supabase
+
+╔═════════════════════════════════════════════════════════════════════════╗
+║  ARCHIVOS DE REFERENCIA                                                 ║
+╚═════════════════════════════════════════════════════════════════════════╝
+
+  📄 GUIA_RAPIDA.txt
+     → Guía visual paso a paso con detalles
+  
+  📄 SOLUCION_USUARIO_ANONIMO.md
+     → Documentación técnica completa
+  
+  📄 CAMBIOS_REALIZADOS.txt
+     → Resumen de todos los cambios realizados
+  
+  📄 fix_forum_user_display.sql
+     → Script SQL que debes ejecutar en Supabase
+
+╔═════════════════════════════════════════════════════════════════════════╗
+║  ¿TODAVÍA NECESITAS AYUDA?                                              ║
+╚═════════════════════════════════════════════════════════════════════════╝
+
+  1. Revisa los archivos de referencia mencionados arriba
+  2. Verifica que completaste TODOS los pasos del checklist
+  3. Asegúrate de haber ejecutado el script SQL correctamente
+  4. Recarga la página con caché limpio (Ctrl+Shift+R)
+
+  Si después de todo esto aún tienes problemas:
+  • Revisa la consola del navegador (F12) en busca de errores
+  • Verifica los logs de Supabase
+  • Contacta al desarrollador con detalles específicos del error
+
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛

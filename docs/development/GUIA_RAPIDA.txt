@@ -1,0 +1,145 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║     🎯 GUÍA RÁPIDA: SOLUCIONAR "USUARIO ANÓNIMO" EN EL FORO              ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  📋 PASO 1: EJECUTAR SCRIPT SQL EN SUPABASE                                │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  1. Abre tu navegador y ve a: https://supabase.com
+  
+  2. Inicia sesión y selecciona tu proyecto: "hogwarts_PotterFriends"
+  
+  3. En el menú lateral izquierdo, busca y haz clic en:
+     "SQL Editor" (ícono de documento con <>)
+  
+  4. Haz clic en el botón "+ New query" (arriba a la derecha)
+  
+  5. Abre el archivo: fix_forum_user_display.sql
+     (está en la carpeta raíz del proyecto)
+  
+  6. Copia TODO el contenido del archivo (Ctrl+A, Ctrl+C)
+  
+  7. Pega el contenido en el editor SQL de Supabase (Ctrl+V)
+  
+  8. Haz clic en el botón "Run" (o presiona Ctrl+Enter)
+  
+  9. ⚠️  Espera a que termine de ejecutarse (puede tardar unos segundos)
+  
+  10. Verifica que veas mensajes como:
+      ✓ "Tabla user_profiles ya existe" o "creada exitosamente"
+      ✓ "Total de perfiles creados: X"
+      ✓ "Usuarios sin perfil: 0"
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  🧪 PASO 2: PROBAR LA SOLUCIÓN                                             │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  1. Ve a tu aplicación web (http://localhost o tu dominio)
+  
+  2. Si ya estás en la página del foro, RECARGA LA PÁGINA:
+     • Windows/Linux: Ctrl + Shift + R
+     • Mac: Cmd + Shift + R
+  
+  3. Asegúrate de estar logueado:
+     • Si no estás logueado, inicia sesión primero
+  
+  4. Crea una nueva discusión:
+     a) Haz clic en "Nueva Discusión"
+     b) Llena el formulario:
+        - Título: "Prueba de usuario"
+        - Categoría: Cualquiera
+        - Contenido: "Probando que aparece mi nombre"
+     c) Haz clic en "Publicar"
+  
+  5. ✅ VERIFICA:
+     • Deberías ver TU NOMBRE en lugar de "Usuario Anónimo"
+     • El avatar debería mostrarse (si lo tienes configurado)
+  
+  6. Prueba también los comentarios:
+     a) Abre cualquier discusión existente
+     b) Escribe un comentario
+     c) Publica
+     d) Verifica que aparece TU NOMBRE
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  ❓ SOLUCIÓN DE PROBLEMAS                                                   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  PROBLEMA: Sigue apareciendo "Usuario Anónimo"
+  ═════════════════════════════════════════════════
+  
+  Solución 1: Limpia el caché del navegador
+  ──────────────────────────────────────────
+    • Chrome/Edge: Ctrl+Shift+Delete → Marcar "Caché" → Limpiar
+    • Firefox: Ctrl+Shift+Delete → Marcar "Caché" → Limpiar ahora
+    • Safari: Cmd+Option+E
+  
+  Solución 2: Verifica que el script SQL se ejecutó
+  ──────────────────────────────────────────────────
+    • Ve a Supabase → SQL Editor
+    • Ejecuta esta consulta:
+    
+      SELECT COUNT(*) FROM user_profiles;
+    
+    • Debería mostrar al menos 1 (tu usuario)
+  
+  Solución 3: Verifica tu sesión
+  ──────────────────────────────
+    • Abre la consola del navegador (F12)
+    • Ve a la pestaña "Console"
+    • Escribe:
+    
+      const { data } = await window.supabaseClient.auth.getUser();
+      console.log(data.user);
+    
+    • Verifica que aparece tu información de usuario
+  
+  Solución 4: Cierra sesión y vuelve a iniciar
+  ──────────────────────────────────────────────
+    • Haz clic en cerrar sesión
+    • Inicia sesión nuevamente
+    • Prueba crear una discusión
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  📝 NOTAS IMPORTANTES                                                       │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  • Los cambios en el código JavaScript YA ESTÁN APLICADOS
+  
+  • Solo necesitas ejecutar el script SQL UNA VEZ
+  
+  • El script es SEGURO y no borra ningún dato existente
+  
+  • Funciona automáticamente para:
+    ✓ Usuarios que ya existen
+    ✓ Usuarios que se registren en el futuro
+    ✓ Usuarios sin información completa
+  
+  • Si necesitas actualizar tu nombre de usuario:
+    1. Ve a tu perfil
+    2. Edita tu información
+    3. El cambio se reflejará automáticamente
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│  📊 VERIFICACIÓN FINAL                                                      │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  Una vez completados los pasos, verifica que:
+  
+  ☐ Script SQL ejecutado sin errores
+  ☐ Página del foro recargada
+  ☐ Nueva discusión muestra tu nombre
+  ☐ Comentarios muestran tu nombre
+  ☐ Avatar se muestra correctamente (si lo tienes)
+  
+  Si todos están marcados: ¡FELICITACIONES! 🎉
+  El problema está solucionado.
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║  ¿Necesitas más ayuda? Revisa el archivo SOLUCION_USUARIO_ANONIMO.md     ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝

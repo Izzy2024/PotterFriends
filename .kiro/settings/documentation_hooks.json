@@ -1,0 +1,52 @@
+{
+  "hooks": [
+    {
+      "name": "Documentation Update Reminder",
+      "description": "Recuerda actualizar la documentación cuando se detectan cambios significativos",
+      "trigger": {
+        "type": "onSave",
+        "filePattern": ["**/*.html", "**/*.css", "**/*.js", "tailwind.config.js", "package.json"]
+      },
+      "action": {
+        "type": "agent",
+        "prompt": "Analiza los cambios realizados en el archivo guardado. Si detectas cambios significativos (nuevas características, componentes, estructura, etc.), recuérdame actualizar la documentación correspondiente según las reglas en .kiro/steering/documentation_rules.md. Si los cambios son menores o no requieren actualización de documentación, simplemente confirma que has revisado los cambios."
+      }
+    },
+    {
+      "name": "Documentation Checklist",
+      "description": "Ejecuta la checklist de documentación para verificar que todo está actualizado",
+      "trigger": {
+        "type": "manual",
+        "label": "Verificar Documentación"
+      },
+      "action": {
+        "type": "agent",
+        "prompt": "Revisa la documentación actual del proyecto según la checklist en .kiro/steering/documentation_checklist.md. Verifica cada punto de la checklist y proporciona un informe sobre qué documentos necesitan actualizarse y qué secciones específicas requieren atención."
+      }
+    },
+    {
+      "name": "New Component Documentation",
+      "description": "Genera documentación para un nuevo componente",
+      "trigger": {
+        "type": "manual",
+        "label": "Documentar Nuevo Componente"
+      },
+      "action": {
+        "type": "agent",
+        "prompt": "Ayúdame a documentar un nuevo componente para el proyecto Hogwarts Community Hub. Pregúntame por el nombre del componente, su propósito, estructura HTML, clases CSS, comportamiento JavaScript y ejemplos de uso. Luego, genera la documentación en el formato adecuado según las plantillas en .kiro/steering/documentation_rules.md y sugiere dónde debe añadirse en los documentos existentes."
+      }
+    },
+    {
+      "name": "Project Memory Update",
+      "description": "Actualiza la memoria del proyecto con nuevas decisiones o cambios importantes",
+      "trigger": {
+        "type": "manual",
+        "label": "Actualizar Memoria del Proyecto"
+      },
+      "action": {
+        "type": "agent",
+        "prompt": "Ayúdame a actualizar la memoria del proyecto en .kiro/steering/project_memory.md. Pregúntame sobre nuevas decisiones técnicas, cambios en el estado del proyecto, nuevos problemas conocidos o cualquier otra información importante que deba recordarse. Luego, actualiza el documento de memoria y añade una entrada al registro de actualizaciones."
+      }
+    }
+  ]
+}
