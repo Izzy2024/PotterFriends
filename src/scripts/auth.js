@@ -401,6 +401,7 @@ async function getUserHouse() {
 
 // Export auth functions
 window.HogwartsAuth = {
+    initSupabase,
     login,
     register,
     logout,

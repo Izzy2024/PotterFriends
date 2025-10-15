@@ -40,7 +40,7 @@ npm run dev
 ### Supabase
 ```javascript
 URL: 'https://vdcclritlgnwwdxloayt.supabase.co'
-ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' (en auth.js)
+ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' (en src/scripts/auth.js)
 ```
 
 ### Base de Datos Principal
@@ -109,7 +109,7 @@ async function getUserHouse()        // Obtiene con fallback
 4. **House Head/Admin:** Panel adicional
 
 ### Archivos Clave
-- **`auth.js`:** Todo el sistema de autenticación
+- **`src/scripts/auth.js`:** Todo el sistema de autenticación
 - **`universal-nav.js`:** Navegación dinámica
 - **Páginas:** login, registration, verification, reset
 
@@ -205,7 +205,7 @@ UNIQUE(user_id, achievement_type_id)
 ## 📁 ARCHIVOS CRÍTICOS - UBICACIONES
 
 ### JavaScript Core
-- **`js/auth.js`** - Autenticación completa + house functions
+- **`src/scripts/auth.js`** - Autenticación completa + house functions
 - **`js/universal-nav.js`** - Navegación dinámica
 - **`js/profile-system.js`** - Sistema perfiles + achievements
 - **`js/achievement-tracker.js`** - Tracking automático

@@ -31,7 +31,7 @@ Se implementó una mejora completa del sistema de selección y almacenamiento de
 
 ### 1. **Nuevo Sistema de Almacenamiento Híbrido**
 
-#### **Funciones principales agregadas a `js/auth.js`:**
+#### **Funciones principales agregadas a `src/scripts/auth.js`:**
 
 ```javascript
 // Guardar casa del usuario en Supabase + localStorage
@@ -147,7 +147,7 @@ CREATE POLICY "Users can update own profile" ON profiles
 ## 📁 Archivos Modificados
 
 ### **Archivos principales:**
-- ✅ `js/auth.js` - Funciones de Supabase agregadas
+- ✅ `src/scripts/auth.js` - Funciones de Supabase agregadas
 - ✅ `js/universal-nav.js` - Navegación corregida
 - ✅ `pages/house_selection_portal_sorting_hat_quiz.html` - Quiz mejorado
 - ✅ `pages/house_common_rooms_personalized_dashboards.html` - Sala común mejorada

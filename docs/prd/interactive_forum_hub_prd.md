@@ -1,7 +1,7 @@
 # PRD – Conversión de "Interactive Forum Hub" de estático a funcional
 
 ## 1. Contexto
-La página `pages/interactive_forum_hub.html` ya cuenta con una rica maqueta visual (TailwindCSS) y algo de JS de demostración. Falta persistencia, seguridad y lógica de negocio. El proyecto utiliza Supabase para autenticación (`../js/auth.js`) y se supone una estructura de páginas HTML estáticas.
+La página `pages/interactive_forum_hub.html` ya cuenta con una rica maqueta visual (TailwindCSS) y algo de JS de demostración. Falta persistencia, seguridad y lógica de negocio. El proyecto utiliza Supabase para autenticación (`../src/scripts/auth.js`) y se supone una estructura de páginas HTML estáticas.
 
 ## 2. Objetivo del producto
 Convertir el hub de foro en una experiencia interactiva completa donde los usuarios autenticados puedan:

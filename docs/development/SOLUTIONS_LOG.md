@@ -17,13 +17,13 @@
 - Navegación no respondía al estado del usuario
 
 ### **Solución Implementada:**
-- ✅ **Sistema Supabase** configurado en `js/auth.js`
+- ✅ **Sistema Supabase** configurado en `src/scripts/auth.js`
 - ✅ **Páginas de autenticación** funcionales
 - ✅ **API unificada** con `window.HogwartsAuth`
 - ✅ **Navegación dinámica** en homepage
 
 ### **Archivos Modificados:**
-- `js/auth.js` - Sistema principal
+- `src/scripts/auth.js` - Sistema principal
 - `pages/user_login.html` - Página de login
 - `pages/homepage_sorting_hat_experience.html` - Navegación dinámica
 
@@ -54,7 +54,7 @@ find pages/ -name "*.html" -exec sed -i '' 's/auth_login\.html/user_login.html/g
 ```
 
 ### **Archivos Afectados:**
-- `public/js/auth.js`
+- `src/scripts/auth.js`
 - Todas las páginas HTML en `pages/`
 
 ### **Estado:** ✅ **RESUELTO**
@@ -95,7 +95,7 @@ find pages/ -name "*.html" -exec sed -i '' 's/auth_login\.html/user_login.html/g
 ```html
 <!-- Universal Navigation -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/auth.js"></script>
+<script src="../src/scripts/auth.js"></script>
 <script src="../js/universal-nav.js"></script>
 ```
 
@@ -168,7 +168,7 @@ const finalHouse = quizHouse || selectedHouse || 'gryffindor';
 ### **Archivos Modificados:**
 - `pages/house_selection_portal_sorting_hat_quiz.html` - Lógica inteligente
 - `pages/house_common_rooms_personalized_dashboards.html` - Sincronización
-- `js/auth.js` - Limpieza en logout (pendiente)
+- `src/scripts/auth.js` - Limpieza en logout (pendiente)
 
 ### **Flujos de Usuario Mejorados:**
 ```

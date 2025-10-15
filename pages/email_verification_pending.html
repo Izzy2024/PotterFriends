@@ -208,6 +208,8 @@
     </footer>
 
     <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../src/scripts/auth.js"></script>
     <script>
         // Mobile menu toggle
         function toggleMobileMenu() {
@@ -238,22 +240,26 @@
             resendError.classList.add('hidden');
             
             try {
-                const response = await fetch('http://localhost:5001/api/auth/resend-verification', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email })
+                // Get Supabase client
+                const supabase = window.supabaseClient || (window.HogwartsAuth ? window.HogwartsAuth.initSupabase() : null);
+                
+                if (!supabase) {
+                    throw new Error('Supabase client not available');
+                }
+                
+                // Resend verification email using Supabase
+                const { error } = await supabase.auth.resend({
+                    type: 'signup',
+                    email: email
                 });
                 
-                const data = await response.json();
-                
-                if (response.ok) {
-                    resendMessage.classList.remove('hidden');
-                } else {
-                    resendError.textContent = data.message || 'Error al reenviar el email. Por favor intenta nuevamente.';
-                    resendError.classList.remove('hidden');
+                if (error) {
+                    throw new Error(error.message);
                 }
+                
+                // Show success message
+                resendMessage.textContent = 'Email de verificación reenviado exitosamente. Por favor revisa tu bandeja de entrada.';
+                resendMessage.classList.remove('hidden');
             } catch (error) {
                 resendError.textContent = 'Error de conexión. Por favor verifica tu conexión a internet.';
                 resendError.classList.remove('hidden');
