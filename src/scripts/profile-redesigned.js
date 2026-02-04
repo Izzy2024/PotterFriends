@@ -16,11 +16,11 @@ class ProfileRedesigned {
 
     async init() {
         try {
-            // Inicializar Supabase
-            this.supabase = window.supabase.createClient(
-                'https://vdcclritlgnwwdxloayt.supabase.co',
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E'
-            );
+            // Inicializar Supabase mediante HogwartsAuth y usar cliente global
+            await (window.HogwartsAuth && window.HogwartsAuth.initSupabase
+                ? window.HogwartsAuth.initSupabase()
+                : Promise.resolve());
+            this.supabase = window.supabaseClient;
 
             // Verificar usuario autenticado
             const { data: { user } } = await this.supabase.auth.getUser();

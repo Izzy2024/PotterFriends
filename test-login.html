@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login - Hogwarts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧙‍♂️ Test de Autenticación - Hogwarts</h1>
+        
+        <div id="status"></div>
+        
+        <h3>1. Login Manual</h3>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="tu-email@ejemplo.com">
+        </div>
+        <div class="form-group">
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" placeholder="tu-contraseña">
+        </div>
+        <button onclick="testLogin()">🔐 Probar Login</button>
+        <button onclick="testLogout()">🚪 Logout</button>
+        <button onclick="checkCurrentUser()">👤 Ver Usuario Actual</button>
+        
+        <h3>2. Diagnóstico Automático</h3>
+        <button onclick="runDiagnostic()">🔍 Ejecutar Diagnóstico</button>
+        <button onclick="createTestUser()">👥 Crear Usuario de Prueba</button>
+        <button onclick="clearLogs()">🧹 Limpiar Logs</button>
+        
+        <h3>3. Logs del Sistema</h3>
+        <div id="logs" class="log">Esperando acciones...\n</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="src/scripts/auth.js"></script>
+    <script src="../js/auth-diagnostic.js"></script>
+    <script>
+        let logContainer = document.getElementById('logs');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            logContainer.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}]`, message);
+        }
+        
+        function clearLogs() {
+            logContainer.textContent = 'Logs limpiados...\n';
+        }
+        
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                log('Por favor ingresa email y contraseña', 'error');
+                return;
+            }
+            
+            log(`Intentando login con: ${email}`, 'info');
+            
+            try {
+                const result = await window.HogwartsAuth.login(email, password);
+                
+                if (result.success) {
+                    log('Login exitoso!', 'success');
+                    log(`Usuario: ${result.data.user.email}`, 'info');
+                    if (result.data.user.wizard_name) {
+                        log(`Nombre mágico: ${result.data.user.wizard_name}`, 'info');
+                    }
+                    if (result.data.user.house) {
+                        log(`Casa: ${result.data.user.house}`, 'info');
+                    }
+                    
+                    document.getElementById('status').innerHTML = 
+                        '<div class="alert alert-success">✅ Login exitoso!</div>';
+                } else {
+                    log(`Error en login: ${result.error}`, 'error');
+                    document.getElementById('status').innerHTML = 
+                        `<div class="alert alert-error">❌ Error: ${result.error}</div>`;
+                }
+            } catch (error) {
+                log(`Error inesperado: ${error.message}`, 'error');
+                document.getElementById('status').innerHTML = 
+                    `<div class="alert alert-error">❌ Error inesperado: ${error.message}</div>`;
+            }
+        }
+        
+        async function testLogout() {
+            log('Cerrando sesión...', 'info');
+            try {
+                await window.HogwartsAuth.logout();
+                log('Sesión cerrada exitosamente', 'success');
+                document.getElementById('status').innerHTML = 
+                    '<div class="alert alert-success">✅ Sesión cerrada</div>';
+            } catch (error) {
+                log(`Error al cerrar sesión: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkCurrentUser() {
+            log('Verificando usuario actual...', 'info');
+            try {
+                const user = await window.HogwartsAuth.getCurrentUser();
+                if (user) {
+                    log(`Usuario actual: ${user.email}`, 'success');
+                    log(`ID: ${user.id}`, 'info');
+                    if (user.wizard_name) log(`Nombre mágico: ${user.wizard_name}`, 'info');
+                    if (user.house) log(`Casa: ${user.house}`, 'info');
+                } else {
+                    log('No hay usuario autenticado', 'info');
+                }
+            } catch (error) {
+                log(`Error obteniendo usuario: ${error.message}`, 'error');
+            }
+        }
+        
+        async function runDiagnostic() {
+            log('=== INICIANDO DIAGNÓSTICO COMPLETO ===', 'info');
+            try {
+                await diagnosticarProblemasAuth();
+                log('=== DIAGNÓSTICO COMPLETADO ===', 'success');
+            } catch (error) {
+                log(`Error en diagnóstico: ${error.message}`, 'error');
+            }
+        }
+        
+        async function createTestUser() {
+            log('Creando usuario de prueba...', 'info');
+            try {
+                const result = await crearUsuarioPrueba();
+                if (result.success) {
+                    log(`Usuario creado: ${result.email}`, 'success');
+                    log(`Contraseña: ${result.password}`, 'info');
+                    document.getElementById('email').value = result.email;
+                    document.getElementById('password').value = result.password;
+                } else {
+                    log(`Error creando usuario: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                log(`Error inesperado: ${error.message}`, 'error');
+            }
+        }
+        
+        // Inicializar
+        log('Sistema de pruebas iniciado', 'success');
+        log('Utiliza los botones de arriba para probar la autenticación', 'info');
+        
+        // Verificar estado inicial
+        checkCurrentUser();
+    </script>
+</body>
+</html>

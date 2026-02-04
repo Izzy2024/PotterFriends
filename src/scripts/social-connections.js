@@ -18,11 +18,13 @@ class SocialConnections {
 
     async init() {
         try {
-            // Usar el cliente de Supabase existente o crear uno nuevo
-            this.supabase = window.supabaseClient || window.supabase.createClient(
-                'https://vdcclritlgnwwdxloayt.supabase.co',
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E'
-            );
+            // Unificar cliente Supabase desde auth.js
+            if (window.HogwartsAuth && window.HogwartsAuth.initSupabase) {
+                await window.HogwartsAuth.initSupabase();
+                this.supabase = window.supabaseClient;
+            } else {
+                throw new Error('HogwartsAuth no disponible para inicializar Supabase');
+            }
 
             // Obtener usuario actual
             const { data: { user } } = await this.supabase.auth.getUser();
@@ -491,8 +493,8 @@ class SocialConnections {
     async checkFirstFriendAchievement() {
         if (this.socialStats.friends_count === 1) {
             // Disparar logro de primer amigo
-            if (window.AchievementTracker) {
-                window.AchievementTracker.triggerAchievement('first_friend');
+            if (window.achievementTracker) {
+                window.achievementTracker.triggerAchievement('first_friend');
             }
         }
     }

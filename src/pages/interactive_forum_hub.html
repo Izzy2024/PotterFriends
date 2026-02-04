@@ -7,6 +7,24 @@
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <style>
+        #onlineMembersSidebar {
+            position: fixed;
+            right: 16px;
+            bottom: 16px;
+            z-index: 50;
+        }
+        @media (max-width: 768px) {
+            #onlineMembersSidebar {
+                right: 12px;
+                bottom: 12px;
+            }
+            #membersPanel {
+                width: 80vw;
+                max-width: 320px;
+            }
+        }
+    </style>
 
 </head>
 <body class="bg-background text-text-primary">
@@ -527,7 +545,7 @@
     </section>
 
     <!-- Collapsible Online Members Sidebar -->
-    <div id="onlineMembersSidebar" class="fixed bottom-6 right-6 z-50">
+    <div id="onlineMembersSidebar" class="fixed bottom-6 right-6 z-50" style="position:fixed; right:16px; bottom:16px; z-index:50;">
         <!-- Toggle Button -->
         <button id="toggleMembersBtn" class="absolute left-0 top-0 transform -translate-x-full bg-primary text-white p-2 rounded-l-lg shadow-elevated focus:outline-none" onclick="toggleOnlineMembers()">
             <svg id="showIcon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -555,6 +573,11 @@
     <script>
         // Check if panel should be open based on localStorage
         document.addEventListener('DOMContentLoaded', function() {
+            // Ensure floating panel is anchored to viewport (avoid transform parents)
+            const sidebar = document.getElementById('onlineMembersSidebar');
+            if (sidebar && sidebar.parentElement !== document.body) {
+                document.body.appendChild(sidebar);
+            }
             const isOpen = localStorage.getItem('onlineMembersPanelOpen') === 'true';
             if (isOpen) {
                 openOnlineMembers();

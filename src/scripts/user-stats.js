@@ -11,29 +11,17 @@ class UserStatsManager {
     }
 
     async init() {
-        // Wait for Supabase to be available
-        const maxAttempts = 50;
-        let attempts = 0;
-        
-        while (!this.supabase && attempts < maxAttempts) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-            
-            // Try different ways to get Supabase client
-            if (window.supabaseClient) {
-                this.supabase = window.supabaseClient;
-            } else if (window.supabase && window.supabase.createClient) {
-                this.supabase = window.supabase.createClient(
-                    'https://vdcclritlgnwwdxloayt.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E'
-                );
-                window.supabaseClient = this.supabase;
+        try {
+            await (window.HogwartsAuth && window.HogwartsAuth.initSupabase
+                ? window.HogwartsAuth.initSupabase()
+                : Promise.resolve());
+            this.supabase = window.supabaseClient;
+            if (!this.supabase) {
+                console.error('Supabase no está disponible para User Stats');
+                return;
             }
-            
-            attempts++;
-        }
-        
-        if (!this.supabase) {
-            console.error('Supabase no está disponible para User Stats');
+        } catch (e) {
+            console.error('Error inicializando Supabase para User Stats:', e);
             return;
         }
 

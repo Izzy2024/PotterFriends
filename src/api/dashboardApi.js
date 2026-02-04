@@ -1,4 +1,4 @@
-import { supabase as supabaseImport } from '../supabase-client.js';
+import { supabase as supabaseImport } from '../scripts/supabase-client.js';
 
 // Manejar el caso cuando supabase es una promesa
 let supabase = supabaseImport;

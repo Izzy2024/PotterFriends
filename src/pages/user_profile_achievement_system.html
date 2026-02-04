@@ -501,19 +501,16 @@
     <!-- Initialize Social Connections and Achievement System -->
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // Wait for Supabase to be available
-            while (!window.supabase) {
-                await new Promise(resolve => setTimeout(resolve, 100));
-            }
-            
-            // Create global Supabase client if not exists
-            if (!window.supabaseClient) {
-                window.supabaseClient = window.supabase.createClient(
-                    'https://vdcclritlgnwwdxloayt.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E'
-                );
-            }
-            
+            // Wait for unified Supabase client from auth.js
+            const waitForClient = async () => {
+                const start = Date.now();
+                while (!window.supabaseClient) {
+                    await new Promise(r => setTimeout(r, 100));
+                    if (Date.now() - start > 5000) break;
+                }
+            };
+            await waitForClient();
+
             // Wait for social connections to initialize
             await new Promise(resolve => {
                 const checkSocial = setInterval(() => {
@@ -525,18 +522,13 @@
             });
             
             // Render recent friends
-            if (window.socialConnections) {
-                await window.socialConnections.renderRecentFriends();
+            if (window.socialConnections && typeof window.socialConnections.renderRecentFriends === 'function') {
+                try { await window.socialConnections.renderRecentFriends(); } catch (e) { console.warn('renderRecentFriends failed:', e); }
             }
             
-            // Initialize achievement tracker if available
-            if (window.AchievementTracker) {
-                try {
-                    const achievementTracker = new window.AchievementTracker();
-                    await achievementTracker.loadUserAchievements();
-                } catch (error) {
-                    console.error('Error initializing achievement tracker:', error);
-                }
+            // Nudge achievement tracker if already initialized
+            if (window.achievementTracker && typeof window.achievementTracker.checkForNewAchievements === 'function') {
+                try { await window.achievementTracker.checkForNewAchievements(); } catch (e) { console.warn('checkForNewAchievements failed:', e); }
             }
         });
     </script>

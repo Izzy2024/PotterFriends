@@ -8,10 +8,33 @@
  * - Authentication state UI updates
  */
 
-// Supabase configuration
+// Supabase configuration (production fallback)
 const SUPABASE_URL = 'https://vdcclritlgnwwdxloayt.supabase.co';
 // Using the correct anon key from your Supabase project
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E';
+
+const APP_CONFIG = window.APP_CONFIG || {
+    USE_LOCAL_BACKEND: true,
+    API_BASE_URL: 'http://localhost:3001'
+};
+
+async function clientLog(event, data = {}) {
+    if (!APP_CONFIG.USE_LOCAL_BACKEND) return;
+    try {
+        await fetch(`${APP_CONFIG.API_BASE_URL}/client-log`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event,
+                data,
+                path: window.location.pathname,
+                ts: new Date().toISOString()
+            })
+        });
+    } catch (error) {
+        // ignore logging errors
+    }
+}
 
 // Storage keys
 const STORAGE_KEYS = {
@@ -22,39 +45,389 @@ const STORAGE_KEYS = {
 // Global Supabase client
 let supabaseClient = null;
 
+// Promise to prevent duplicate initialization
+let supabaseInitPromise = null;
+
+function createLocalSupabaseClient(baseUrl) {
+    const TOKEN_KEY = 'local_auth_token';
+
+    const getToken = () => localStorage.getItem(TOKEN_KEY);
+    const setToken = (token) => localStorage.setItem(TOKEN_KEY, token);
+    const clearToken = () => localStorage.removeItem(TOKEN_KEY);
+
+    const request = async (path, options = {}) => {
+        const token = getToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            ...(options.headers || {})
+        };
+        if (token) headers.Authorization = `Bearer ${token}`;
+
+        const res = await fetch(`${baseUrl}${path}`, {
+            ...options,
+            headers
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const error = new Error(data.error || 'request_failed');
+            error.details = data.detail || null;
+            return { data: null, error };
+        }
+        return { data, error: null };
+    };
+
+    const auth = {
+        async signUp({ email, password, options }) {
+            const meta = options?.data || {};
+            const { data, error } = await request('/auth/signup', {
+                method: 'POST',
+                body: JSON.stringify({
+                    email,
+                    password,
+                    wizard_name: meta.wizard_name,
+                    first_name: meta.first_name,
+                    last_name: meta.last_name,
+                    house: meta.house
+                })
+            });
+
+            if (error) return { data: null, error };
+            if (data?.session?.access_token) setToken(data.session.access_token);
+            clientLog('auth_signup', { ok: true, email });
+
+            return {
+                data: { user: data.user, session: data.session },
+                error: null
+            };
+        },
+        async signInWithPassword({ email, password }) {
+            const { data, error } = await request('/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password })
+            });
+
+            if (error) return { data: null, error };
+            if (data?.session?.access_token) setToken(data.session.access_token);
+            clientLog('auth_login', { ok: true, email });
+
+            return {
+                data: { user: data.user, session: data.session },
+                error: null
+            };
+        },
+        async signOut() {
+            await request('/auth/logout', { method: 'POST' });
+            clearToken();
+            clientLog('auth_logout', { ok: true });
+            return { error: null };
+        },
+        async getSession() {
+            const token = getToken();
+            clientLog('auth_get_session', { hasToken: !!token });
+            if (!token) return { data: { session: null }, error: null };
+            return { data: { session: { access_token: token, token_type: 'bearer' } }, error: null };
+        },
+        async getUser() {
+            const token = getToken();
+            clientLog('auth_get_user', { hasToken: !!token });
+            if (!token) return { data: { user: null }, error: null };
+            const { data, error } = await request('/auth/user', { method: 'GET' });
+            if (error) return { data: { user: null }, error };
+            return { data: { user: data.user }, error: null };
+        },
+        async resetPasswordForEmail(email) {
+            const { data, error } = await request('/auth/request-reset', {
+                method: 'POST',
+                body: JSON.stringify({ email })
+            });
+            if (error) return { data: null, error };
+            return { data, error: null };
+        },
+        async updateUser({ password }) {
+            const { data, error } = await request('/auth/update', {
+                method: 'POST',
+                body: JSON.stringify({ password })
+            });
+            if (error) return { data: null, error };
+            return { data, error: null };
+        }
+    };
+
+    const createQueryBuilder = (table) => {
+        const state = {
+            table,
+            op: 'select',
+            columns: '*',
+            filters: [],
+            order: null,
+            limit: null,
+            offset: null,
+            count: null,
+            head: false,
+            values: null,
+            returning: null,
+            single: false,
+            maybeSingle: false
+        };
+
+        const builder = {
+            select(columns = '*', options = {}) {
+                state.op = 'select';
+                state.columns = columns;
+                state.count = options.count || null;
+                state.head = options.head || false;
+                return builder;
+            },
+            insert(values, options = {}) {
+                state.op = 'insert';
+                state.values = values;
+                state.returning = options.returning || null;
+                return builder;
+            },
+            update(values, options = {}) {
+                state.op = 'update';
+                state.values = values;
+                state.returning = options.returning || null;
+                return builder;
+            },
+            delete(options = {}) {
+                state.op = 'delete';
+                state.returning = options.returning || null;
+                return builder;
+            },
+            eq(column, value) {
+                state.filters.push({ column, op: 'eq', value });
+                return builder;
+            },
+            or(filterString) {
+                state.or = filterString;
+                return builder;
+            },
+            in(column, value) {
+                state.filters.push({ column, op: 'in', value });
+                return builder;
+            },
+            neq(column, value) {
+                state.filters.push({ column, op: 'neq', value });
+                return builder;
+            },
+            gt(column, value) {
+                state.filters.push({ column, op: 'gt', value });
+                return builder;
+            },
+            gte(column, value) {
+                state.filters.push({ column, op: 'gte', value });
+                return builder;
+            },
+            lt(column, value) {
+                state.filters.push({ column, op: 'lt', value });
+                return builder;
+            },
+            lte(column, value) {
+                state.filters.push({ column, op: 'lte', value });
+                return builder;
+            },
+            like(column, value) {
+                state.filters.push({ column, op: 'like', value });
+                return builder;
+            },
+            ilike(column, value) {
+                state.filters.push({ column, op: 'ilike', value });
+                return builder;
+            },
+            is(column, value) {
+                state.filters.push({ column, op: 'is', value });
+                return builder;
+            },
+            order(column, options = {}) {
+                if (!column) return builder;
+                const columns = column
+                    .split(',')
+                    .map((c) => c.trim())
+                    .filter(Boolean);
+                state.order = columns.map((col) => ({
+                    column: col,
+                    ascending: options.ascending !== false
+                }));
+                return builder;
+            },
+            range(from, to) {
+                if (Number.isInteger(from) && Number.isInteger(to) && to >= from) {
+                    state.offset = from;
+                    state.limit = to - from + 1;
+                }
+                return builder;
+            },
+            limit(count) {
+                if (Number.isInteger(count)) {
+                    state.limit = count;
+                }
+                return builder;
+            },
+            single() {
+                state.single = true;
+                return builder;
+            },
+            maybeSingle() {
+                state.maybeSingle = true;
+                return builder;
+            },
+            async rpc(fn, args) {
+                const { data, error } = await request('/api/db/rpc', {
+                    method: 'POST',
+                    body: JSON.stringify({ fn, args })
+                });
+                if (error) return { data: null, error };
+                return { data: data.data, error: null };
+            },
+            async _execute() {
+                let result;
+                if (state.op === 'select') {
+                    result = await request('/api/db/select', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            table: state.table,
+                            columns: state.columns,
+                            filters: state.filters,
+                            or: state.or || null,
+                            order: state.order,
+                            limit: state.limit,
+                            offset: state.offset,
+                            count: state.count,
+                            head: state.head
+                        })
+                    });
+                    if (result.error) return { data: null, error: result.error, count: null };
+                    let data = result.data.data || [];
+                    let error = null;
+
+                    if (state.single || state.maybeSingle) {
+                        if (data.length === 0) {
+                            if (state.maybeSingle) {
+                                data = null;
+                            } else {
+                                error = { message: 'No rows', code: 'PGRST116' };
+                                data = null;
+                            }
+                        } else if (data.length > 1) {
+                            error = { message: 'Multiple rows', code: 'PGRST116' };
+                            data = null;
+                        } else {
+                            data = data[0];
+                        }
+                    }
+
+                    return { data, error, count: result.data.count ?? null };
+                }
+
+                if (state.op === 'insert') {
+                    result = await request('/api/db/insert', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            table: state.table,
+                            values: state.values,
+                            returning: state.returning
+                        })
+                    });
+                }
+
+                if (state.op === 'update') {
+                    result = await request('/api/db/update', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            table: state.table,
+                            values: state.values,
+                            filters: state.filters,
+                            returning: state.returning
+                        })
+                    });
+                }
+
+                if (state.op === 'delete') {
+                    result = await request('/api/db/delete', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            table: state.table,
+                            filters: state.filters,
+                            returning: state.returning
+                        })
+                    });
+                }
+
+                if (result.error) return { data: null, error: result.error };
+                return { data: result.data.data, error: null };
+            },
+            then(resolve, reject) {
+                return builder._execute().then(resolve, reject);
+            }
+        };
+
+        return builder;
+    };
+
+    return {
+        auth,
+        from: (table) => createQueryBuilder(table),
+        rpc: async (fn, args) => createQueryBuilder(null).rpc(fn, args),
+        channel: () => {
+            const channel = {
+                on: () => channel,
+                subscribe: () => ({}),
+                presenceState: () => ({}),
+                track: async () => ({})
+            };
+            return channel;
+        },
+        removeChannel: () => {},
+        supabaseUrl: baseUrl
+    };
+}
+
 /**
  * Initialize Supabase client
  * @returns {Object} Supabase client
  */
 function initSupabase() {
-    if (!supabaseClient) {
-        // Load Supabase from CDN if not available
-        if (!window.supabase) {
-            console.error('Supabase client not available. Loading from CDN...');
-            const script = document.createElement('script');
+    if (supabaseClient) {
+        return Promise.resolve(supabaseClient);
+    }
+    if (supabaseInitPromise) {
+        return supabaseInitPromise;
+    }
+
+    if (APP_CONFIG.USE_LOCAL_BACKEND) {
+        supabaseClient = createLocalSupabaseClient(APP_CONFIG.API_BASE_URL);
+        window.supabaseClient = supabaseClient;
+        window.supabase = window.supabase || { createClient: () => supabaseClient };
+        return Promise.resolve(supabaseClient);
+    }
+
+    const createClient = () => {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Hacer el cliente disponible globalmente
+        window.supabaseClient = supabaseClient;
+        return supabaseClient;
+    };
+
+    if (window.supabase) {
+        supabaseInitPromise = Promise.resolve(createClient());
+    } else {
+        console.warn('Supabase client not available. Loading from CDN...');
+        let script = document.querySelector('script[data-supabase-cdn]');
+        if (!script) {
+            script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
             script.async = true;
+            script.setAttribute('data-supabase-cdn', 'true');
             document.head.appendChild(script);
-            
-            return new Promise((resolve, reject) => {
-                script.onload = () => {
-                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    // Hacer el cliente disponible globalmente
-                    window.supabaseClient = supabaseClient;
-                    resolve(supabaseClient);
-                };
-                script.onerror = () => {
-                    reject(new Error('Failed to load Supabase client from CDN'));
-                };
-            });
-        } else {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            // Hacer el cliente disponible globalmente
-            window.supabaseClient = supabaseClient;
         }
+        supabaseInitPromise = new Promise((resolve, reject) => {
+            script.onload = () => resolve(createClient());
+            script.onerror = () => reject(new Error('Failed to load Supabase client from CDN'));
+        });
     }
-    
-    return supabaseClient;
+
+    return supabaseInitPromise;
 }
 
 /**
@@ -63,7 +436,7 @@ function initSupabase() {
  */
 async function isAuthenticated() {
     try {
-        const supabase = initSupabase();
+        const supabase = await initSupabase();
         const { data: { session } } = await supabase.auth.getSession();
         return !!session;
     } catch (error) {
@@ -78,7 +451,7 @@ async function isAuthenticated() {
  */
 async function getCurrentUser() {
     try {
-        const supabase = initSupabase();
+        const supabase = await initSupabase();
         const { data: { user } } = await supabase.auth.getUser();
         
         if (user) {
@@ -111,7 +484,7 @@ async function getCurrentUser() {
  */
 async function login(email, password) {
     try {
-        const supabase = initSupabase();
+        const supabase = await initSupabase();
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password
@@ -149,7 +522,7 @@ async function login(email, password) {
  */
 async function register(userData) {
     try {
-        const supabase = initSupabase();
+        const supabase = await initSupabase();
         const { data, error } = await supabase.auth.signUp({
             email: userData.email,
             password: userData.password,
@@ -201,7 +574,7 @@ async function register(userData) {
  */
 async function logout() {
     try {
-        const supabase = initSupabase();
+        const supabase = await initSupabase();
         await supabase.auth.signOut();
     } catch (error) {
         console.error('Logout error:', error);
@@ -283,8 +656,8 @@ async function updateAuthUI() {
  */
 async function resetPassword(email) {
     try {
-        const supabase = initSupabase();
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        const supabase = await initSupabase();
+        const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo: `${window.location.origin}/pages/reset_password.html`
         });
 
@@ -292,7 +665,7 @@ async function resetPassword(email) {
             return { success: false, error: error.message || 'Error al enviar el correo de recuperación' };
         }
 
-        return { success: true };
+        return { success: true, resetToken: data?.reset_token || null };
     } catch (error) {
         console.error('Reset password error:', error);
         return { success: false, error: 'Error de conexión. Por favor verifica tu conexión a internet.' };
@@ -315,10 +688,13 @@ async function initAuth() {
         if (authenticated) {
             const user = await getCurrentUser();
             
-            // If user has no house assigned, redirect to sorting hat quiz
-            if (user && !user.house && window.location.pathname.includes('house_common_rooms_personalized_dashboards.html')) {
+        // If user has no house assigned, redirect to sorting hat quiz
+        if (user && window.location.pathname.includes('house_common_rooms_personalized_dashboards.html')) {
+            const house = await getUserHouse();
+            if (!house) {
                 window.location.href = 'house_selection_portal_sorting_hat_quiz.html';
             }
+        }
         }
     } catch (error) {
         console.error('Auth initialization error:', error);
@@ -335,21 +711,41 @@ document.addEventListener('DOMContentLoaded', initAuth);
  */
 async function saveUserHouse(house) {
     try {
-        const supabase = initSupabase();
+        const supabase = await initSupabase();
         const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {
-            return { success: false, error: 'Usuario no autenticado' };
+            // Fallback local even if not authenticated
+            localStorage.setItem('userHouse', house);
+            localStorage.setItem('selectedHouse', house);
+            localStorage.setItem('sortingDate', new Date().toISOString());
+            return { success: false, error: 'Usuario no autenticado (guardado localmente)' };
         }
 
-        // Save to Supabase profiles table
-        const { error } = await supabase
-            .from('user_profiles')
-            .update({ 
-                house: house, 
-                house_selected_at: new Date().toISOString() 
+        // Save to Supabase profiles tables (compatibilidad con ambas)
+        let error = null;
+        const houseSelectedAt = new Date().toISOString();
+
+        const respProfiles = await supabase
+            .from('profiles')
+            .update({
+                house: house,
+                house_selected_at: houseSelectedAt
             })
             .eq('id', user.id);
+        if (respProfiles.error) {
+            error = respProfiles.error;
+        }
+
+        const respUserProfiles = await supabase
+            .from('user_profiles')
+            .update({
+                house: house
+            })
+            .eq('id', user.id);
+        if (respUserProfiles.error && !error) {
+            error = respUserProfiles.error;
+        }
             
         if (error) {
             console.error('Error saving house to Supabase:', error);

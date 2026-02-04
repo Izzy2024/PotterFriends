@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dual Tables - Hogwarts Auth</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .table-status {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .table-info {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+        .table-ok {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .table-error {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧙‍♂️ Test Autenticación Dual Tables - Hogwarts</h1>
+        
+        <div id="status"></div>
+        
+        <h3>📊 Estado de las Tablas</h3>
+        <div class="table-status">
+            <div id="profiles-status" class="table-info">
+                <h4>📋 Tabla `profiles`</h4>
+                <div id="profiles-info">Verificando...</div>
+            </div>
+            <div id="user-profiles-status" class="table-info">
+                <h4>👤 Tabla `user_profiles`</h4>
+                <div id="user-profiles-info">Verificando...</div>
+            </div>
+        </div>
+        
+        <h3>1. Login de Prueba</h3>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="tu-email@ejemplo.com">
+        </div>
+        <div class="form-group">
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" placeholder="tu-contraseña">
+        </div>
+        <button onclick="testLogin()">🔐 Probar Login</button>
+        <button onclick="testLogout()">🚪 Logout</button>
+        <button onclick="checkCurrentUser()">👤 Usuario Actual</button>
+        
+        <h3>2. Diagnóstico de Tablas</h3>
+        <button onclick="checkTableStructure()">🔍 Verificar Estructura</button>
+        <button onclick="testTableAccess()">🛠️ Test Acceso Tablas</button>
+        <button onclick="checkDataConsistency()">📊 Verificar Consistencia</button>
+        <button onclick="createTestUser()">👥 Crear Usuario de Prueba</button>
+        
+        <h3>3. Logs del Sistema</h3>
+        <button onclick="clearLogs()">🧹 Limpiar Logs</button>
+        <div id="logs" class="log">Iniciando diagnóstico dual tables...\n</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="src/scripts/auth.js"></script>
+    <script>
+        let logContainer = document.getElementById('logs');
+        let supabase;
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️';
+            logContainer.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(`[${type.toUpperCase()}]`, message);
+        }
+        
+        function clearLogs() {
+            logContainer.textContent = 'Logs limpiados...\n';
+        }
+        
+        // Initialize Supabase
+        async function initializeSupabase() {
+            try {
+                supabase = initSupabase();
+                log('Supabase inicializado correctamente', 'success');
+                return true;
+            } catch (error) {
+                log(`Error inicializando Supabase: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function checkTableStructure() {
+            log('=== VERIFICANDO ESTRUCTURA DE TABLAS ===', 'info');
+            
+            // Check profiles table
+            try {
+                const { data: profilesData, error: profilesError } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .limit(1);
+                
+                if (profilesError) {
+                    log(`❌ Error accediendo a tabla 'profiles': ${profilesError.message}`, 'error');
+                    document.getElementById('profiles-status').className = 'table-info table-error';
+                    document.getElementById('profiles-info').innerHTML = `❌ Error: ${profilesError.message}`;
+                } else {
+                    log(`✅ Tabla 'profiles' accesible`, 'success');
+                    document.getElementById('profiles-status').className = 'table-info table-ok';
+                    document.getElementById('profiles-info').innerHTML = '✅ Accesible y funcionando';
+                }
+            } catch (e) {
+                log(`❌ Excepción accediendo a 'profiles': ${e.message}`, 'error');
+                document.getElementById('profiles-status').className = 'table-info table-error';
+                document.getElementById('profiles-info').innerHTML = `❌ Excepción: ${e.message}`;
+            }
+            
+            // Check user_profiles table
+            try {
+                const { data: userProfilesData, error: userProfilesError } = await supabase
+                    .from('user_profiles')
+                    .select('*')
+                    .limit(1);
+                
+                if (userProfilesError) {
+                    log(`❌ Error accediendo a tabla 'user_profiles': ${userProfilesError.message}`, 'error');
+                    document.getElementById('user-profiles-status').className = 'table-info table-error';
+                    document.getElementById('user-profiles-info').innerHTML = `❌ Error: ${userProfilesError.message}`;
+                } else {
+                    log(`✅ Tabla 'user_profiles' accesible`, 'success');
+                    document.getElementById('user-profiles-status').className = 'table-info table-ok';
+                    document.getElementById('user-profiles-info').innerHTML = '✅ Accesible y funcionando';
+                }
+            } catch (e) {
+                log(`❌ Excepción accediendo a 'user_profiles': ${e.message}`, 'error');
+                document.getElementById('user-profiles-status').className = 'table-info table-error';
+                document.getElementById('user-profiles-info').innerHTML = `❌ Excepción: ${e.message}`;
+            }
+        }
+        
+        async function testTableAccess() {
+            log('=== TESTING ACCESO A TABLAS ===', 'info');
+            
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                log('⚠️ No hay usuario autenticado para probar acceso', 'warning');
+                return;
+            }
+            
+            // Test profiles table access
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id);
+                
+                if (error) {
+                    log(`❌ Error accediendo perfil en 'profiles': ${error.message}`, 'error');
+                } else {
+                    log(`✅ Acceso a 'profiles' exitoso. Registros encontrados: ${data?.length || 0}`, 'success');
+                    if (data?.length > 0) {
+                        log(`📋 Datos en profiles: ${JSON.stringify(data[0], null, 2)}`, 'info');
+                    }
+                }
+            } catch (e) {
+                log(`❌ Excepción en 'profiles': ${e.message}`, 'error');
+            }
+            
+            // Test user_profiles table access
+            try {
+                const { data, error } = await supabase
+                    .from('user_profiles')
+                    .select('*')
+                    .eq('id', user.id);
+                
+                if (error) {
+                    log(`❌ Error accediendo perfil en 'user_profiles': ${error.message}`, 'error');
+                } else {
+                    log(`✅ Acceso a 'user_profiles' exitoso. Registros encontrados: ${data?.length || 0}`, 'success');
+                    if (data?.length > 0) {
+                        log(`👤 Datos en user_profiles: ${JSON.stringify(data[0], null, 2)}`, 'info');
+                    }
+                }
+            } catch (e) {
+                log(`❌ Excepción en 'user_profiles': ${e.message}`, 'error');
+            }
+        }
+        
+        async function checkDataConsistency() {
+            log('=== VERIFICANDO CONSISTENCIA DE DATOS ===', 'info');
+            
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                log('⚠️ No hay usuario autenticado para verificar consistencia', 'warning');
+                return;
+            }
+            
+            let profilesData = null;
+            let userProfilesData = null;
+            
+            // Get data from both tables
+            try {
+                const { data: pData } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+                profilesData = pData;
+            } catch (e) {
+                log(`No se encontraron datos en 'profiles' para usuario actual`, 'warning');
+            }
+            
+            try {
+                const { data: upData } = await supabase
+                    .from('user_profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+                userProfilesData = upData;
+            } catch (e) {
+                log(`No se encontraron datos en 'user_profiles' para usuario actual`, 'warning');
+            }
+            
+            // Compare data
+            if (profilesData && userProfilesData) {
+                log('✅ Usuario encontrado en ambas tablas', 'success');
+                
+                // Check key fields consistency
+                const fields = ['wizard_name', 'house'];
+                fields.forEach(field => {
+                    if (profilesData[field] !== userProfilesData[field]) {
+                        log(`⚠️ Inconsistencia en '${field}': profiles='${profilesData[field]}' vs user_profiles='${userProfilesData[field]}'`, 'warning');
+                    } else {
+                        log(`✅ Campo '${field}' consistente: '${profilesData[field]}'`, 'success');
+                    }
+                });
+            } else if (profilesData && !userProfilesData) {
+                log('⚠️ Usuario solo existe en tabla "profiles"', 'warning');
+            } else if (!profilesData && userProfilesData) {
+                log('⚠️ Usuario solo existe en tabla "user_profiles"', 'warning');
+            } else {
+                log('❌ Usuario no encontrado en ninguna tabla', 'error');
+            }
+        }
+        
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                log('Por favor ingresa email y contraseña', 'error');
+                return;
+            }
+            
+            log(`Intentando login con estrategia dual tables: ${email}`, 'info');
+            
+            try {
+                const result = await window.HogwartsAuth.login(email, password);
+                
+                if (result.success) {
+                    log('✅ Login exitoso con nueva estrategia!', 'success');
+                    log(`Usuario: ${result.data.user.email}`, 'info');
+                    if (result.data.user.wizard_name) {
+                        log(`Nombre mágico: ${result.data.user.wizard_name}`, 'info');
+                    }
+                    if (result.data.user.house) {
+                        log(`Casa: ${result.data.user.house}`, 'info');
+                    }
+                    
+                    document.getElementById('status').innerHTML = 
+                        '<div class="alert alert-success">✅ Login exitoso con estrategia dual tables!</div>';
+                        
+                    // Auto-run table access test after login
+                    setTimeout(testTableAccess, 1000);
+                } else {
+                    log(`❌ Error en login: ${result.error}`, 'error');
+                    document.getElementById('status').innerHTML = 
+                        `<div class="alert alert-error">❌ Error: ${result.error}</div>`;
+                }
+            } catch (error) {
+                log(`❌ Error inesperado: ${error.message}`, 'error');
+                document.getElementById('status').innerHTML = 
+                    `<div class="alert alert-error">❌ Error inesperado: ${error.message}</div>`;
+            }
+        }
+        
+        async function testLogout() {
+            log('Cerrando sesión...', 'info');
+            try {
+                await window.HogwartsAuth.logout();
+                log('✅ Sesión cerrada exitosamente', 'success');
+                document.getElementById('status').innerHTML = 
+                    '<div class="alert alert-success">✅ Sesión cerrada</div>';
+            } catch (error) {
+                log(`❌ Error al cerrar sesión: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkCurrentUser() {
+            log('Verificando usuario actual...', 'info');
+            try {
+                const user = await window.HogwartsAuth.getCurrentUser();
+                if (user) {
+                    log(`✅ Usuario actual: ${user.email}`, 'success');
+                    log(`ID: ${user.id}`, 'info');
+                    if (user.wizard_name) log(`Nombre mágico: ${user.wizard_name}`, 'info');
+                    if (user.house) log(`Casa: ${user.house}`, 'info');
+                    
+                    // Auto-run table access test
+                    setTimeout(testTableAccess, 500);
+                } else {
+                    log('ℹ️ No hay usuario autenticado', 'info');
+                }
+            } catch (error) {
+                log(`❌ Error obteniendo usuario: ${error.message}`, 'error');
+            }
+        }
+        
+        async function createTestUser() {
+            log('Creando usuario de prueba...', 'info');
+            const timestamp = Date.now();
+            const testEmail = `test${timestamp}@hogwarts.test`;
+            const testPassword = 'TestPassword123!';
+            
+            try {
+                const result = await window.HogwartsAuth.register({
+                    email: testEmail,
+                    password: testPassword,
+                    firstName: 'Test',
+                    lastName: 'User',
+                    wizardName: `TestWizard${timestamp}`
+                });
+                
+                if (result.success) {
+                    log(`✅ Usuario de prueba creado: ${testEmail}`, 'success');
+                    log(`Contraseña: ${testPassword}`, 'info');
+                    document.getElementById('email').value = testEmail;
+                    document.getElementById('password').value = testPassword;
+                    
+                    document.getElementById('status').innerHTML = 
+                        '<div class="alert alert-info">👥 Usuario de prueba creado. Datos prellenados en el formulario.</div>';
+                } else {
+                    log(`❌ Error creando usuario: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Error inesperado: ${error.message}`, 'error');
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            log('🚀 Iniciando sistema de pruebas dual tables...', 'info');
+            
+            const supabaseReady = await initializeSupabase();
+            if (supabaseReady) {
+                await checkTableStructure();
+                await checkCurrentUser();
+                log('📋 Sistema listo. Usa los botones para probar la funcionalidad.', 'info');
+            } else {
+                log('❌ Error inicializando sistema', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

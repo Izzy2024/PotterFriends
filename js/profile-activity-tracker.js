@@ -1,5 +1,5 @@
 // Profile Activity Tracker
-import { supabase } from './supabase-client.js';
+import { supabase as supabaseReady } from '../src/scripts/supabase-client.js';
 
 class ProfileActivityTracker {
     constructor() {
@@ -10,10 +10,17 @@ class ProfileActivityTracker {
             totalComments: 0,
             totalViews: 0
         };
+        this.supabase = null;
         this.init();
     }
 
     async init() {
+        try {
+            this.supabase = await supabaseReady;
+        } catch (e) {
+            console.error('Supabase client not ready:', e);
+            return;
+        }
         await this.loadUserStats();
         await this.loadRecentActivities();
         this.updateDisplay();
@@ -21,31 +28,33 @@ class ProfileActivityTracker {
     }
 
     async loadUserStats() {
+        if (!this.supabase) return;
         try {
-            const { data: user } = await supabase.auth.getUser();
+            const { data: user } = await this.supabase.auth.getUser();
             if (!user?.user) return;
 
             const userId = user.user.id;
 
             // Get posts count and total views
-            const { data: posts, count: postsCount } = await supabase
+            const { data: posts, count: postsCount } = await this.supabase
                 .from('posts')
-                .select('views', { count: 'exact' })
+                .select('id, views', { count: 'exact' })
                 .eq('user_id', userId);
 
             this.stats.totalPosts = postsCount || 0;
             this.stats.totalViews = posts?.reduce((total, post) => total + (post.views || 0), 0) || 0;
 
             // Get likes received on posts
-            const { count: likesCount } = await supabase
+            const postIds = posts?.map(p => p.id) || [];
+            const { count: likesCount } = await this.supabase
                 .from('likes')
                 .select('*', { count: 'exact', head: true })
-                .in('post_id', posts?.map(p => p.id) || []);
+                .in('post_id', postIds);
 
             this.stats.totalLikes = likesCount || 0;
 
             // Get comments count
-            const { count: commentsCount } = await supabase
+            const { count: commentsCount } = await this.supabase
                 .from('comments')
                 .select('*', { count: 'exact', head: true })
                 .eq('user_id', userId);
@@ -58,15 +67,16 @@ class ProfileActivityTracker {
     }
 
     async loadRecentActivities() {
+        if (!this.supabase) return;
         try {
-            const { data: user } = await supabase.auth.getUser();
+            const { data: user } = await this.supabase.auth.getUser();
             if (!user?.user) return;
 
             const userId = user.user.id;
             const activities = [];
 
             // Get recent posts
-            const { data: recentPosts } = await supabase
+            const { data: recentPosts } = await this.supabase
                 .from('posts')
                 .select(`
                     id,
@@ -91,7 +101,7 @@ class ProfileActivityTracker {
             });
 
             // Get recent likes received
-            const { data: recentLikes } = await supabase
+            const { data: recentLikes } = await this.supabase
                 .from('likes')
                 .select(`
                     created_at,
@@ -113,7 +123,7 @@ class ProfileActivityTracker {
             });
 
             // Get recent comments
-            const { data: recentComments } = await supabase
+            const { data: recentComments } = await this.supabase
                 .from('comments')
                 .select(`
                     created_at,
@@ -244,8 +254,9 @@ class ProfileActivityTracker {
     }
 
     setupRealTimeListeners() {
+        if (!this.supabase) return;
         // Listen for new posts
-        supabase
+        this.supabase
             .channel('profile-posts')
             .on('postgres_changes', 
                 { event: 'INSERT', schema: 'public', table: 'posts' },
@@ -254,7 +265,7 @@ class ProfileActivityTracker {
             .subscribe();
 
         // Listen for new likes
-        supabase
+        this.supabase
             .channel('profile-likes')
             .on('postgres_changes',
                 { event: 'INSERT', schema: 'public', table: 'likes' },
@@ -263,7 +274,7 @@ class ProfileActivityTracker {
             .subscribe();
 
         // Listen for new comments
-        supabase
+        this.supabase
             .channel('profile-comments')
             .on('postgres_changes',
                 { event: 'INSERT', schema: 'public', table: 'comments' },
@@ -273,7 +284,8 @@ class ProfileActivityTracker {
     }
 
     async handleNewPost(payload) {
-        const { data: user } = await supabase.auth.getUser();
+        if (!this.supabase) return;
+        const { data: user } = await this.supabase.auth.getUser();
         if (payload.new.user_id === user?.user?.id) {
             this.stats.totalPosts++;
             this.activities.unshift({
@@ -290,11 +302,12 @@ class ProfileActivityTracker {
     }
 
     async handleNewLike(payload) {
-        const { data: user } = await supabase.auth.getUser();
+        if (!this.supabase) return;
+        const { data: user } = await this.supabase.auth.getUser();
         
         // Check if the like is on user's post
         if (payload.new.post_id) {
-            const { data: post } = await supabase
+            const { data: post } = await this.supabase
                 .from('posts')
                 .select('user_id, title')
                 .eq('id', payload.new.post_id)
@@ -317,11 +330,12 @@ class ProfileActivityTracker {
     }
 
     async handleNewComment(payload) {
-        const { data: user } = await supabase.auth.getUser();
+        if (!this.supabase) return;
+        const { data: user } = await this.supabase.auth.getUser();
         if (payload.new.user_id === user?.user?.id) {
             this.stats.totalComments++;
             
-            const { data: post } = await supabase
+            const { data: post } = await this.supabase
                 .from('posts')
                 .select('title')
                 .eq('id', payload.new.post_id)

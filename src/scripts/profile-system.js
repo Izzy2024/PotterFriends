@@ -14,17 +14,12 @@ class ProfileSystem {
 
     async init() {
         try {
-            // Reutilizar cliente de Supabase existente o crear uno nuevo
-            if (window.supabaseClient) {
-                this.supabase = window.supabaseClient;
-            } else if (window.supabase && window.supabase.createClient) {
-                this.supabase = window.supabase.createClient(
-                    'https://vdcclritlgnwwdxloayt.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E'
-                );
-                // Guardar como referencia global para otros scripts
-                window.supabaseClient = this.supabase;
-            } else {
+            // Inicializar Supabase mediante HogwartsAuth e integrar cliente global
+            await (window.HogwartsAuth && window.HogwartsAuth.initSupabase
+                ? window.HogwartsAuth.initSupabase()
+                : Promise.resolve());
+            this.supabase = window.supabaseClient;
+            if (!this.supabase) {
                 throw new Error('Supabase no está disponible');
             }
 

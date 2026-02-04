@@ -602,7 +602,7 @@
     <!-- Auth Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../scripts/auth.js"></script>
-    <script type="module" src="../js/services/dashboardApi.js"></script>
+    <script type="module" src="../api/dashboardApi.js"></script>
     <script>
         // Handle logout using Supabase
         async function handleLogout() {
@@ -635,7 +635,7 @@
         // Import dashboard API
         async function initializeDashboardAPI() {
             try {
-                const { dashboardAPI: api } = await import('../js/services/dashboardApi.js');
+                const { dashboardAPI: api } = await import('../api/dashboardApi.js');
                 dashboardAPI = api;
                 console.log('✅ Dashboard API loaded successfully');
                 return true;
@@ -1288,6 +1288,10 @@
         async function requireAuth() {
             const authenticated = await window.HogwartsAuth.isAuthenticated();
             if (!authenticated) {
+                if (window.HogwartsAuth?.getUserHouse) {
+                    const house = await window.HogwartsAuth.getUserHouse();
+                    console.log('[DASHBOARD] requireAuth -> no session, house:', house);
+                }
                 window.location.href = 'user_login.html?message=' + 
                     encodeURIComponent('Debes iniciar sesión para acceder a esta página') + 
                     '&type=warning';

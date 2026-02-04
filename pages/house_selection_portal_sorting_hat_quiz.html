@@ -699,17 +699,13 @@
                     }
                 } catch (error) {
                     console.error('Error guardando casa:', error);
-                    // Fallback to localStorage only
-                    localStorage.setItem('userHouse', selectedHouse);
-                    localStorage.setItem('selectedHouse', selectedHouse);
-                    localStorage.setItem('sortingDate', new Date().toISOString());
                 }
-            } else {
-                // Fallback if auth not available
-                localStorage.setItem('userHouse', selectedHouse);
-                localStorage.setItem('selectedHouse', selectedHouse);
-                localStorage.setItem('sortingDate', new Date().toISOString());
             }
+
+            // Siempre guardar en localStorage como respaldo
+            localStorage.setItem('userHouse', selectedHouse);
+            localStorage.setItem('selectedHouse', selectedHouse);
+            localStorage.setItem('sortingDate', new Date().toISOString());
             
             showResults(selectedHouse);
         }
