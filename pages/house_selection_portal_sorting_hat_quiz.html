@@ -7,9 +7,113 @@
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --wood-a: #180d0b;
+            --wood-b: #2b1612;
+            --wine: #2c1221;
+            --gold: #c7a765;
+            --cream: #efe0b8;
+        }
+        body.theme-selection {
+            font-family: 'Josefin Sans', sans-serif;
+            background:
+                linear-gradient(180deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.72)),
+                radial-gradient(circle at 20% -10%, rgba(116, 0, 1, 0.25), transparent 40%),
+                radial-gradient(circle at 85% 120%, rgba(41, 18, 33, 0.5), transparent 45%),
+                linear-gradient(160deg, var(--wood-a), var(--wood-b) 45%, var(--wine) 100%);
+            color: #f3dfba;
+        }
+        .theme-selection .font-headline,
+        .theme-selection h1,
+        .theme-selection h2,
+        .theme-selection h3,
+        .theme-selection h4,
+        .theme-selection .text-text-primary {
+            color: #f3dfba !important;
+        }
+        .theme-selection .text-text-secondary,
+        .theme-selection .text-gray-300,
+        .theme-selection .text-gray-400,
+        .theme-selection .text-gray-500 {
+            color: rgba(236,220,185,.84) !important;
+        }
+        .theme-selection .text-accent,
+        .theme-selection .text-ravenclaw {
+            color: #9fd4ff !important;
+        }
+        .theme-selection .bg-accent\/10,
+        .theme-selection .bg-ravenclaw\/10 {
+            background-color: rgba(159,212,255,.16) !important;
+        }
+        .theme-selection .border-accent,
+        .theme-selection .border-ravenclaw {
+            border-color: rgba(159,212,255,.56) !important;
+        }
+        .font-headline,.font-accent { font-family: 'Cinzel', serif !important; letter-spacing: .03em; }
+        nav {
+            background: linear-gradient(180deg, rgba(26, 12, 10, 0.97), rgba(14, 7, 6, 0.96)) !important;
+            border-bottom: 1px solid rgba(199, 167, 101, 0.35) !important;
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45), inset 0 -1px 0 rgba(199, 167, 101, 0.1);
+        }
+        nav .hidden.md\:flex.items-center.space-x-8 {
+            background: linear-gradient(180deg, rgba(20, 10, 8, 0.92), rgba(10, 5, 5, 0.88));
+            border: 1px solid rgba(199, 167, 101, 0.45);
+            border-radius: 999px;
+            padding: 0.62rem 1.25rem;
+            gap: 1rem;
+        }
+        nav a { letter-spacing: .08em; text-transform: uppercase; font-size: .79rem; }
+        nav .btn-primary {
+            background: linear-gradient(180deg, #cb1b1f, #8f1115) !important;
+            border: 1px solid #e36f6f !important;
+            color: #fff4dd !important;
+        }
+        .min-h-screen.bg-gradient-to-b {
+            background:
+                linear-gradient(180deg, rgba(13, 7, 6, 0.94), rgba(13, 7, 6, 0.98)),
+                repeating-linear-gradient(90deg, rgba(255,255,255,.01) 0 1px, transparent 1px 20px) !important;
+        }
+        #welcomeScreen .bg-surface\/20,
+        #quizScreen .bg-surface\/20,
+        #resultsScreen .bg-surface\/20 {
+            background: linear-gradient(180deg, rgba(24,12,10,.82), rgba(11,6,5,.82)) !important;
+            border: 1px solid rgba(199,167,101,.38) !important;
+            box-shadow: 0 18px 34px rgba(0,0,0,.45);
+            backdrop-filter: blur(4px);
+        }
+        .btn-secondary {
+            background: linear-gradient(180deg, rgba(53,27,17,.88), rgba(27,14,10,.88)) !important;
+            border: 1px solid rgba(199,167,101,.42) !important;
+            color: #f3e3bb !important;
+        }
+        .btn-secondary:hover { border-color: rgba(226,196,134,.72) !important; }
+        #answerOptions button {
+            background: rgba(22,11,9,.66) !important;
+            border: 1px solid rgba(199,167,101,.25) !important;
+            color: #f1e6c9 !important;
+        }
+        #answerOptions button:hover { border-color: rgba(199,167,101,.55) !important; transform: translateY(-2px); }
+        .text-gray-300,.text-gray-400 { color: rgba(236,220,185,.84) !important; }
+        /* Unique touch: ceremonial star shimmer */
+        #welcomeScreen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(1px 1px at 14% 20%, rgba(239,224,184,.45), transparent),
+                radial-gradient(1px 1px at 72% 26%, rgba(239,224,184,.35), transparent),
+                radial-gradient(1px 1px at 30% 72%, rgba(239,224,184,.35), transparent),
+                radial-gradient(1px 1px at 84% 64%, rgba(239,224,184,.4), transparent);
+            animation: selection-shimmer 6s ease-in-out infinite;
+        }
+        @keyframes selection-shimmer { 0%,100%{opacity:.45} 50%{opacity:.9} }
+    </style>
 
 </head>
-<body class="bg-background text-text-primary">
+<body class="bg-background text-text-primary theme-selection">
     <!-- Navigation Header -->
     <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

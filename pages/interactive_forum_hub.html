@@ -7,12 +7,133 @@
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
+        :root {
+            --forum-ink: #101318;
+            --forum-surface: #1a0f0d;
+            --forum-gold: #c7a765;
+        }
+        body.theme-forum {
+            font-family: 'Josefin Sans', sans-serif;
+            background:
+                linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.72)),
+                radial-gradient(circle at 82% -10%, rgba(79,132,204,.32), transparent 38%),
+                radial-gradient(circle at 18% 120%, rgba(159,212,255,.24), transparent 42%),
+                linear-gradient(160deg, #140b0a, #2a1410 42%, #1a2138 100%);
+            color: #f3dfba;
+        }
+        .theme-forum .font-headline,
+        .theme-forum h1,
+        .theme-forum h2,
+        .theme-forum h3,
+        .theme-forum h4,
+        .theme-forum .text-text-primary {
+            color: #f3dfba !important;
+        }
+        .theme-forum .text-text-secondary,
+        .theme-forum .text-gray-300,
+        .theme-forum .text-gray-400,
+        .theme-forum .text-gray-500 {
+            color: rgba(236,220,185,.84) !important;
+        }
+        .theme-forum .text-accent,
+        .theme-forum .text-ravenclaw {
+            color: #9fd4ff !important;
+        }
+        .theme-forum .bg-accent\/10,
+        .theme-forum .bg-ravenclaw\/10 {
+            background-color: rgba(159,212,255,.16) !important;
+        }
+        .theme-forum .border-accent,
+        .theme-forum .border-ravenclaw {
+            border-color: rgba(159,212,255,.56) !important;
+        }
+        .font-headline,.font-accent { font-family: 'Cinzel', serif !important; letter-spacing: .03em; }
         #onlineMembersSidebar {
             position: fixed;
             right: 16px;
             bottom: 16px;
             z-index: 50;
+        }
+        nav {
+            background: linear-gradient(180deg, rgba(26,12,10,.97), rgba(14,7,6,.96)) !important;
+            border-bottom: 1px solid rgba(199,167,101,.35) !important;
+            box-shadow: 0 12px 26px rgba(0,0,0,.45), inset 0 -1px 0 rgba(199,167,101,.1);
+        }
+        nav .hidden.md\:flex.items-center.space-x-8 {
+            background: linear-gradient(180deg, rgba(20,10,8,.92), rgba(10,5,5,.88));
+            border: 1px solid rgba(199,167,101,.45);
+            border-radius: 999px;
+            padding: .62rem 1.25rem;
+            gap: 1rem;
+        }
+        nav a { letter-spacing: .08em; text-transform: uppercase; font-size: .79rem; }
+        nav .btn-primary {
+            background: linear-gradient(180deg, #cb1b1f, #8f1115) !important;
+            border: 1px solid #e36f6f !important;
+            color: #fff4dd !important;
+        }
+        section.bg-gradient-to-r,
+        section.py-8 {
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(18,8,8,.9), rgba(10,6,8,.96)),
+                radial-gradient(circle at 90% 16%, rgba(159,212,255,.14), transparent 34%),
+                radial-gradient(circle at 10% 85%, rgba(79,132,204,.16), transparent 30%),
+                repeating-linear-gradient(90deg, rgba(255,255,255,.01) 0 1px, transparent 1px 22px) !important;
+        }
+        section.bg-gradient-to-r::after,
+        section.py-8::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 85% 18%, rgba(139, 197, 255, 0.28), transparent 36%),
+                radial-gradient(circle at 12% 82%, rgba(96, 165, 250, 0.24), transparent 34%),
+                linear-gradient(120deg, rgba(59, 130, 246, 0.08), transparent 42%);
+        }
+        section.bg-gradient-to-r > *,
+        section.py-8 > * {
+            position: relative;
+            z-index: 1;
+        }
+        .card {
+            background: linear-gradient(180deg, rgba(25,12,10,.9), rgba(13,7,6,.92)) !important;
+            border: 1px solid rgba(199,167,101,.24) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 12px 26px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.07);
+        }
+        .input-field, input[type="text"], select {
+            background: rgba(22,11,9,.82) !important;
+            border: 1px solid rgba(199,167,101,.32) !important;
+            color: #f3dfba !important;
+        }
+        .input-field::placeholder, input[type="text"]::placeholder { color: rgba(236,220,185,.62) !important; }
+        .bg-surface\/80,.bg-surface\/50,.hover\:bg-surface:hover {
+            background: rgba(30,15,11,.75) !important;
+            border-color: rgba(199,167,101,.22) !important;
+        }
+        .btn-secondary {
+            background: linear-gradient(180deg, rgba(53,27,17,.88), rgba(27,14,10,.88)) !important;
+            border: 1px solid rgba(199,167,101,.45) !important;
+            color: #f3e3bb !important;
+        }
+        .text-text-secondary,.text-gray-300,.text-gray-400,.text-gray-500 { color: rgba(236,220,185,.8) !important; }
+        /* Unique touch: left rule like parchment thread lane */
+        .lg\:col-span-3 .card { position: relative; overflow: hidden; }
+        .lg\:col-span-3 .card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, rgba(199,167,101,.75), rgba(116,0,1,.55));
+            opacity: .6;
         }
         @media (max-width: 768px) {
             #onlineMembersSidebar {
@@ -27,7 +148,7 @@
     </style>
 
 </head>
-<body class="bg-background text-text-primary">
+<body class="bg-background text-text-primary theme-forum">
     <!-- Navigation Header -->
     <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

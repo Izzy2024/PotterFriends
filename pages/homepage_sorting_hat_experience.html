@@ -7,48 +7,140 @@
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     
     <style>
-        /* Estilos para la sección hero con imagen de búho de fondo */
+        /* Estilos para la sección hero con video de fondo */
         .owl-hero-section {
-            background-image: 
-                linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.6) 30%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.6) 70%, rgba(0, 0, 0, 0.85) 100%),
-                linear-gradient(45deg, rgba(116, 0, 1, 0.4) 0%, rgba(201, 169, 97, 0.3) 50%, rgba(14, 26, 64, 0.4) 100%),
-                radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%),
-                url('../public/owl-6820989_1280.jpg');
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
             position: relative;
-            transition: all 0.8s ease-in-out;
+            background-color: #0a0a0a;
+            overflow: hidden;
         }
-        
-        /* Fallback para navegadores que no soporten background-attachment: fixed */
+
+        /* Video de fondo - fullscreen cover */
+        .hero-media {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 25% 25%, rgba(201, 169, 97, 0.08) 0%, transparent 45%),
+                linear-gradient(180deg, #0c0908 0%, #090706 100%);
+        }
+
+        .hero-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            transform: translateZ(0) scale(1.015);
+            will-change: transform, opacity, filter;
+            filter: contrast(1.08) saturate(1.06) brightness(0.9);
+            opacity: 0;
+            transition: opacity 0.7s ease, filter 0.45s ease;
+            backface-visibility: hidden;
+        }
+
+        .hero-video.is-ready {
+            opacity: 1;
+        }
+
+        .hero-video.is-enhanced {
+            filter: contrast(1.12) saturate(1.08) brightness(0.92);
+        }
+
+        /* Overlay oscuro sobre el video para legibilidad */
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.6) 0%,
+                rgba(0, 0, 0, 0.4) 40%,
+                rgba(0, 0, 0, 0.5) 70%,
+                rgba(0, 0, 0, 0.8) 100%
+            );
+            pointer-events: none;
+        }
+
+        /* Efectos mágicos sutiles sobre el video */
+        .hero-magic-effects {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(201, 169, 97, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(116, 0, 1, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+            animation: subtle-magic 12s ease-in-out infinite;
+        }
+
+        @keyframes subtle-magic {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        .hero-audio-toggle {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.75);
+            color: #ffffff;
+            border: 1px solid rgba(201, 169, 97, 0.5);
+            padding: 12px 20px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-audio-toggle::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(201, 169, 97, 0.8);
+            transition: background 0.25s ease;
+        }
+
+        .hero-audio-toggle[aria-pressed="true"]::before {
+            background: #22c55e;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+        }
+
+        .hero-audio-toggle:hover {
+            transform: translateY(-2px);
+            background: rgba(0, 0, 0, 0.85);
+            border-color: rgba(201, 169, 97, 0.8);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-audio-toggle:focus-visible {
+            outline: 2px solid rgba(201, 169, 97, 0.9);
+            outline-offset: 2px;
+        }
+
+        /* Responsive - disable fixed background on mobile */
         @media (max-width: 768px) {
-            .owl-hero-section {
-                background-attachment: scroll;
+            .hero-audio-toggle {
+                bottom: 16px;
+                right: 16px;
+                padding: 10px 16px;
+                font-size: 13px;
             }
         }
         
-        /* Efectos mágicos sobre la imagen de fondo */
-        .owl-hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(201, 169, 97, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(116, 0, 1, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(14, 26, 64, 0.1) 0%, transparent 70%);
-            animation: magical-aura 8s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        /* Partículas mágicas flotantes */
+        /* Efectos mágicos flotantes sutiles - solo partículas pequeñas */
         .owl-hero-section::after {
             content: '';
             position: absolute;
@@ -57,230 +149,1251 @@
             right: 0;
             bottom: 0;
             background-image: 
-                radial-gradient(2px 2px at 20% 30%, rgba(201, 169, 97, 0.8), transparent),
-                radial-gradient(2px 2px at 40% 70%, rgba(116, 0, 1, 0.6), transparent),
-                radial-gradient(1px 1px at 90% 40%, rgba(14, 26, 64, 0.7), transparent),
-                radial-gradient(1px 1px at 60% 10%, rgba(201, 169, 97, 0.5), transparent),
-                radial-gradient(2px 2px at 10% 80%, rgba(116, 0, 1, 0.4), transparent),
-                radial-gradient(1px 1px at 80% 90%, rgba(14, 26, 64, 0.6), transparent);
-            background-size: 300px 300px, 400px 400px, 200px 200px, 350px 350px, 250px 250px, 180px 180px;
-            animation: floating-particles 20s linear infinite;
+                radial-gradient(1.5px 1.5px at 20% 30%, rgba(201, 169, 97, 0.6), transparent),
+                radial-gradient(1px 1px at 60% 20%, rgba(201, 169, 97, 0.4), transparent),
+                radial-gradient(1.5px 1.5px at 80% 60%, rgba(201, 169, 97, 0.5), transparent),
+                radial-gradient(1px 1px at 40% 80%, rgba(201, 169, 97, 0.3), transparent);
+            background-size: 400px 400px;
+            animation: floating-particles 25s linear infinite;
             pointer-events: none;
-            z-index: 2;
-        }
-        
-        @keyframes magical-aura {
-            0%, 100% { 
-                opacity: 0.6;
-                transform: scale(1) rotate(0deg);
-            }
-            25% {
-                opacity: 0.8;
-                transform: scale(1.02) rotate(1deg);
-            }
-            50% { 
-                opacity: 1;
-                transform: scale(1.05) rotate(0deg);
-            }
-            75% {
-                opacity: 0.8;
-                transform: scale(1.02) rotate(-1deg);
-            }
+            z-index: 4;
+            opacity: 0.7;
         }
         
         @keyframes floating-particles {
             0% { 
-                transform: translateY(0px) rotate(0deg);
-                opacity: 0.7;
-            }
-            25% {
-                transform: translateY(-10px) rotate(90deg);
-                opacity: 1;
+                transform: translateY(0px);
+                opacity: 0.5;
             }
             50% { 
-                transform: translateY(-5px) rotate(180deg);
+                transform: translateY(-20px);
                 opacity: 0.8;
             }
-            75% {
-                transform: translateY(-15px) rotate(270deg);
-                opacity: 0.9;
-            }
             100% { 
-                transform: translateY(0px) rotate(360deg);
-                opacity: 0.7;
+                transform: translateY(0px);
+                opacity: 0.5;
             }
         }
         
-        /* Efectos de texto mejorados para máxima legibilidad */
+        /* Efectos de texto optimizados para video de fondo */
         .enhanced-text-shadow {
             text-shadow: 
-                3px 3px 0px rgba(0, 0, 0, 1),
-                -1px -1px 0px rgba(0, 0, 0, 1),
-                1px -1px 0px rgba(0, 0, 0, 1),
-                -1px 1px 0px rgba(0, 0, 0, 1),
-                0 0 10px rgba(0, 0, 0, 0.8),
-                0 0 20px rgba(201, 169, 97, 0.6),
-                0 0 40px rgba(201, 169, 97, 0.4),
-                0 0 60px rgba(116, 0, 1, 0.3);
+                0 2px 4px rgba(0, 0, 0, 0.9),
+                0 4px 8px rgba(0, 0, 0, 0.7),
+                0 8px 16px rgba(0, 0, 0, 0.5);
         }
         
         .magical-text-glow {
-            animation: magical-text-pulse 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(201, 169, 97, 0.8));
+            animation: magical-text-pulse 4s ease-in-out infinite;
+            text-shadow: 
+                0 0 20px rgba(201, 169, 97, 0.8),
+                0 0 40px rgba(201, 169, 97, 0.5),
+                0 2px 4px rgba(0, 0, 0, 0.9);
         }
         
         @keyframes magical-text-pulse {
             0%, 100% { 
-                filter: drop-shadow(0 0 10px rgba(201, 169, 97, 0.8));
-                transform: scale(1);
+                text-shadow: 
+                    0 0 20px rgba(201, 169, 97, 0.6),
+                    0 0 40px rgba(201, 169, 97, 0.3),
+                    0 2px 4px rgba(0, 0, 0, 0.9);
             }
             50% { 
-                filter: drop-shadow(0 0 20px rgba(201, 169, 97, 1)) drop-shadow(0 0 30px rgba(201, 169, 97, 0.6));
-                transform: scale(1.02);
+                text-shadow: 
+                    0 0 30px rgba(201, 169, 97, 0.9),
+                    0 0 60px rgba(201, 169, 97, 0.5),
+                    0 2px 4px rgba(0, 0, 0, 0.9);
             }
         }
         
-        /* Contenedor de texto hero mejorado */
+        /* Contenedor de texto hero - mismo estilo que stats cards */
         .hero-text-container {
             position: relative;
-            backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(201, 169, 97, 0.4);
             box-shadow: 
-                0 25px 50px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 50px rgba(201, 169, 97, 0.2);
-            transition: all 0.3s ease-in-out;
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
         }
         
         .hero-text-container:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
+            border-color: rgba(201, 169, 97, 0.7);
             box-shadow: 
-                0 35px 70px rgba(0, 0, 0, 0.6),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                0 0 80px rgba(201, 169, 97, 0.4);
+                0 30px 80px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
         
-        /* Efectos de partículas flotantes mejorados */
+        /* Partículas flotantes elegantes - reducidas para video */
         .floating-orb {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(201, 169, 97, 0.8) 0%, rgba(201, 169, 97, 0.4) 50%, transparent 100%);
-            filter: blur(1px);
-            animation: float-magical 8s ease-in-out infinite;
+            background: radial-gradient(circle, rgba(201, 169, 97, 0.6) 0%, transparent 70%);
+            filter: blur(2px);
+            animation: float-gentle 10s ease-in-out infinite;
+            pointer-events: none;
         }
+
+        .orb-1 { width: 12px; height: 12px; top: 15%; left: 10%; animation-delay: 0s; }
+        .orb-2 { width: 10px; height: 10px; top: 25%; right: 15%; animation-delay: 2s; }
+        .orb-3 { width: 14px; height: 14px; top: 70%; left: 8%; animation-delay: 4s; }
+        .orb-4 { width: 10px; height: 10px; top: 80%; right: 12%; animation-delay: 6s; }
         
-        .orb-1 { width: 20px; height: 20px; top: 10%; left: 15%; animation-delay: 0s; }
-        .orb-2 { width: 15px; height: 15px; top: 20%; right: 20%; animation-delay: 1s; background: radial-gradient(circle, rgba(116, 0, 1, 0.8) 0%, rgba(116, 0, 1, 0.4) 50%, transparent 100%); }
-        .orb-3 { width: 25px; height: 25px; top: 60%; left: 10%; animation-delay: 2s; background: radial-gradient(circle, rgba(14, 26, 64, 0.8) 0%, rgba(14, 26, 64, 0.4) 50%, transparent 100%); }
-        .orb-4 { width: 18px; height: 18px; top: 70%; right: 15%; animation-delay: 3s; }
-        .orb-5 { width: 12px; height: 12px; top: 30%; left: 50%; animation-delay: 4s; background: radial-gradient(circle, rgba(116, 0, 1, 0.8) 0%, rgba(116, 0, 1, 0.4) 50%, transparent 100%); }
-        .orb-6 { width: 22px; height: 22px; top: 80%; left: 70%; animation-delay: 5s; background: radial-gradient(circle, rgba(14, 26, 64, 0.8) 0%, rgba(14, 26, 64, 0.4) 50%, transparent 100%); }
-        
+        /* Sparkles sutiles */
         .sparkle {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(201, 169, 97, 0.9);
+            width: 3px;
+            height: 3px;
+            background: rgba(201, 169, 97, 0.8);
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(201, 169, 97, 0.8);
-            animation: sparkle-twinkle 3s ease-in-out infinite;
+            animation: sparkle-twinkle 4s ease-in-out infinite;
+            pointer-events: none;
         }
+
+        .sparkle-1 { top: 20%; left: 20%; animation-delay: 0s; }
+        .sparkle-2 { top: 30%; right: 25%; animation-delay: 1s; }
+        .sparkle-3 { top: 60%; left: 15%; animation-delay: 2s; }
+        .sparkle-4 { top: 75%; right: 20%; animation-delay: 3s; }
         
-        .sparkle-1 { top: 15%; left: 25%; animation-delay: 0s; }
-        .sparkle-2 { top: 25%; right: 30%; animation-delay: 0.5s; background: rgba(116, 0, 1, 0.9); box-shadow: 0 0 10px rgba(116, 0, 1, 0.8); }
-        .sparkle-3 { top: 45%; left: 20%; animation-delay: 1s; background: rgba(14, 26, 64, 0.9); box-shadow: 0 0 10px rgba(14, 26, 64, 0.8); }
-        .sparkle-4 { top: 55%; right: 25%; animation-delay: 1.5s; }
-        .sparkle-5 { top: 75%; left: 30%; animation-delay: 2s; background: rgba(116, 0, 1, 0.9); box-shadow: 0 0 10px rgba(116, 0, 1, 0.8); }
-        .sparkle-6 { top: 35%; right: 40%; animation-delay: 2.5s; background: rgba(14, 26, 64, 0.9); box-shadow: 0 0 10px rgba(14, 26, 64, 0.8); }
-        .sparkle-7 { top: 65%; left: 60%; animation-delay: 3s; }
-        .sparkle-8 { top: 85%; right: 35%; animation-delay: 3.5s; background: rgba(116, 0, 1, 0.9); box-shadow: 0 0 10px rgba(116, 0, 1, 0.8); }
-        
-        @keyframes float-magical {
+        @keyframes float-gentle {
             0%, 100% { 
-                transform: translateY(0px) translateX(0px) scale(1);
-                opacity: 0.6;
-            }
-            25% {
-                transform: translateY(-20px) translateX(10px) scale(1.1);
-                opacity: 0.8;
+                transform: translateY(0) translateX(0);
+                opacity: 0.4;
             }
             50% { 
-                transform: translateY(-10px) translateX(-5px) scale(1.2);
-                opacity: 1;
-            }
-            75% {
-                transform: translateY(-30px) translateX(15px) scale(1.1);
-                opacity: 0.9;
+                transform: translateY(-15px) translateX(5px);
+                opacity: 0.7;
             }
         }
         
         @keyframes sparkle-twinkle {
             0%, 100% { 
-                opacity: 0.3;
+                opacity: 0.2;
                 transform: scale(0.8);
             }
-            25% {
-                opacity: 0.8;
-                transform: scale(1.2);
-            }
             50% { 
-                opacity: 1;
-                transform: scale(1.5);
-            }
-            75% {
-                opacity: 0.6;
-                transform: scale(1.1);
+                opacity: 0.9;
+                transform: scale(1.2);
             }
         }
         
-        /* Asegurar que el contenido esté por encima de los efectos */
+        /* Contenido sobre el video */
         .owl-hero-section .relative {
             z-index: 10;
             position: relative;
         }
         
-        /* Efectos hover para toda la sección */
-        .owl-hero-section:hover::before {
-            animation-duration: 4s;
-        }
-        
-        .owl-hero-section:hover::after {
-            animation-duration: 10s;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 1024px) {
-            .owl-hero-section {
-                background-size: cover;
-                background-position: center top;
-            }
-        }
-        
+        /* Responsive hero */
         @media (max-width: 768px) {
             .owl-hero-section {
-                background-size: cover;
-                background-position: center center;
-                min-height: 80vh;
+                min-height: 85vh;
+            }
+            
+            .hero-text-container {
+                padding: 1.5rem;
             }
         }
         
         @media (max-width: 480px) {
             .owl-hero-section {
-                min-height: 70vh;
+                min-height: 80vh;
             }
         }
+        
+        /* Respeta prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            .floating-orb,
+            .sparkle,
+            .owl-hero-section::after,
+            .hero-magic-effects,
+            .magical-text-glow {
+                animation: none;
+            }
+
+            .hero-video {
+                transition: none;
+                transform: none;
+            }
+        }
+
+        /* ========== SECCIONES INMERSIVAS HOGWARTS ========== */
+        /* Design System: Dark OLED (#0D0D0D) + Skeuomorphism */
+        /* Typography: Cinzel (headings) + Josefin Sans (body) */
+        /* Transitions: 200-300ms ease-out only */
+        
+        /* ---- Gran Comedor Section (DONE - preserved) ---- */
+        .section-great-hall {
+            background: linear-gradient(180deg, 
+                #0a0a0a 0%, 
+                #0D0D0D 30%,
+                #111111 60%,
+                #0a0a0a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-great-hall::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 10% 20%, rgba(202, 138, 4, 0.06) 0%, transparent 40%),
+                radial-gradient(ellipse at 90% 80%, rgba(202, 138, 4, 0.04) 0%, transparent 40%);
+            pointer-events: none;
+            animation: ambient-glow 8s ease-in-out infinite;
+        }
+        
+        /* Floating candles (Great Hall only) */
+        .floating-candles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .candle {
+            position: absolute;
+            width: 4px;
+            background: linear-gradient(to top, #c9a961 0%, #ffd700 50%, #fff8dc 100%);
+            border-radius: 2px 2px 0 0;
+            box-shadow: 
+                0 -5px 15px rgba(255, 215, 0, 0.6),
+                0 -10px 30px rgba(255, 165, 0, 0.4),
+                0 0 20px rgba(201, 169, 97, 0.3);
+            animation: candle-float 6s ease-in-out infinite;
+        }
+        
+        .candle::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 10px;
+            background: radial-gradient(ellipse, #fff8dc 0%, #ffd700 40%, transparent 70%);
+            border-radius: 50% 50% 20% 20%;
+            animation: flame-flicker 0.5s ease-in-out infinite alternate;
+        }
+        
+        .candle-1 { height: 30px; top: 5%; left: 8%; animation-delay: 0s; }
+        .candle-2 { height: 25px; top: 8%; left: 20%; animation-delay: 1s; }
+        .candle-3 { height: 35px; top: 3%; left: 35%; animation-delay: 2s; }
+        .candle-4 { height: 28px; top: 6%; left: 50%; animation-delay: 0.5s; }
+        .candle-5 { height: 32px; top: 4%; left: 65%; animation-delay: 1.5s; }
+        .candle-6 { height: 26px; top: 7%; left: 80%; animation-delay: 2.5s; }
+        .candle-7 { height: 30px; top: 5%; left: 92%; animation-delay: 3s; }
+        
+        @keyframes candle-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes flame-flicker {
+            0% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+            100% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+        }
+        
+        @keyframes ambient-glow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        /* ---- Reusable Card: magic-card (skeuomorphic) ---- */
+        .magic-card {
+            background: #0D0D0D;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.4),
+                0 4px 8px rgba(0, 0, 0, 0.3),
+                0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .magic-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
+            pointer-events: none;
+        }
+        
+        .magic-card:hover {
+            border-color: rgba(202, 138, 4, 0.25);
+            transform: translateY(-4px);
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                0 8px 16px rgba(0, 0, 0, 0.4),
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(202, 138, 4, 0.08);
+        }
+        
+        /* ---- House Standings Section ---- */
+        .section-common-room {
+            background: linear-gradient(180deg, #0D0D0D 0%, #110f0a 50%, #0D0D0D 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-common-room::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 0%, rgba(202, 138, 4, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(116, 0, 1, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        /* House cards - skeuomorphic with realistic layered shadows */
+        .house-card {
+            background: #111111;
+            border-radius: 12px;
+            transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.4),
+                0 4px 8px rgba(0, 0, 0, 0.3),
+                0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .house-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.015) 0%, transparent 50%);
+            pointer-events: none;
+            border-radius: 12px;
+        }
+        
+        .house-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .house-card-gryffindor {
+            border: 1px solid rgba(116, 0, 1, 0.2);
+        }
+        .house-card-gryffindor:hover {
+            border-color: rgba(116, 0, 1, 0.5);
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                0 8px 16px rgba(0, 0, 0, 0.4),
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(116, 0, 1, 0.08);
+        }
+        
+        .house-card-slytherin {
+            border: 1px solid rgba(26, 71, 42, 0.2);
+        }
+        .house-card-slytherin:hover {
+            border-color: rgba(26, 71, 42, 0.5);
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                0 8px 16px rgba(0, 0, 0, 0.4),
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(26, 71, 42, 0.08);
+        }
+        
+        .house-card-ravenclaw {
+            border: 1px solid rgba(14, 26, 64, 0.25);
+        }
+        .house-card-ravenclaw:hover {
+            border-color: rgba(14, 26, 64, 0.6);
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                0 8px 16px rgba(0, 0, 0, 0.4),
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(14, 26, 64, 0.1);
+        }
+        
+        .house-card-hufflepuff {
+            border: 1px solid rgba(238, 186, 48, 0.15);
+        }
+        .house-card-hufflepuff:hover {
+            border-color: rgba(238, 186, 48, 0.5);
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                0 8px 16px rgba(0, 0, 0, 0.4),
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(238, 186, 48, 0.06);
+        }
+        
+        /* House points progress bar */
+        .house-progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.04);
+            overflow: hidden;
+        }
+        .house-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.8s ease-out;
+        }
+        
+        /* ---- Testimonials Section ---- */
+        .section-library {
+            background: linear-gradient(180deg, #0D0D0D 0%, #0d0a0f 50%, #0D0D0D 100%);
+            position: relative;
+        }
+        
+        .section-library::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 25% 20%, rgba(202, 138, 4, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 75% 80%, rgba(100, 50, 120, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        /* Testimonial quote decoration */
+        .testimonial-quote {
+            position: relative;
+        }
+        .testimonial-quote::before {
+            content: '\201C';
+            position: absolute;
+            top: -12px;
+            left: -4px;
+            font-family: 'Cinzel', serif;
+            font-size: 4rem;
+            line-height: 1;
+            color: rgba(202, 138, 4, 0.15);
+            pointer-events: none;
+        }
+        
+        /* ---- Quick Access / Explore Section ---- */
+        .section-marauders-map {
+            background: linear-gradient(180deg, #0D0D0D 0%, #0a0d11 50%, #0D0D0D 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-marauders-map::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(202, 138, 4, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(202, 138, 4, 0.015) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+        
+        .explore-card {
+            background: #111111;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
+            position: relative;
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.4),
+                0 4px 8px rgba(0, 0, 0, 0.3),
+                0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .explore-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.015) 0%, transparent 40%);
+            pointer-events: none;
+            border-radius: 12px;
+        }
+        
+        .explore-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(202, 138, 4, 0.2);
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                0 8px 16px rgba(0, 0, 0, 0.4),
+                0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* ---- Section titles (static gold, no animation) ---- */
+        .magical-title {
+            font-family: 'Cinzel', serif;
+            color: #CA8A04;
+            text-shadow: 0 0 20px rgba(202, 138, 4, 0.2);
+        }
+        
+        /* ---- Text utilities ---- */
+        .text-glow-gold {
+            color: #CA8A04;
+            text-shadow: 0 0 8px rgba(202, 138, 4, 0.3);
+        }
+        
+        .text-glow-white {
+            color: #E0E0E0;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+        }
+        
+        /* ---- Font assignments ---- */
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-josefin { font-family: 'Josefin Sans', sans-serif; }
+
+        /* ---- Global floating sparkles ---- */
+        .page-sparkles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .page-sparkle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            background: rgba(202, 138, 4, 0.6);
+            box-shadow: 0 0 4px rgba(202, 138, 4, 0.4);
+            animation: sparkle-drift linear infinite;
+        }
+        .page-sparkle.white {
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+        }
+        .page-sparkle.small {
+            width: 1px;
+            height: 1px;
+        }
+        .page-sparkle.large {
+            width: 3px;
+            height: 3px;
+        }
+        @keyframes sparkle-drift {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-20px) translateX(30px);
+                opacity: 0;
+            }
+        }
+
+        /* ========== DIAGON ALLEY ELEGANT THEME (SIN IMAGENES NUEVAS) ========== */
+        :root {
+            --alley-wood-deep: #160b0a;
+            --alley-wood-mid: #2a1410;
+            --alley-wood-wine: #2f1322;
+            --alley-gold: #c7a765;
+            --alley-gold-soft: #8d7142;
+            --alley-cream: #efe0b8;
+            --alley-red: #b61317;
+            --alley-red-deep: #6b0e12;
+        }
+
+        body {
+            background:
+                linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.7)),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.01) 0px,
+                    rgba(255, 255, 255, 0.01) 2px,
+                    transparent 2px,
+                    transparent 18px
+                ),
+                radial-gradient(circle at 30% -20%, #4a2319 0%, transparent 45%),
+                radial-gradient(circle at 100% 120%, #301123 0%, transparent 50%),
+                linear-gradient(160deg, var(--alley-wood-deep), var(--alley-wood-mid) 45%, var(--alley-wood-wine) 100%);
+            color: #f1e6c9;
+        }
+
+        nav {
+            background: linear-gradient(180deg, rgba(26, 12, 10, 0.97), rgba(14, 7, 6, 0.96)) !important;
+            border-bottom: 1px solid rgba(199, 167, 101, 0.35) !important;
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45), inset 0 -1px 0 rgba(199, 167, 101, 0.1);
+            backdrop-filter: blur(9px);
+        }
+
+        nav a {
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.79rem;
+        }
+
+        nav .btn-primary,
+        #authButton a {
+            background: linear-gradient(180deg, #cb1b1f, #8f1115);
+            border: 1px solid #e36f6f;
+            color: #fff4dd;
+            box-shadow: 0 6px 16px rgba(130, 10, 13, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+        }
+
+        nav .btn-primary:hover,
+        #authButton a:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.06);
+        }
+
+        .owl-hero-section {
+            border-bottom: 1px solid rgba(199, 167, 101, 0.25);
+        }
+
+        .hero-overlay {
+            background: linear-gradient(
+                to bottom,
+                rgba(5, 1, 1, 0.65) 0%,
+                rgba(16, 6, 4, 0.53) 40%,
+                rgba(24, 10, 8, 0.72) 75%,
+                rgba(10, 4, 3, 0.9) 100%
+            );
+        }
+
+        .owl-hero-section .text-center > div:first-child {
+            background:
+                linear-gradient(180deg, rgba(21, 10, 8, 0.87), rgba(10, 5, 4, 0.83)),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.012) 0px,
+                    rgba(255, 255, 255, 0.012) 1px,
+                    transparent 1px,
+                    transparent 16px
+                ) !important;
+            border: 1px solid rgba(199, 167, 101, 0.45) !important;
+            box-shadow:
+                0 24px 58px rgba(0, 0, 0, 0.52),
+                0 0 0 1px rgba(199, 167, 101, 0.1) inset,
+                inset 0 1px 0 rgba(255, 255, 255, 0.07);
+            border-radius: 16px !important;
+        }
+
+        .owl-hero-section .text-center > div:first-child h1 {
+            letter-spacing: 0.03em;
+        }
+
+        .owl-hero-section .grid.grid-cols-2.md\:grid-cols-4 > div {
+            background:
+                linear-gradient(180deg, rgba(27, 13, 10, 0.88), rgba(14, 7, 6, 0.85)) !important;
+            border: 1px solid rgba(199, 167, 101, 0.34) !important;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+            border-radius: 14px !important;
+        }
+
+        .owl-hero-section .grid.grid-cols-2.md\:grid-cols-4 > div:hover {
+            border-color: rgba(199, 167, 101, 0.62) !important;
+            transform: translateY(-3px);
+        }
+
+        .owl-hero-section .pt-8 > a {
+            background: linear-gradient(180deg, #da1b1f, #9f1216) !important;
+            color: #f9efd2 !important;
+            border: 1px solid #f06666 !important;
+            border-radius: 11px !important;
+            box-shadow: 0 10px 26px rgba(113, 13, 17, 0.55), 0 0 0 2px rgba(255, 212, 136, 0.08) inset !important;
+        }
+
+        .owl-hero-section .pt-8 > a:hover {
+            filter: brightness(1.05);
+            transform: translateY(-2px) !important;
+        }
+
+        .hero-audio-toggle {
+            background: rgba(18, 9, 8, 0.82);
+            border-color: rgba(199, 167, 101, 0.55);
+            color: #f1e2ba;
+        }
+
+        .section-great-hall,
+        .section-common-room,
+        .section-library,
+        .section-marauders-map {
+            background:
+                linear-gradient(180deg, rgba(24, 10, 8, 0.96), rgba(13, 6, 6, 0.97)),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.01) 0px,
+                    rgba(255, 255, 255, 0.01) 1px,
+                    transparent 1px,
+                    transparent 22px
+                );
+        }
+
+        .magical-title {
+            color: #f2dec1 !important;
+            text-shadow: 0 3px 12px rgba(0, 0, 0, 0.7), 0 0 22px rgba(199, 167, 101, 0.24);
+            letter-spacing: 0.04em;
+        }
+
+        .magic-card,
+        .explore-card,
+        .house-card {
+            background:
+                linear-gradient(180deg, rgba(25, 12, 10, 0.9), rgba(13, 7, 6, 0.92)) !important;
+            border: 1px solid rgba(199, 167, 101, 0.24) !important;
+            box-shadow:
+                0 12px 26px rgba(0, 0, 0, 0.42),
+                inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.55);
+            border-radius: 14px !important;
+        }
+
+        .magic-card:hover,
+        .explore-card:hover,
+        .house-card:hover {
+            border-color: rgba(199, 167, 101, 0.52) !important;
+            box-shadow:
+                0 20px 36px rgba(0, 0, 0, 0.52),
+                0 0 0 1px rgba(199, 167, 101, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.09);
+        }
+
+        .house-card .font-cinzel.text-2xl {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(199, 167, 101, 0.45);
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.4));
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12), 0 6px 12px rgba(0, 0, 0, 0.45);
+        }
+
+        .house-progress-bar {
+            background: rgba(255, 245, 225, 0.08);
+            border: 1px solid rgba(199, 167, 101, 0.15);
+        }
+
+        .explore-card a {
+            background: linear-gradient(180deg, rgba(53, 27, 17, 0.88), rgba(27, 14, 10, 0.88)) !important;
+            border: 1px solid rgba(199, 167, 101, 0.4) !important;
+            color: #f3e3bb !important;
+        }
+
+        .explore-card a:hover {
+            border-color: rgba(226, 196, 134, 0.72) !important;
+            background: linear-gradient(180deg, rgba(66, 34, 21, 0.9), rgba(36, 17, 11, 0.9)) !important;
+        }
+
+        footer {
+            background:
+                linear-gradient(180deg, rgba(12, 6, 6, 0.98), rgba(6, 3, 3, 0.98)) !important;
+            border-top: 1px solid rgba(199, 167, 101, 0.25) !important;
+        }
+
+        footer h3,
+        footer h4,
+        footer .font-cinzel {
+            color: #f3ddbb !important;
+        }
+
+        @media (max-width: 768px) {
+            .owl-hero-section .text-center > div:first-child {
+                margin-bottom: 48px !important;
+                padding: 1.4rem !important;
+            }
+        }
+
+        /* ========== REFINAMIENTO VISUAL TIPO REFERENCIA ========== */
+        @media (min-width: 768px) {
+            nav .hidden.md\:flex.items-center.space-x-8 {
+                background: linear-gradient(180deg, rgba(20, 10, 8, 0.92), rgba(10, 5, 5, 0.88));
+                border: 1px solid rgba(199, 167, 101, 0.45);
+                border-radius: 999px;
+                padding: 0.62rem 1.25rem;
+                gap: 1.05rem;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.45);
+            }
+        }
+
+        nav .text-primary.font-medium.border-b-2 {
+            border-color: rgba(199, 167, 101, 0.95) !important;
+            color: #f3deb7 !important;
+        }
+
+        .owl-hero-section .text-center > div:first-child p {
+            color: #f7e9cb !important;
+        }
+
+        .owl-hero-section .grid.grid-cols-2.md\:grid-cols-4 > div .text-white.font-semibold.text-sm {
+            color: #efdcb2 !important;
+            letter-spacing: 0.02em;
+        }
+
+        .section-great-hall .magic-card h3,
+        .section-library .magic-card h4,
+        .section-marauders-map .explore-card h3 {
+            color: #f3dfba !important;
+        }
+
+        .section-great-hall .magic-card p,
+        .section-library .magic-card blockquote,
+        .section-marauders-map .explore-card p,
+        .section-common-room p {
+            color: rgba(236, 220, 185, 0.82) !important;
+        }
+
+        .section-common-room .house-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-common-room .house-card::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 34%;
+            background: linear-gradient(180deg, rgba(239, 224, 184, 0.04), rgba(239, 224, 184, 0.1));
+            pointer-events: none;
+        }
+
+        .section-common-room .house-card .font-josefin.text-2xl.font-bold.text-white {
+            color: #f7e8c6 !important;
+        }
+
+        .section-library .magic-card {
+            border-left: 2px solid rgba(199, 167, 101, 0.48) !important;
+        }
+
+        .section-marauders-map .explore-card .border-t-2 {
+            border-top-color: rgba(199, 167, 101, 0.88) !important;
+        }
+
+        footer .grid.md\:grid-cols-4 > div h4 {
+            color: #f1dbb2 !important;
+            letter-spacing: 0.04em;
+        }
+
+        /* ========== PASADA 3: AJUSTE FINO ========== */
+        .font-headline,
+        .font-cinzel {
+            letter-spacing: 0.035em;
+        }
+
+        .font-josefin,
+        .font-body {
+            letter-spacing: 0.01em;
+        }
+
+        .max-w-7xl {
+            max-width: 1220px;
+        }
+
+        .section-great-hall .grid,
+        .section-common-room .grid,
+        .section-library .grid,
+        .section-marauders-map .grid {
+            gap: 1.5rem !important;
+        }
+
+        .magic-card,
+        .explore-card,
+        .house-card {
+            border-radius: 12px !important;
+        }
+
+        .section-great-hall .magic-card,
+        .section-library .magic-card,
+        .section-marauders-map .explore-card {
+            padding: 1.7rem !important;
+        }
+
+        .section-common-room .house-card {
+            padding: 1.35rem !important;
+        }
+
+        .section-common-room .house-card .font-cinzel.text-lg {
+            font-size: 1.06rem;
+        }
+
+        .section-common-room .house-card .font-josefin.text-xs.uppercase {
+            color: rgba(240, 220, 178, 0.75) !important;
+        }
+
+        .section-common-room .house-card .mt-4.pt-4 {
+            border-top-color: rgba(199, 167, 101, 0.18) !important;
+        }
+
+        .section-great-hall .magic-card span.text-xs.text-gray-500,
+        .section-common-room .house-card p.font-josefin.text-xs.text-gray-600,
+        .section-library .magic-card span.font-josefin.text-xs.text-gray-500 {
+            color: rgba(208, 185, 140, 0.7) !important;
+        }
+
+        .section-marauders-map .explore-card a,
+        .section-common-room .text-center.mt-12 a {
+            border-radius: 999px !important;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .section-marauders-map .explore-card a svg,
+        .section-common-room .text-center.mt-12 a svg {
+            transition: transform 0.2s ease;
+        }
+
+        .section-marauders-map .explore-card a:hover svg,
+        .section-common-room .text-center.mt-12 a:hover svg {
+            transform: translateX(2px);
+        }
+
+        .owl-hero-section .pt-8 > a {
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            font-size: 0.95rem !important;
+            padding-left: 2.1rem !important;
+            padding-right: 2.1rem !important;
+        }
+
+        .owl-hero-section .pt-8 > a svg {
+            width: 1.15rem;
+            height: 1.15rem;
+        }
+
+        .hero-audio-toggle {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .page-sparkle {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 1024px) {
+            .max-w-7xl {
+                max-width: 95%;
+            }
+        }
+
+        /* ========== ESPACIADO UX + SEPARADORES ENTRE SECCIONES ========== */
+        /* Más aire visual para lectura/escaneo (UX) y estructura clara por bloques (SEO semántico percibido). */
+        .owl-hero-section .relative.z-10.max-w-7xl {
+            padding-top: 8.5rem !important;
+            padding-bottom: 7rem !important;
+        }
+
+        .section-great-hall,
+        .section-common-room,
+        .section-library,
+        .section-marauders-map {
+            padding-top: 8.25rem !important;
+            padding-bottom: 8.25rem !important;
+            position: relative;
+        }
+
+        /* Separador ornamental entre secciones */
+        .section-common-room::after,
+        .section-library::after,
+        .section-marauders-map::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(88vw, 1040px);
+            height: 18px;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at center, rgba(199, 167, 101, 0.34) 0%, rgba(199, 167, 101, 0.08) 36%, transparent 70%),
+                linear-gradient(90deg, transparent 0%, rgba(199, 167, 101, 0.62) 20%, rgba(240, 220, 178, 0.78) 50%, rgba(199, 167, 101, 0.62) 80%, transparent 100%);
+            mask: linear-gradient(to bottom, rgba(0, 0, 0, 0.98), rgba(0, 0, 0, 0.25));
+            opacity: 0.9;
+        }
+
+        .section-great-hall .text-center.mb-16,
+        .section-common-room .text-center.mb-16,
+        .section-library .text-center.mb-16,
+        .section-marauders-map .text-center.mb-16 {
+            margin-bottom: 4.25rem !important;
+        }
+
+        .section-common-room .text-center.mt-12,
+        .section-great-hall .text-center.mt-12,
+        .section-library .text-center.mt-12,
+        .section-marauders-map .text-center.mt-12 {
+            margin-top: 4rem !important;
+        }
+
+        footer {
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 1024px) {
+            .owl-hero-section .relative.z-10.max-w-7xl {
+                padding-top: 7.25rem !important;
+                padding-bottom: 5.5rem !important;
+            }
+
+            .section-great-hall,
+            .section-common-room,
+            .section-library,
+            .section-marauders-map {
+                padding-top: 6.5rem !important;
+                padding-bottom: 6.5rem !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .owl-hero-section .relative.z-10.max-w-7xl {
+                padding-top: 6.25rem !important;
+                padding-bottom: 4.75rem !important;
+            }
+
+            .section-great-hall,
+            .section-common-room,
+            .section-library,
+            .section-marauders-map {
+                padding-top: 5.25rem !important;
+                padding-bottom: 5.25rem !important;
+            }
+
+            .section-great-hall .text-center.mb-16,
+            .section-common-room .text-center.mb-16,
+            .section-library .text-center.mb-16,
+            .section-marauders-map .text-center.mb-16 {
+                margin-bottom: 3rem !important;
+            }
+        }
+
+        /* ========== HERO SPLIT (MEDIA + DATOS) ========== */
+        .hero-split-section {
+            min-height: auto !important;
+            padding-top: 7rem;
+            padding-bottom: 5rem;
+            border-bottom: 1px solid rgba(199, 167, 101, 0.2);
+        }
+
+        .hero-split-section .relative.z-10.max-w-7xl {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        .hero-split-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+            gap: 2rem;
+            align-items: stretch;
+        }
+
+        .hero-motion-frame {
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px;
+            border: 1px solid rgba(199, 167, 101, 0.45);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            min-height: 560px;
+            background: linear-gradient(180deg, rgba(20, 10, 8, 0.9), rgba(8, 4, 4, 0.9));
+        }
+
+        .hero-motion-frame::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(199, 167, 101, 0.12) 0%, transparent 45%),
+                linear-gradient(180deg, rgba(12, 5, 5, 0.15) 0%, rgba(8, 2, 2, 0.45) 100%);
+        }
+
+        .hero-motion-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            opacity: 0;
+            transform: scale(1.02);
+            transition: opacity 0.7s ease, transform 0.7s ease, filter 0.4s ease;
+            filter: saturate(1.05) contrast(1.08) brightness(0.92);
+            will-change: opacity, transform;
+        }
+
+        .hero-motion-image.is-ready {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .hero-copy-panel {
+            background: linear-gradient(180deg, rgba(21, 10, 8, 0.86), rgba(10, 5, 4, 0.86));
+            border: 1px solid rgba(199, 167, 101, 0.38);
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .hero-copy-panel h1 {
+            margin: 0;
+        }
+
+        .hero-copy-panel p {
+            margin: 0;
+            max-width: 62ch;
+        }
+
+        .hero-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.9rem;
+        }
+
+        .hero-stat-card {
+            background: linear-gradient(180deg, rgba(29, 14, 10, 0.88), rgba(14, 7, 6, 0.88));
+            border: 1px solid rgba(199, 167, 101, 0.32);
+            border-radius: 12px;
+            padding: 0.95rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        }
+
+        .hero-stat-card:hover {
+            border-color: rgba(199, 167, 101, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .hero-split-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            align-self: flex-start;
+            margin-top: 0.5rem;
+            background: linear-gradient(180deg, #d41f24 0%, #9e1317 100%) !important;
+            color: #fff2d8 !important;
+            border: 1px solid rgba(240, 146, 146, 0.8);
+            box-shadow:
+                0 12px 30px rgba(128, 14, 18, 0.55),
+                0 0 0 1px rgba(255, 220, 150, 0.08) inset;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease, background 0.25s ease;
+        }
+
+        .hero-split-cta:hover {
+            background: linear-gradient(180deg, #ef3a40 0%, #b7171c 100%) !important;
+            color: #fff7e7 !important;
+            transform: translateY(-3px);
+            box-shadow:
+                0 16px 34px rgba(128, 14, 18, 0.62),
+                0 0 22px rgba(239, 58, 64, 0.34),
+                0 0 0 1px rgba(255, 223, 158, 0.16) inset;
+            filter: saturate(1.08);
+        }
+
+        .hero-split-cta:focus-visible {
+            outline: 2px solid rgba(255, 217, 149, 0.95);
+            outline-offset: 2px;
+        }
+
+
+        /* ========== NAV BRAND LOGO (MAGICAL) ========== */
+        .brand-mark {
+            width: 2.6rem;
+            height: 2.6rem;
+            margin-right: 0.68rem;
+            color: #d6b374;
+            filter: drop-shadow(0 2px 8px rgba(199, 167, 101, 0.2));
+            transition: transform 0.35s ease, filter 0.35s ease, color 0.35s ease;
+            transform-origin: 50% 50%;
+        }
+
+        .brand-mark .ring {
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.1;
+            opacity: 0.95;
+        }
+
+        .brand-mark .star {
+            fill: currentColor;
+            opacity: 0.95;
+        }
+
+        .brand-mark .wand {
+            stroke: currentColor;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            opacity: 0.95;
+        }
+
+        .brand-mark .spark {
+            fill: currentColor;
+            opacity: 0.85;
+            transform-origin: center;
+            animation: brand-sparkle 3.2s ease-in-out infinite;
+        }
+
+        nav .flex.items-center:hover .brand-mark {
+            color: #f1d199;
+            transform: translateY(-1px) rotate(-4deg) scale(1.04);
+            filter: drop-shadow(0 6px 16px rgba(199, 167, 101, 0.38));
+        }
+
+        nav .flex.items-center:hover .brand-mark .ring {
+            stroke-dasharray: 120;
+            animation: ring-swish 1.1s ease;
+        }
+
+        @keyframes brand-sparkle {
+            0%, 100% { opacity: 0.45; transform: scale(0.9); }
+            40% { opacity: 0.95; transform: scale(1.1); }
+            65% { opacity: 0.7; transform: scale(1); }
+        }
+
+        @keyframes ring-swish {
+            0% { stroke-dashoffset: 120; }
+            100% { stroke-dashoffset: 0; }
+        }
+
+        @media (max-width: 1024px) {
+            .hero-split-section {
+                padding-top: 6rem;
+            }
+
+            .hero-split-layout {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+
+            .hero-motion-frame {
+                min-height: 360px;
+            }
+
+            .hero-copy-panel {
+                padding: 1.35rem;
+            }
+        }
+
     </style>
 
 </head>
 <body class="bg-background text-text-primary">
+    <!-- Global floating sparkles -->
+    <div class="page-sparkles" id="pageSparkles" aria-hidden="true"></div>
+
     <!-- Navigation Header -->
     <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <svg class="h-10 w-10 text-primary mr-3" viewBox="0 0 100 100" fill="currentColor">
-                        <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
-                        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+                        <circle class="ring" cx="32" cy="32" r="21"></circle>
+                        <path class="wand" d="M18 43 L44 17"></path>
+                        <path class="star" d="M32 16 L34.5 22 L41 24 L35.5 28 L36.8 34.4 L32 31.2 L27.2 34.4 L28.5 28 L23 24 L29.5 22 Z"></path>
+                        <circle class="spark" cx="46.5" cy="15.5" r="2"></circle>
+                        <circle class="spark" cx="14.5" cy="47.5" r="1.6"></circle>
                     </svg>
                     <span class="font-accent text-xl font-medium text-primary">Potter Friends</span>
                 </div>
@@ -308,452 +1421,396 @@
         </div>
     </nav>
 
-    <!-- Hero Section with Owl Background -->
-    <section class="relative min-h-screen overflow-hidden owl-hero-section">
-        <!-- Animated Background Elements -->
-        <div class="absolute inset-0">
-            <!-- Floating Candles -->
-            <div class="absolute top-20 left-10 w-2 h-8 bg-secondary rounded-full opacity-80 animate-pulse"></div>
-            <div class="absolute top-32 right-20 w-2 h-8 bg-secondary rounded-full opacity-60 animate-pulse" style="animation-delay: 1s;"></div>
-            <div class="absolute top-40 left-1/4 w-2 h-8 bg-secondary rounded-full opacity-70 animate-pulse" style="animation-delay: 2s;"></div>
-            <div class="absolute top-24 right-1/3 w-2 h-8 bg-secondary rounded-full opacity-90 animate-pulse" style="animation-delay: 0.5s;"></div>
-            
-            <!-- Particle Effects -->
-            <div class="absolute top-1/4 left-1/6 w-1 h-1 bg-secondary rounded-full opacity-50 animate-ping"></div>
-            <div class="absolute top-1/3 right-1/4 w-1 h-1 bg-secondary rounded-full opacity-40 animate-ping" style="animation-delay: 1.5s;"></div>
-            <div class="absolute bottom-1/3 left-1/3 w-1 h-1 bg-secondary rounded-full opacity-60 animate-ping" style="animation-delay: 3s;"></div>
-        </div>
-        
-        <!-- Magical floating particles overlay -->
-        <div class="absolute inset-0 pointer-events-none z-5">
-            <!-- Large floating orbs -->
-            <div class="floating-orb orb-1"></div>
-            <div class="floating-orb orb-2"></div>
-            <div class="floating-orb orb-3"></div>
-            <div class="floating-orb orb-4"></div>
-            <div class="floating-orb orb-5"></div>
-            <div class="floating-orb orb-6"></div>
-            
-            <!-- Small sparkles -->
-            <div class="sparkle sparkle-1"></div>
-            <div class="sparkle sparkle-2"></div>
-            <div class="sparkle sparkle-3"></div>
-            <div class="sparkle sparkle-4"></div>
-            <div class="sparkle sparkle-5"></div>
-            <div class="sparkle sparkle-6"></div>
-            <div class="sparkle sparkle-7"></div>
-            <div class="sparkle sparkle-8"></div>
-        </div>
-        
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-            <div class="text-center">
+    <!-- Hero Section Split: Motion Media + Data -->
+    <section class="relative overflow-hidden owl-hero-section hero-split-section" aria-labelledby="hero-title">
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="hero-split-layout">
+                <figure class="hero-motion-frame" aria-label="Escena magica en movimiento">
+                    <img class="hero-motion-image" src="../public/Harry.png" alt="Harry Potter en primer plano con efecto magico" loading="eager" decoding="async" fetchpriority="high" />
+                </figure>
 
-                
-                <!-- Main Headline with Enhanced Visibility -->
-                <div class="hero-text-container backdrop-blur-md bg-gradient-to-br from-black/50 via-black/30 to-black/50 rounded-3xl p-10 mb-8 border-2 border-secondary/50 shadow-2xl">
-                    <!-- Magical glow effect behind text -->
-                    <div class="absolute inset-0 bg-gradient-to-r from-secondary/20 via-primary/20 to-accent/20 rounded-3xl blur-xl opacity-60 animate-pulse"></div>
-                    
-                    <div class="relative z-10">
-                        <h1 class="font-headline text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 enhanced-text-shadow">
-                            Tu Carta de Hogwarts<br />
-                            <span class="text-secondary magical-text-glow">Finalmente Llegó</span>
-                        </h1>
-                        
-                        <p class="font-body text-xl md:text-2xl text-white mb-6 max-w-3xl mx-auto leading-relaxed enhanced-text-shadow">
-                            Únete a miles de magos y brujas en la comunidad más mágica de internet. 
-                            Descubre tu casa, gana puntos y vive la magia que nunca termina.
-                        </p>
+                <div class="hero-copy-panel">
+                    <h1 id="hero-title" class="font-headline text-4xl md:text-5xl font-bold text-white leading-tight enhanced-text-shadow">
+                        Tu Carta de Hogwarts<br />
+                        <span class="text-secondary magical-text-glow">Finalmente Llego</span>
+                    </h1>
+
+                    <p class="font-body text-lg md:text-xl text-white/90 leading-relaxed enhanced-text-shadow">
+                        Unete a miles de magos y brujas en la comunidad mas magica de internet.
+                        Descubre tu casa, gana puntos y vive la magia que nunca termina.
+                    </p>
+
+                    <div class="hero-stats-grid">
+                        <div class="hero-stat-card transition-all duration-300 cursor-pointer">
+                            <div class="flex justify-center mb-2">
+                                <svg class="w-6 h-6 text-secondary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                                </svg>
+                            </div>
+                            <div class="font-headline text-xl font-bold text-white text-center">2,847</div>
+                            <div class="text-white font-semibold text-xs mt-1 text-center">Miembros Activos</div>
+                        </div>
+
+                        <div class="hero-stat-card transition-all duration-300 cursor-pointer">
+                            <div class="flex justify-center mb-2">
+                                <svg class="w-6 h-6 text-secondary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            </div>
+                            <div class="font-headline text-xl font-bold text-white text-center">15,392</div>
+                            <div class="text-white font-semibold text-xs mt-1 text-center">Puntos Hoy</div>
+                        </div>
+
+                        <div class="hero-stat-card transition-all duration-300 cursor-pointer">
+                            <div class="flex justify-center mb-2">
+                                <svg class="w-6 h-6 text-secondary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div class="font-headline text-xl font-bold text-white text-center">1,205</div>
+                            <div class="text-white font-semibold text-xs mt-1 text-center">Discusiones</div>
+                        </div>
+
+                        <div class="hero-stat-card transition-all duration-300 cursor-pointer">
+                            <div class="flex justify-center mb-2">
+                                <svg class="w-6 h-6 text-secondary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div class="font-headline text-xl font-bold text-white text-center">89</div>
+                            <div class="text-white font-semibold text-xs mt-1 text-center">Nuevos Hoy</div>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Primary CTA -->
-                <div class="mb-12">
-                    <a href="house_selection_portal_sorting_hat_quiz.html" class="btn-primary text-lg px-8 py-4 rounded-lg hover-scale magical-transition inline-flex items-center">
-                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        Comenzar Selección
+
+                    <a href="house_selection_portal_sorting_hat_quiz.html" class="hero-split-cta bg-white text-black font-semibold text-base px-7 py-3 rounded-xl shadow-lg transition-all duration-300 cursor-pointer">
+                        Comenzar Seleccion
                     </a>
-                </div>
-                
-                <!-- Quick Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto text-center">
-                    <!-- Miembros Activos -->
-                    <div class="bg-black/60 backdrop-blur-md rounded-lg p-4 border-2 border-secondary/50 shadow-2xl hover-scale magical-transition hover:bg-black/70">
-                        <div class="flex justify-center mb-2">
-                            <svg class="w-6 h-6 text-secondary" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
-                            </svg>
-                        </div>
-                        <div class="font-headline text-2xl font-medium text-white">2,847</div>
-                        <div class="text-secondary font-medium text-sm">Miembros Activos</div>
-                    </div>
-                    
-                    <!-- Puntos Ganados -->
-                    <div class="bg-black/60 backdrop-blur-md rounded-lg p-4 border-2 border-secondary/50 shadow-2xl hover-scale magical-transition hover:bg-black/70">
-                        <div class="flex justify-center mb-2">
-                            <svg class="w-6 h-6 text-secondary" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                        </div>
-                        <div class="font-headline text-2xl font-medium text-white">15,392</div>
-                        <div class="text-secondary font-medium text-sm">Puntos Ganados Hoy</div>
-                    </div>
-                    
-                    <!-- Discusiones -->
-                    <div class="bg-black/60 backdrop-blur-md rounded-lg p-4 border-2 border-secondary/50 shadow-2xl hover-scale magical-transition hover:bg-black/70">
-                        <div class="flex justify-center mb-2">
-                            <svg class="w-6 h-6 text-secondary" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="font-headline text-2xl font-medium text-white">1,205</div>
-                        <div class="text-secondary font-medium text-sm">Discusiones Activas</div>
-                    </div>
-                    
-                    <!-- Nuevos Hoy -->
-                    <div class="bg-black/60 backdrop-blur-md rounded-lg p-4 border-2 border-secondary/50 shadow-2xl hover-scale magical-transition hover:bg-black/70">
-                        <div class="flex justify-center mb-2">
-                            <svg class="w-6 h-6 text-secondary" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="font-headline text-2xl font-medium text-white">89</div>
-                        <div class="text-secondary font-medium text-sm">Nuevos Hoy</div>
-                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Live Community Activity Feed -->
-    <section class="py-16 bg-surface">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="font-headline text-3xl md:text-4xl font-medium text-text-primary mb-4">
+    <!-- Live Community Activity Feed - Gran Comedor Style -->
+    <section class="py-20 section-great-hall relative">
+        <!-- Velas flotantes -->
+        <div class="floating-candles" aria-hidden="true">
+            <div class="candle candle-1"></div>
+            <div class="candle candle-2"></div>
+            <div class="candle candle-3"></div>
+            <div class="candle candle-4"></div>
+            <div class="candle candle-5"></div>
+            <div class="candle candle-6"></div>
+            <div class="candle candle-7"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="font-headline text-3xl md:text-5xl font-bold magical-title mb-4">
                     Actividad de la Comunidad
                 </h2>
-                <p class="font-body text-lg text-text-secondary max-w-2xl mx-auto">
-                    Descubre lo que está sucediendo ahora mismo en nuestra comunidad mágica
+                <p class="font-body text-lg text-gray-300 max-w-2xl mx-auto">
+                    Descubre lo que esta sucediendo ahora mismo en nuestra comunidad magica
                 </p>
             </div>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Recent House Points -->
-                <div class="card p-6 hover-scale">
+                <div class="magic-card p-6 cursor-pointer">
                     <div class="flex items-center mb-4">
-                        <div class="w-3 h-3 bg-gryffindor rounded-full mr-3"></div>
+                        <div class="w-3 h-3 bg-gryffindor rounded-full mr-3 shadow-[0_0_10px_rgba(116,0,1,0.6)]"></div>
                         <span class="font-cta text-sm font-semibold text-gryffindor">GRYFFINDOR</span>
                     </div>
-                    <h3 class="font-headline text-lg font-medium mb-2">+50 Puntos Ganados</h3>
-                    <p class="text-text-secondary text-sm mb-3">María González completó el desafío "Coraje en la Adversidad"</p>
-                    <span class="text-xs text-text-secondary">Hace 5 minutos</span>
+                    <h3 class="font-headline text-lg font-medium text-white mb-2">+50 Puntos Ganados</h3>
+                    <p class="text-gray-400 text-sm mb-3">Maria Gonzalez completo el desafio "Coraje en la Adversidad"</p>
+                    <span class="text-xs text-gray-500">Hace 5 minutos</span>
                 </div>
                 
                 <!-- New Member Sorting -->
-                <div class="card p-6 hover-scale">
+                <div class="magic-card p-6 cursor-pointer">
                     <div class="flex items-center mb-4">
-                        <div class="w-3 h-3 bg-ravenclaw rounded-full mr-3"></div>
+                        <div class="w-3 h-3 bg-ravenclaw rounded-full mr-3 shadow-[0_0_10px_rgba(14,26,64,0.6)]"></div>
                         <span class="font-cta text-sm font-semibold text-ravenclaw">RAVENCLAW</span>
                     </div>
-                    <h3 class="font-headline text-lg font-medium mb-2">Nuevo Miembro Seleccionado</h3>
-                    <p class="text-text-secondary text-sm mb-3">Carlos Mendoza se unió a Ravenclaw tras completar la selección</p>
-                    <span class="text-xs text-text-secondary">Hace 12 minutos</span>
+                    <h3 class="font-headline text-lg font-medium text-white mb-2">Nuevo Miembro Seleccionado</h3>
+                    <p class="text-gray-400 text-sm mb-3">Carlos Mendoza se unio a Ravenclaw tras completar la seleccion</p>
+                    <span class="text-xs text-gray-500">Hace 12 minutos</span>
                 </div>
                 
                 <!-- Featured Discussion -->
-                <div class="card p-6 hover-scale">
+                <div class="magic-card p-6 cursor-pointer">
                     <div class="flex items-center mb-4">
-                        <div class="w-3 h-3 bg-hufflepuff rounded-full mr-3"></div>
-                        <span class="font-cta text-sm font-semibold text-hufflepuff">DISCUSIÓN DESTACADA</span>
+                        <div class="w-3 h-3 bg-hufflepuff rounded-full mr-3 shadow-[0_0_10px_rgba(238,186,48,0.6)]"></div>
+                        <span class="font-cta text-sm font-semibold text-hufflepuff">DISCUSION DESTACADA</span>
                     </div>
-                    <h3 class="font-headline text-lg font-medium mb-2">Teorías sobre Patronus</h3>
-                    <p class="text-text-secondary text-sm mb-3">Ana Rodríguez inició una fascinante discusión sobre la conexión emocional...</p>
-                    <span class="text-xs text-text-secondary">Hace 1 hora</span>
+                    <h3 class="font-headline text-lg font-medium text-white mb-2">Teorias sobre Patronus</h3>
+                    <p class="text-gray-400 text-sm mb-3">Ana Rodriguez inicio una fascinante discusion sobre la conexion emocional...</p>
+                    <span class="text-xs text-gray-500">Hace 1 hora</span>
                 </div>
                 
                 <!-- Achievement Unlocked -->
-                <div class="card p-6 hover-scale">
+                <div class="magic-card p-6 cursor-pointer">
                     <div class="flex items-center mb-4">
-                        <div class="w-3 h-3 bg-slytherin rounded-full mr-3"></div>
+                        <div class="w-3 h-3 bg-slytherin rounded-full mr-3 shadow-[0_0_10px_rgba(26,71,42,0.6)]"></div>
                         <span class="font-cta text-sm font-semibold text-slytherin">SLYTHERIN</span>
                     </div>
-                    <h3 class="font-headline text-lg font-medium mb-2">Logro Desbloqueado</h3>
-                    <p class="text-text-secondary text-sm mb-3">Diego Morales obtuvo la insignia "Estratega Maestro"</p>
-                    <span class="text-xs text-text-secondary">Hace 2 horas</span>
+                    <h3 class="font-headline text-lg font-medium text-white mb-2">Logro Desbloqueado</h3>
+                    <p class="text-gray-400 text-sm mb-3">Diego Morales obtuvo la insignia "Estratega Maestro"</p>
+                    <span class="text-xs text-gray-500">Hace 2 horas</span>
                 </div>
                 
                 <!-- Library Contribution -->
-                <div class="card p-6 hover-scale">
+                <div class="magic-card p-6 cursor-pointer">
                     <div class="flex items-center mb-4">
                         <svg class="w-4 h-4 text-secondary mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <span class="font-cta text-sm font-semibold text-secondary">BIBLIOTECA</span>
                     </div>
-                    <h3 class="font-headline text-lg font-medium mb-2">Nueva Contribución</h3>
-                    <p class="text-text-secondary text-sm mb-3">Laura Vega añadió un análisis detallado sobre la historia de Hogwarts</p>
-                    <span class="text-xs text-text-secondary">Hace 3 horas</span>
+                    <h3 class="font-headline text-lg font-medium text-white mb-2">Nueva Contribucion</h3>
+                    <p class="text-gray-400 text-sm mb-3">Laura Vega anadio un analisis detallado sobre la historia de Hogwarts</p>
+                    <span class="text-xs text-gray-500">Hace 3 horas</span>
                 </div>
                 
                 <!-- Community Event -->
-                <div class="card p-6 hover-scale">
+                <div class="magic-card p-6 cursor-pointer">
                     <div class="flex items-center mb-4">
                         <svg class="w-4 h-4 text-warning mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                         </svg>
                         <span class="font-cta text-sm font-semibold text-warning">EVENTO</span>
                     </div>
-                    <h3 class="font-headline text-lg font-medium mb-2">Torneo de Conocimiento</h3>
-                    <p class="text-text-secondary text-sm mb-3">¡Inscripciones abiertas para el Gran Torneo de Conocimiento Mágico!</p>
-                    <span class="text-xs text-text-secondary">Hace 4 horas</span>
+                    <h3 class="font-headline text-lg font-medium text-white mb-2">Torneo de Conocimiento</h3>
+                    <p class="text-gray-400 text-sm mb-3">Inscripciones abiertas para el Gran Torneo de Conocimiento Magico!</p>
+                    <span class="text-xs text-gray-500">Hace 4 horas</span>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- House Standings Preview -->
-    <section class="py-16 bg-background">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="font-headline text-3xl md:text-4xl font-medium text-text-primary mb-4">
-                    Clasificación de las Casas
+    <section class="py-20 section-common-room relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold magical-title mb-4">
+                    Clasificacion de las Casas
                 </h2>
-                <p class="font-body text-lg text-text-secondary max-w-2xl mx-auto">
-                    Descubre cuál casa está liderando y únete a la competencia
+                <p class="font-josefin text-lg text-gray-400 max-w-2xl mx-auto">
+                    Descubre cual casa esta liderando y unete a la competencia
                 </p>
             </div>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Gryffindor -->
-                <div class="card p-6 border-l-4 border-gryffindor hover-scale group">
-                    <div class="flex items-center justify-between mb-4">
-                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=400&auto=format&fit=crop" alt="Escudo Gryffindor" class="w-12 h-12 object-cover rounded-full" onerror="this.src='https://images.pexels.com/photos/1029141/pexels-photo-1029141.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
-                        <span class="text-2xl font-bold text-gryffindor">#1</span>
-                    </div>
-                    <h3 class="font-accent text-xl font-medium text-gryffindor mb-2">Gryffindor</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Puntos:</span>
-                            <span class="font-semibold text-gryffindor">8,547</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Miembros:</span>
-                            <span class="font-semibold">742</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Activos hoy:</span>
-                            <span class="font-semibold">156</span>
+                <div class="house-card house-card-gryffindor p-6 cursor-pointer">
+                    <div class="flex items-center gap-4 mb-5">
+                        <span class="font-cinzel text-2xl font-bold text-gryffindor">G</span>
+                        <div>
+                            <h3 class="font-cinzel text-lg font-semibold text-white">Gryffindor</h3>
+                            <span class="font-josefin text-xs text-gray-500 uppercase tracking-wider">1er Lugar</span>
                         </div>
                     </div>
-                    <div class="mt-4 pt-4 border-t border-gray-200">
-                        <p class="text-xs text-text-secondary">Último logro: "Coraje Colectivo" - Hace 2 horas</p>
+                    <div class="mb-4">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <span class="font-josefin text-2xl font-bold text-white">8,547</span>
+                            <span class="font-josefin text-xs text-gray-500">puntos</span>
+                        </div>
+                        <div class="house-progress-bar">
+                            <div class="house-progress-fill bg-gryffindor" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="font-josefin grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <span class="text-gray-500 text-xs block">Miembros</span>
+                            <span class="text-white font-medium">742</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500 text-xs block">Activos hoy</span>
+                            <span class="text-white font-medium">156</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/5">
+                        <p class="font-josefin text-xs text-gray-600">"Coraje Colectivo" - Hace 2h</p>
                     </div>
                 </div>
                 
                 <!-- Slytherin -->
-                <div class="card p-6 border-l-4 border-slytherin hover-scale group">
-                    <div class="flex items-center justify-between mb-4">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop" alt="Escudo Slytherin" class="w-12 h-12 object-cover rounded-full" onerror="this.src='https://images.pixabay.com/photo-2016/11/29/13/14/snake-1869429_1280.jpg'; this.onerror=null;" />
-                        <span class="text-2xl font-bold text-slytherin">#2</span>
-                    </div>
-                    <h3 class="font-accent text-xl font-medium text-slytherin mb-2">Slytherin</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Puntos:</span>
-                            <span class="font-semibold text-slytherin">8,203</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Miembros:</span>
-                            <span class="font-semibold">689</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Activos hoy:</span>
-                            <span class="font-semibold">134</span>
+                <div class="house-card house-card-slytherin p-6 cursor-pointer">
+                    <div class="flex items-center gap-4 mb-5">
+                        <span class="font-cinzel text-2xl font-bold text-slytherin">S</span>
+                        <div>
+                            <h3 class="font-cinzel text-lg font-semibold text-white">Slytherin</h3>
+                            <span class="font-josefin text-xs text-gray-500 uppercase tracking-wider">2do Lugar</span>
                         </div>
                     </div>
-                    <div class="mt-4 pt-4 border-t border-gray-200">
-                        <p class="text-xs text-text-secondary">Último logro: "Astucia Suprema" - Hace 1 hora</p>
+                    <div class="mb-4">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <span class="font-josefin text-2xl font-bold text-white">8,203</span>
+                            <span class="font-josefin text-xs text-gray-500">puntos</span>
+                        </div>
+                        <div class="house-progress-bar">
+                            <div class="house-progress-fill bg-slytherin" style="width: 96%"></div>
+                        </div>
+                    </div>
+                    <div class="font-josefin grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <span class="text-gray-500 text-xs block">Miembros</span>
+                            <span class="text-white font-medium">689</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500 text-xs block">Activos hoy</span>
+                            <span class="text-white font-medium">134</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/5">
+                        <p class="font-josefin text-xs text-gray-600">"Astucia Suprema" - Hace 1h</p>
                     </div>
                 </div>
                 
                 <!-- Ravenclaw -->
-                <div class="card p-6 border-l-4 border-ravenclaw hover-scale group">
-                    <div class="flex items-center justify-between mb-4">
-                        <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?q=80&w=400&auto=format&fit=crop" alt="Escudo Ravenclaw" class="w-12 h-12 object-cover rounded-full" onerror="this.src='https://images.pexels.com/photos/36717/amazing-animal-beautiful-beautifull.jpg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
-                        <span class="text-2xl font-bold text-ravenclaw">#3</span>
-                    </div>
-                    <h3 class="font-accent text-xl font-medium text-ravenclaw mb-2">Ravenclaw</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Puntos:</span>
-                            <span class="font-semibold text-ravenclaw">7,891</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Miembros:</span>
-                            <span class="font-semibold">654</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Activos hoy:</span>
-                            <span class="font-semibold">128</span>
+                <div class="house-card house-card-ravenclaw p-6 cursor-pointer">
+                    <div class="flex items-center gap-4 mb-5">
+                        <span class="font-cinzel text-2xl font-bold text-ravenclaw">R</span>
+                        <div>
+                            <h3 class="font-cinzel text-lg font-semibold text-white">Ravenclaw</h3>
+                            <span class="font-josefin text-xs text-gray-500 uppercase tracking-wider">3er Lugar</span>
                         </div>
                     </div>
-                    <div class="mt-4 pt-4 border-t border-gray-200">
-                        <p class="text-xs text-text-secondary">Último logro: "Sabiduría Ancestral" - Hace 3 horas</p>
+                    <div class="mb-4">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <span class="font-josefin text-2xl font-bold text-white">7,891</span>
+                            <span class="font-josefin text-xs text-gray-500">puntos</span>
+                        </div>
+                        <div class="house-progress-bar">
+                            <div class="house-progress-fill bg-ravenclaw" style="width: 92%"></div>
+                        </div>
+                    </div>
+                    <div class="font-josefin grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <span class="text-gray-500 text-xs block">Miembros</span>
+                            <span class="text-white font-medium">654</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500 text-xs block">Activos hoy</span>
+                            <span class="text-white font-medium">128</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/5">
+                        <p class="font-josefin text-xs text-gray-600">"Sabiduria Ancestral" - Hace 3h</p>
                     </div>
                 </div>
                 
                 <!-- Hufflepuff -->
-                <div class="card p-6 border-l-4 border-hufflepuff hover-scale group">
-                    <div class="flex items-center justify-between mb-4">
-                        <img src="https://images.unsplash.com/photo-1425082661705-1834bfd09dca?q=80&w=400&auto=format&fit=crop" alt="Escudo Hufflepuff" class="w-12 h-12 object-cover rounded-full" onerror="this.src='https://images.pixabay.com/photo-2016/07/10/21/47/cat-1508613_1280.jpg'; this.onerror=null;" />
-                        <span class="text-2xl font-bold text-hufflepuff">#4</span>
-                    </div>
-                    <h3 class="font-accent text-xl font-medium text-hufflepuff mb-2">Hufflepuff</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Puntos:</span>
-                            <span class="font-semibold text-hufflepuff">7,652</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Miembros:</span>
-                            <span class="font-semibold">762</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-text-secondary">Activos hoy:</span>
-                            <span class="font-semibold">145</span>
+                <div class="house-card house-card-hufflepuff p-6 cursor-pointer">
+                    <div class="flex items-center gap-4 mb-5">
+                        <span class="font-cinzel text-2xl font-bold text-hufflepuff">H</span>
+                        <div>
+                            <h3 class="font-cinzel text-lg font-semibold text-white">Hufflepuff</h3>
+                            <span class="font-josefin text-xs text-gray-500 uppercase tracking-wider">4to Lugar</span>
                         </div>
                     </div>
-                    <div class="mt-4 pt-4 border-t border-gray-200">
-                        <p class="text-xs text-text-secondary">Último logro: "Lealtad Inquebrantable" - Hace 30 min</p>
+                    <div class="mb-4">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <span class="font-josefin text-2xl font-bold text-white">7,652</span>
+                            <span class="font-josefin text-xs text-gray-500">puntos</span>
+                        </div>
+                        <div class="house-progress-bar">
+                            <div class="house-progress-fill bg-hufflepuff" style="width: 89%"></div>
+                        </div>
+                    </div>
+                    <div class="font-josefin grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <span class="text-gray-500 text-xs block">Miembros</span>
+                            <span class="text-white font-medium">762</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500 text-xs block">Activos hoy</span>
+                            <span class="text-white font-medium">145</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/5">
+                        <p class="font-josefin text-xs text-gray-600">"Lealtad Inquebrantable" - Hace 30 min</p>
                     </div>
                 </div>
             </div>
             
-            <div class="text-center mt-8">
-                <a href="house_common_rooms_personalized_dashboards.html" class="btn-secondary px-6 py-3 rounded-lg hover-scale magical-transition">
-                    Ver Clasificación Completa
+            <div class="text-center mt-12">
+                <a href="house_common_rooms_personalized_dashboards.html" class="font-josefin inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors duration-200">
+                    Ver clasificacion completa
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                    </svg>
                 </a>
             </div>
         </div>
     </section>
 
     <!-- Community Testimonials -->
-    <section class="py-16 bg-surface">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="font-headline text-3xl md:text-4xl font-medium text-text-primary mb-4">
+    <section class="py-20 section-library relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold magical-title mb-4">
                     Voces de Nuestra Comunidad
                 </h2>
-                <p class="font-body text-lg text-text-secondary max-w-2xl mx-auto">
-                    Descubre por qué miles de fans han encontrado su hogar mágico aquí
+                <p class="font-josefin text-lg text-gray-400 max-w-2xl mx-auto">
+                    Descubre por que miles de fans han encontrado su hogar magico aqui
                 </p>
             </div>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Testimonial 1 -->
-                <div class="card p-6 hover-scale">
-                    <div class="flex items-center mb-4">
-                        <img src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400" alt="María González" class="w-12 h-12 object-cover rounded-full mr-4" onerror="this.src='https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
-                        <div>
-                            <h4 class="font-cta font-semibold text-text-primary">María González</h4>
-                            <div class="flex items-center">
-                                <div class="w-3 h-3 bg-gryffindor rounded-full mr-2"></div>
-                                <span class="text-sm text-gryffindor font-medium">Gryffindor</span>
-                            </div>
-                        </div>
+                <!-- Testimonial 1 - Gryffindor -->
+                <div class="magic-card p-8">
+                    <div class="testimonial-quote mb-6">
+                        <blockquote class="font-josefin text-gray-300 leading-relaxed pl-2 border-l-2 border-gryffindor/40">
+                            "Finalmente encontre mi hogar magico. Aqui no solo soy fan, soy parte de algo mas grande. 
+                            La comunidad de Gryffindor me ha dado amigos de verdad."
+                        </blockquote>
                     </div>
-                    <blockquote class="text-text-secondary italic">
-                        "Finalmente encontré mi hogar mágico. Aquí no solo soy fan, soy parte de algo más grande. 
-                        La comunidad de Gryffindor me ha dado amigos de verdad."
-                    </blockquote>
-                    <div class="flex text-secondary mt-3">
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center flex-shrink-0">
+                            <span class="font-josefin text-sm font-semibold text-white">MG</span>
+                        </div>
+                        <div>
+                            <h4 class="font-josefin font-semibold text-white text-sm">Maria Gonzalez</h4>
+                            <span class="font-josefin text-xs text-gray-500">Gryffindor &middot; Miembro desde 2023</span>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Testimonial 2 -->
-                <div class="card p-6 hover-scale">
-                    <div class="flex items-center mb-4">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop" alt="Diego Morales" class="w-12 h-12 object-cover rounded-full mr-4" onerror="this.src='https://images.pixabay.com/photo-2016/11/21/12/42/beard-1845166_1280.jpg'; this.onerror=null;" />
-                        <div>
-                            <h4 class="font-cta font-semibold text-text-primary">Diego Morales</h4>
-                            <div class="flex items-center">
-                                <div class="w-3 h-3 bg-slytherin rounded-full mr-2"></div>
-                                <span class="text-sm text-slytherin font-medium">Slytherin</span>
-                            </div>
-                        </div>
+                <!-- Testimonial 2 - Slytherin -->
+                <div class="magic-card p-8">
+                    <div class="testimonial-quote mb-6">
+                        <blockquote class="font-josefin text-gray-300 leading-relaxed pl-2 border-l-2 border-slytherin/40">
+                            "La competencia entre casas es increible. Cada dia hay nuevos desafios y la estrategia 
+                            de Slytherin siempre encuentra la manera de destacar."
+                        </blockquote>
                     </div>
-                    <blockquote class="text-text-secondary italic">
-                        "La competencia entre casas es increíble. Cada día hay nuevos desafíos y la estrategia 
-                        de Slytherin siempre encuentra la manera de destacar."
-                    </blockquote>
-                    <div class="flex text-secondary mt-3">
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center flex-shrink-0">
+                            <span class="font-josefin text-sm font-semibold text-white">DM</span>
+                        </div>
+                        <div>
+                            <h4 class="font-josefin font-semibold text-white text-sm">Diego Morales</h4>
+                            <span class="font-josefin text-xs text-gray-500">Slytherin &middot; Miembro desde 2022</span>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Testimonial 3 -->
-                <div class="card p-6 hover-scale">
-                    <div class="flex items-center mb-4">
-                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop" alt="Ana Rodríguez" class="w-12 h-12 object-cover rounded-full mr-4" onerror="this.src='https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400'; this.onerror=null;" />
-                        <div>
-                            <h4 class="font-cta font-semibold text-text-primary">Ana Rodríguez</h4>
-                            <div class="flex items-center">
-                                <div class="w-3 h-3 bg-ravenclaw rounded-full mr-2"></div>
-                                <span class="text-sm text-ravenclaw font-medium">Ravenclaw</span>
-                            </div>
-                        </div>
+                <!-- Testimonial 3 - Ravenclaw -->
+                <div class="magic-card p-8">
+                    <div class="testimonial-quote mb-6">
+                        <blockquote class="font-josefin text-gray-300 leading-relaxed pl-2 border-l-2 border-ravenclaw/40">
+                            "Las discusiones en el foro son fascinantes. Cada teoria, cada analisis profundo... 
+                            Ravenclaw realmente valora el conocimiento y la sabiduria."
+                        </blockquote>
                     </div>
-                    <blockquote class="text-text-secondary italic">
-                        "Las discusiones en el foro son fascinantes. Cada teoría, cada análisis profundo... 
-                        Ravenclaw realmente valora el conocimiento y la sabiduría."
-                    </blockquote>
-                    <div class="flex text-secondary mt-3">
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center flex-shrink-0">
+                            <span class="font-josefin text-sm font-semibold text-white">AR</span>
+                        </div>
+                        <div>
+                            <h4 class="font-josefin font-semibold text-white text-sm">Ana Rodriguez</h4>
+                            <span class="font-josefin text-xs text-gray-500">Ravenclaw &middot; Miembro desde 2024</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -761,57 +1818,69 @@
     </section>
 
     <!-- Quick Access Section -->
-    <section class="py-16 bg-background">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="font-headline text-3xl md:text-4xl font-medium text-text-primary mb-4">
-                    Explora Tu Mundo Mágico
+    <section class="py-20 section-marauders-map relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold magical-title mb-4">
+                    Explora Tu Mundo Magico
                 </h2>
-                <p class="font-body text-lg text-text-secondary max-w-2xl mx-auto">
-                    Accede rápidamente a todas las áreas de nuestra comunidad
+                <p class="font-josefin text-lg text-gray-400 max-w-2xl mx-auto">
+                    Accede rapidamente a todas las areas de nuestra comunidad
                 </p>
             </div>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Digital Library -->
-                <div class="card p-8 text-center hover-scale group">
-                    <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-accent/20 magical-transition">
-                        <svg class="w-8 h-8 text-accent" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <div class="explore-card p-8 group">
+                    <div class="border-t-2 border-[#CA8A04] absolute top-0 left-6 right-6 rounded-t"></div>
+                    <div class="mb-6">
+                        <svg class="w-7 h-7 text-gray-400 group-hover:text-[#CA8A04] transition-colors duration-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
                         </svg>
                     </div>
-                    <h3 class="font-headline text-xl font-medium text-text-primary mb-3">Biblioteca Digital</h3>
-                    <p class="text-text-secondary mb-6">Explora miles de artículos, teorías y análisis profundos del mundo mágico</p>
-                    <a href="javascript:void(0)" class="btn-secondary px-6 py-2 rounded-lg hover-scale magical-transition">
+                    <h3 class="font-cinzel text-lg font-semibold text-white mb-2">Biblioteca Digital</h3>
+                    <p class="font-josefin text-sm text-gray-500 mb-6 leading-relaxed">Explora miles de articulos, teorias y analisis profundos del mundo magico</p>
+                    <a href="javascript:void(0)" class="font-josefin inline-flex items-center justify-center w-full gap-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover:bg-white/10 hover:border-white/20 transition-all duration-200">
                         Explorar Biblioteca
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                        </svg>
                     </a>
                 </div>
                 
                 <!-- Main Forum -->
-                <div class="card p-8 text-center hover-scale group">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 magical-transition">
-                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+                <div class="explore-card p-8 group">
+                    <div class="border-t-2 border-[#CA8A04] absolute top-0 left-6 right-6 rounded-t"></div>
+                    <div class="mb-6">
+                        <svg class="w-7 h-7 text-gray-400 group-hover:text-[#CA8A04] transition-colors duration-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/>
                         </svg>
                     </div>
-                    <h3 class="font-headline text-xl font-medium text-text-primary mb-3">Foro Principal</h3>
-                    <p class="text-text-secondary mb-6">Únete a discusiones fascinantes con fans de todo el mundo</p>
-                    <a href="interactive_forum_hub.html" class="btn-primary px-6 py-2 rounded-lg hover-scale magical-transition">
+                    <h3 class="font-cinzel text-lg font-semibold text-white mb-2">Foro Principal</h3>
+                    <p class="font-josefin text-sm text-gray-500 mb-6 leading-relaxed">Unete a discusiones fascinantes con fans de todo el mundo</p>
+                    <a href="interactive_forum_hub.html" class="font-josefin inline-flex items-center justify-center w-full gap-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover:bg-white/10 hover:border-white/20 transition-all duration-200">
                         Unirse al Foro
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                        </svg>
                     </a>
                 </div>
                 
                 <!-- Community Events -->
-                <div class="card p-8 text-center hover-scale group">
-                    <div class="w-16 h-16 bg-warning/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-warning/20 magical-transition">
-                        <svg class="w-8 h-8 text-warning" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                <div class="explore-card p-8 group">
+                    <div class="border-t-2 border-[#CA8A04] absolute top-0 left-6 right-6 rounded-t"></div>
+                    <div class="mb-6">
+                        <svg class="w-7 h-7 text-gray-400 group-hover:text-[#CA8A04] transition-colors duration-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"/>
                         </svg>
                     </div>
-                    <h3 class="font-headline text-xl font-medium text-text-primary mb-3">Eventos Comunitarios</h3>
-                    <p class="text-text-secondary mb-6">Participa en torneos, desafíos y celebraciones especiales</p>
-                    <a href="community_events_challenges_center.html" class="btn-secondary px-6 py-2 rounded-lg hover-scale magical-transition">
+                    <h3 class="font-cinzel text-lg font-semibold text-white mb-2">Eventos Comunitarios</h3>
+                    <p class="font-josefin text-sm text-gray-500 mb-6 leading-relaxed">Participa en torneos, desafios y celebraciones especiales</p>
+                    <a href="community_events_challenges_center.html" class="font-josefin inline-flex items-center justify-center w-full gap-2 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 hover:bg-white/10 hover:border-white/20 transition-all duration-200">
                         Ver Eventos
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -829,7 +1898,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
+    <footer style="background: #0D0D0D;" class="text-gray-300 py-12 border-t border-white/5">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-8">
                 <!-- Brand -->
@@ -839,24 +1908,24 @@
                             <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
                             <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
                         </svg>
-                        <span class="font-accent text-xl font-medium">Hogwarts Community Hub</span>
+                        <span class="font-cinzel text-xl font-medium text-white">Hogwarts Community Hub</span>
                     </div>
-                    <p class="text-gray-300 mb-4 max-w-md">
-                        La comunidad mágica más grande de habla hispana. Donde los fans de Harry Potter 
-                        encuentran su verdadero hogar mágico.
+                    <p class="text-gray-400 mb-4 max-w-md font-josefin">
+                        La comunidad magica mas grande de habla hispana. Donde los fans de Harry Potter 
+                        encuentran su verdadero hogar magico.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
+                        <a href="javascript:void(0)" class="text-gray-500 hover:text-secondary transition-colors duration-200">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clip-rule="evenodd"/>
                             </svg>
                         </a>
-                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
+                        <a href="javascript:void(0)" class="text-gray-500 hover:text-secondary transition-colors duration-200">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"/>
                             </svg>
                         </a>
-                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
+                        <a href="javascript:void(0)" class="text-gray-500 hover:text-secondary transition-colors duration-200">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M12.017 0C18.624 0 20 1.376 20 8.017v3.966C20 18.624 18.624 20 12.017 20H7.983C1.376 20 0 18.624 0 11.983V8.017C0 1.376 1.376 0 7.983 0h4.034zm0 1.8H7.983C2.276 1.8 1.8 2.276 1.8 7.983v4.034c0 5.707.476 6.183 6.183 6.183h4.034c5.707 0 6.183-.476 6.183-6.183V7.983c0-5.707-.476-6.183-6.183-6.183zM10 5.4a4.6 4.6 0 110 9.2 4.6 4.6 0 010-9.2zm0 1.8a2.8 2.8 0 100 5.6 2.8 2.8 0 000-5.6zm5.4-3.6a1.1 1.1 0 110 2.2 1.1 1.1 0 010-2.2z" clip-rule="evenodd"/>
                             </svg>
@@ -866,31 +1935,30 @@
                 
                 <!-- Quick Links -->
                 <div>
-                    <h4 class="font-cta font-semibold mb-4">Enlaces Rápidos</h4>
-                    <ul class="space-y-2">
-                        <li><a href="house_selection_portal_sorting_hat_quiz.html" class="text-gray-300 hover:text-secondary magical-transition">Selección de Casa</a></li>
-                        <li><a href="interactive_forum_hub.html" class="text-gray-300 hover:text-secondary magical-transition">Foro Principal</a></li>
-                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Biblioteca Digital</a></li>
-                        <li><a href="community_events_challenges_center.html" class="text-gray-300 hover:text-secondary magical-transition">Eventos</a></li>
+                    <h4 class="font-cinzel font-semibold mb-4 text-white text-sm uppercase tracking-wider">Enlaces Rapidos</h4>
+                    <ul class="space-y-2 font-josefin">
+                        <li><a href="house_selection_portal_sorting_hat_quiz.html" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Seleccion de Casa</a></li>
+                        <li><a href="interactive_forum_hub.html" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Foro Principal</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Biblioteca Digital</a></li>
+                        <li><a href="community_events_challenges_center.html" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Eventos</a></li>
                     </ul>
                 </div>
                 
                 <!-- Community -->
                 <div>
-                    <h4 class="font-cta font-semibold mb-4">Comunidad</h4>
-                    <ul class="space-y-2">
-                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Normas de la Comunidad</a></li>
-                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Ayuda y Soporte</a></li>
-                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Contacto</a></li>
-                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Política de Privacidad</a></li>
+                    <h4 class="font-cinzel font-semibold mb-4 text-white text-sm uppercase tracking-wider">Comunidad</h4>
+                    <ul class="space-y-2 font-josefin">
+                        <li><a href="javascript:void(0)" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Normas de la Comunidad</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Ayuda y Soporte</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Contacto</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Politica de Privacidad</a></li>
                     </ul>
                 </div>
             </div>
             
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
-                <p class="text-gray-400">
-                    © 2025 Hogwarts Community Hub. Todos los derechos reservados. 
-                    <span class="text-gray-500">Creado con magia por fans, para fans.</span>
+            <div class="border-t border-white/5 mt-8 pt-8 text-center">
+                <p class="text-gray-500 font-josefin text-sm">
+                    2025 Hogwarts Community Hub. Todos los derechos reservados.
                 </p>
             </div>
         </div>
@@ -898,6 +1966,27 @@
 
     <!-- Custom JavaScript for Animations -->
     <script>
+        // Floating sparkles generator
+        (function() {
+            const container = document.getElementById('pageSparkles');
+            if (!container || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            
+            const SPARKLE_COUNT = 25;
+            const sizes = ['small', '', 'large'];
+            const types = ['', '', '', 'white']; // 75% gold, 25% white
+            
+            for (let i = 0; i < SPARKLE_COUNT; i++) {
+                const sparkle = document.createElement('div');
+                const size = sizes[Math.floor(Math.random() * sizes.length)];
+                const type = types[Math.floor(Math.random() * types.length)];
+                sparkle.className = 'page-sparkle' + (size ? ' ' + size : '') + (type ? ' ' + type : '');
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.animationDuration = (12 + Math.random() * 20) + 's';
+                sparkle.style.animationDelay = (Math.random() * 15) + 's';
+                container.appendChild(sparkle);
+            }
+        })();
+
         // Debug: Verificar carga de imagen del búho
         document.addEventListener('DOMContentLoaded', function() {
             const owlImage = document.querySelector('img[alt="Búho Mágico de Hogwarts"]');
@@ -936,7 +2025,7 @@
             }, observerOptions);
             
             // Observe cards for scroll animations
-            document.querySelectorAll('.card').forEach(card => {
+            document.querySelectorAll('.card, .magic-card, .house-card, .explore-card').forEach(card => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(20px)';
                 card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
@@ -948,6 +2037,23 @@
     <!-- Auth Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../src/scripts/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroMotionImage = document.querySelector('.hero-motion-image');
+            if (!heroMotionImage) return;
+
+            const markImageReady = () => {
+                heroMotionImage.classList.add('is-ready');
+            };
+
+            if (heroMotionImage.complete) {
+                markImageReady();
+            } else {
+                heroMotionImage.addEventListener('load', markImageReady, { once: true });
+                heroMotionImage.addEventListener('error', markImageReady, { once: true });
+            }
+        });
+    </script>
     <script>
         // Update navigation based on auth status
         async function updateNavigation() {

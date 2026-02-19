@@ -7,60 +7,165 @@
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-        /* Estilos minimalistas personalizados */
+        /* ---- Font assignments ---- */
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-josefin { font-family: 'Josefin Sans', sans-serif; }
+
+        /* ---- Dark OLED Skeuomorphic Cards ---- */
         .compact-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: #111111;
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.4),
+                0 4px 8px rgba(0, 0, 0, 0.3),
+                0 12px 24px rgba(0, 0, 0, 0.2);
         }
+        .compact-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
+            pointer-events: none;
+        }
+        .compact-card:hover {
+            border-color: rgba(202, 138, 4, 0.25);
+            transform: translateY(-4px);
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                0 8px 16px rgba(0, 0, 0, 0.4),
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(202, 138, 4, 0.08);
+        }
+
+        /* ---- Achievement Badges (dark mode) ---- */
         .achievement-badge {
             width: 48px;
             height: 48px;
-            border-radius: 6px;
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
             position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .achievement-badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(202, 138, 4, 0.15);
+            border-color: rgba(202, 138, 4, 0.3);
         }
+
+        /* ---- Stat Item ---- */
         .stat-item {
             padding: 0.75rem;
             border-radius: 8px;
-            background: rgba(0, 0, 0, 0.02);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
+
+        /* ---- Minimal Button (dark) ---- */
         .minimal-button {
             padding: 0.5rem 1rem;
             font-size: 0.875rem;
-            border-radius: 6px;
-            transition: all 0.2s ease;
+            border-radius: 8px;
+            transition: all 0.2s ease-out;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #E0E0E0;
         }
-        
-        /* Tooltips mejorados para los logros */
+        .minimal-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(202, 138, 4, 0.3);
+            color: #FFFFFF;
+        }
+
+        /* ---- Tooltips (dark) ---- */
         .achievement-badge[title]:hover:after {
             content: attr(title);
             position: absolute;
             top: -2.5rem;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+            background: rgba(17, 17, 17, 0.95);
+            color: #E0E0E0;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
             font-size: 0.75rem;
             white-space: nowrap;
             z-index: 10;
             pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            font-family: 'Josefin Sans', sans-serif;
         }
-        
-        /* Mejoras responsivas adicionales */
+
+        /* ---- Section title style ---- */
+        .section-title {
+            font-family: 'Cinzel', serif;
+            color: #CA8A04;
+            text-shadow: 0 0 20px rgba(202, 138, 4, 0.2);
+        }
+
+        /* ---- Profile section background tint ---- */
+        .profile-section {
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 0%, rgba(202, 138, 4, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(116, 0, 1, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* ---- Progress bar track (dark) ---- */
+        .progress-track {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 9999px;
+        }
+
+        /* ---- Global floating sparkles ---- */
+        .page-sparkles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .page-sparkle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            background: rgba(202, 138, 4, 0.6);
+            box-shadow: 0 0 4px rgba(202, 138, 4, 0.4);
+            animation: sparkle-drift linear infinite;
+        }
+        .page-sparkle.white {
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+        }
+        .page-sparkle.small { width: 1px; height: 1px; }
+        .page-sparkle.large { width: 3px; height: 3px; }
+        @keyframes sparkle-drift {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-20px) translateX(30px); opacity: 0; }
+        }
+
+        /* ---- Responsive ---- */
         @media (max-width: 640px) {
             .achievement-badge {
                 width: 40px;
@@ -71,9 +176,140 @@
                 height: 1rem !important;
             }
         }
+
+        /* Theme harmonization with homepage + unique "vault" profile tone */
+        body.theme-profile {
+            background:
+                linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.72)),
+                radial-gradient(circle at 18% -15%, rgba(202,138,4,0.2), transparent 38%),
+                radial-gradient(circle at 85% 115%, rgba(116,0,1,0.25), transparent 42%),
+                linear-gradient(160deg, #120a09, #23120f 45%, #23151f 100%) !important;
+            position: relative;
+        }
+        body.theme-profile::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 12% 12%, rgba(228,183,94,0.24), transparent 34%),
+                radial-gradient(circle at 88% 78%, rgba(72,140,112,0.22), transparent 36%),
+                linear-gradient(140deg, rgba(202,138,4,0.1), rgba(72,140,112,0.08) 45%, transparent 70%);
+        }
+        body.theme-profile > * {
+            position: relative;
+            z-index: 1;
+        }
+        .theme-profile .profile-section {
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(155deg, rgba(18,8,8,.92), rgba(20,10,8,.96)),
+                repeating-linear-gradient(90deg, rgba(255,255,255,.01) 0 1px, transparent 1px 20px) !important;
+        }
+        .theme-profile .profile-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 12% 18%, rgba(228, 183, 94, 0.24), transparent 34%),
+                radial-gradient(circle at 86% 82%, rgba(72, 140, 112, 0.2), transparent 32%),
+                linear-gradient(130deg, rgba(202,138,4,.08), transparent 38%);
+            animation: profile-aura 8s ease-in-out infinite;
+            mix-blend-mode: screen;
+        }
+        .theme-profile .profile-section > * {
+            position: relative;
+            z-index: 1;
+        }
+        .theme-profile .max-w-6xl.mx-auto.px-4.sm\:px-6.lg\:px-8.py-6.relative.z-10 {
+            position: relative;
+        }
+        .theme-profile .max-w-6xl.mx-auto.px-4.sm\:px-6.lg\:px-8.py-6.relative.z-10::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 78% 22%, rgba(228,183,94,.12), transparent 30%),
+                radial-gradient(circle at 24% 88%, rgba(72,140,112,.1), transparent 26%);
+        }
+        .theme-profile .max-w-6xl.mx-auto.px-4.sm\:px-6.lg\:px-8.py-6.relative.z-10 > * {
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes profile-aura {
+            0%, 100% { opacity: .68; }
+            50% { opacity: 1; }
+        }
+        .theme-profile .font-headline,
+        .theme-profile h1,
+        .theme-profile h2,
+        .theme-profile h3,
+        .theme-profile h4,
+        .theme-profile .text-text-primary {
+            color: #f3dfba !important;
+        }
+        .theme-profile .text-text-secondary,
+        .theme-profile .text-gray-300,
+        .theme-profile .text-gray-400,
+        .theme-profile .text-gray-500 {
+            color: rgba(236,220,185,.84) !important;
+        }
+        .theme-profile .text-accent,
+        .theme-profile .text-ravenclaw {
+            color: #9fd4ff !important;
+        }
+        .theme-profile .bg-accent\/10,
+        .theme-profile .bg-ravenclaw\/10 {
+            background-color: rgba(159,212,255,.16) !important;
+        }
+        .theme-profile .border-accent,
+        .theme-profile .border-ravenclaw {
+            border-color: rgba(159,212,255,.56) !important;
+        }
+        nav {
+            background: linear-gradient(180deg, rgba(26,12,10,.97), rgba(14,7,6,.96)) !important;
+            border-bottom: 1px solid rgba(199,167,101,.35) !important;
+            box-shadow: 0 12px 26px rgba(0,0,0,.45), inset 0 -1px 0 rgba(199,167,101,.1);
+        }
+        nav .hidden.md\:flex.items-center.space-x-8 {
+            background: linear-gradient(180deg, rgba(20,10,8,.92), rgba(10,5,5,.88));
+            border: 1px solid rgba(199,167,101,.45);
+            border-radius: 999px;
+            padding: .62rem 1.25rem;
+            gap: 1rem;
+        }
+        nav a { letter-spacing: .08em; text-transform: uppercase; font-size: .79rem; }
+        nav .btn-primary {
+            background: linear-gradient(180deg, #cb1b1f, #8f1115) !important;
+            border: 1px solid #e36f6f !important;
+            color: #fff4dd !important;
+        }
+        .compact-card {
+            border-color: rgba(199,167,101,.22) !important;
+            background: linear-gradient(180deg, rgba(25,12,10,.9), rgba(13,7,6,.92)) !important;
+        }
+        .section-title { color: #f2dec1 !important; }
+        .stat-item { background: rgba(33,16,12,.62); border-color: rgba(199,167,101,.14); }
+        .progress-track { background: rgba(255,245,225,.12); }
+        /* Unique touch: achievement glow pulse */
+        .achievement-badge {
+            box-shadow: 0 0 0 1px rgba(199,167,101,.1) inset;
+        }
+        .achievement-badge:hover {
+            box-shadow: 0 6px 18px rgba(202,138,4,.24), 0 0 0 1px rgba(202,138,4,.28) inset;
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-background text-text-primary font-josefin theme-profile" style="background: #0D0D0D;">
+    <!-- Global floating sparkles -->
+    <div class="page-sparkles" id="pageSparkles" aria-hidden="true"></div>
+
     <!-- Navigation Header -->
     <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -107,17 +343,18 @@
         </div>
     </nav>
 
-    <!-- Profile Header Section - Minimalist Version -->
-    <section class="bg-white border-b border-gray-100">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Profile Header Section - Dark OLED Skeuomorphic -->
+    <section class="profile-section border-b border-white/5">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
             <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
                 <!-- Avatar -->
                 <div class="relative flex-shrink-0">
                     <img id="profileAvatar" 
                          src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=300" 
                          alt="Avatar" 
-                         class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full border-2 border-gray-100" />
-                    <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-primary rounded-full border-2 border-white flex items-center justify-center">
+                         class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full border-2 border-white/10" 
+                         style="box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 0 3px rgba(202, 138, 4, 0.2);" />
+                    <div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full border-2 border-[#0D0D0D] flex items-center justify-center" style="background: #CA8A04;">
                         <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                         </svg>
@@ -127,46 +364,46 @@
                 <!-- Info -->
                 <div class="flex-1 text-center md:text-left">
                     <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
-                        <h1 id="profileName" class="text-2xl font-semibold text-gray-900">Cargando...</h1>
-                        <span id="profileHouse" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                        <h1 id="profileName" class="text-2xl font-semibold text-white font-cinzel">Cargando...</h1>
+                        <span id="profileHouse" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-josefin" style="background: rgba(202, 138, 4, 0.15); color: #CA8A04; border: 1px solid rgba(202, 138, 4, 0.25);">
                             GRYFFINDOR
                         </span>
                     </div>
                     
-                    <p class="text-gray-600 text-sm mb-4">
+                    <p class="text-gray-400 text-sm mb-4 font-josefin">
                         <span id="profileRole">Miembro</span> • 
-                        <span id="profileSpecialization">Teorías Mágicas</span>
+                        <span id="profileSpecialization">Teorias Magicas</span>
                     </p>
                     
                     <!-- Compact Stats -->
-                    <div class="flex flex-wrap gap-6 mb-4 text-sm">
+                    <div class="flex flex-wrap gap-6 mb-4 text-sm font-josefin">
                         <div class="flex items-center gap-2">
                             <span class="text-gray-500">Puntos:</span>
-                            <span id="housePoints" class="font-semibold text-gray-900">0</span>
+                            <span id="housePoints" class="font-semibold text-white">0</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-gray-500">Nivel:</span>
-                            <span id="reputationLevel" class="font-semibold text-gray-900">1</span>
+                            <span id="reputationLevel" class="font-semibold text-white">1</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-gray-500">Días:</span>
-                            <span id="communityTime" class="font-semibold text-gray-900">0</span>
+                            <span class="text-gray-500">Dias:</span>
+                            <span id="communityTime" class="font-semibold text-white">0</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-gray-500">Contribuciones:</span>
-                            <span id="contributionsCount" class="font-semibold text-gray-900">0</span>
+                            <span id="contributionsCount" class="font-semibold text-white">0</span>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Actions -->
                 <div class="flex gap-2">
-                    <button id="editProfileBtn" class="minimal-button bg-gray-100 hover:bg-gray-200 text-gray-700">
+                    <button id="editProfileBtn" class="minimal-button">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                         </svg>
                     </button>
-                    <button id="shareProfileBtn" class="minimal-button bg-gray-100 hover:bg-gray-200 text-gray-700">
+                    <button id="shareProfileBtn" class="minimal-button">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
                         </svg>
@@ -177,85 +414,85 @@
     </section>
 
     <!-- Main Content -->
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
         <div class="grid lg:grid-cols-3 gap-6">
             <!-- Left Column - Main Content -->
             <div class="lg:col-span-2 space-y-6">
                 <!-- Personal Bio -->
                 <section class="compact-card p-5">
                     <div class="flex items-center justify-between mb-3">
-                        <h2 class="text-lg font-semibold text-gray-900">Mi Historia Mágica</h2>
-                        <button id="editBioBtn" class="text-gray-400 hover:text-gray-600 text-sm">
+                        <h2 class="text-lg font-semibold text-white section-title">Mi Historia Magica</h2>
+                        <button id="editBioBtn" class="text-gray-500 hover:text-gray-300 text-sm transition-colors duration-200">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                             </svg>
                         </button>
                     </div>
-                    <div id="profileBio" class="text-gray-600 text-sm leading-relaxed">
-                        <p>Cargando biografía...</p>
+                    <div id="profileBio" class="text-gray-400 text-sm leading-relaxed font-josefin">
+                        <p>Cargando biografia...</p>
                     </div>
                 </section>
 
                 <!-- Achievement Gallery -->
                 <section class="compact-card p-5">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold text-gray-900">Logros</h2>
-                        <span id="achievementCount" class="text-sm text-gray-500">6/10</span>
+                        <h2 class="text-lg font-semibold text-white section-title">Logros</h2>
+                        <span id="achievementCount" class="text-sm text-gray-500 font-josefin">6/10</span>
                     </div>
                     
                     <div id="achievementsContainer" class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
                         <!-- Achievement Badge 1 -->
-                        <div class="achievement-badge bg-amber-100 hover:bg-amber-200 relative group" title="Primer Año - Estudiante">
-                            <svg class="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="achievement-badge relative group" title="Primer Ano - Estudiante" style="background: rgba(202, 138, 4, 0.12);">
+                            <svg class="w-5 h-5" style="color: #CA8A04;" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
                         </div>
 
                         <!-- Achievement Badge 2 -->
-                        <div class="achievement-badge bg-red-100 hover:bg-red-200 relative group" title="Campeón de Casa">
-                            <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="achievement-badge relative group" title="Campeon de Casa" style="background: rgba(185, 28, 28, 0.15);">
+                            <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
                         </div>
 
                         <!-- Achievement Badge 3 -->
-                        <div class="achievement-badge bg-purple-100 hover:bg-purple-200 relative group" title="Maestro Teórico">
-                            <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="achievement-badge relative group" title="Maestro Teorico" style="background: rgba(147, 51, 234, 0.15);">
+                            <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
 
                         <!-- Achievement Badge 4 -->
-                        <div class="achievement-badge bg-green-100 hover:bg-green-200 relative group" title="Ayudante Comunitario">
-                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="achievement-badge relative group" title="Ayudante Comunitario" style="background: rgba(22, 163, 74, 0.15);">
+                            <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
                             </svg>
                         </div>
 
                         <!-- Achievement Badge 5 -->
-                        <div class="achievement-badge bg-orange-100 hover:bg-orange-200 relative group" title="Escritor Prolífico">
-                            <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="achievement-badge relative group" title="Escritor Prolifico" style="background: rgba(234, 88, 12, 0.15);">
+                            <svg class="w-5 h-5 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03z" clip-rule="evenodd"/>
                             </svg>
                         </div>
 
                         <!-- Achievement Badge 6 -->
-                        <div class="achievement-badge bg-pink-100 hover:bg-pink-200 relative group" title="Mentor Querido">
-                            <svg class="w-5 h-5 text-pink-600" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="achievement-badge relative group" title="Mentor Querido" style="background: rgba(219, 39, 119, 0.15);">
+                            <svg class="w-5 h-5 text-pink-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
                             </svg>
                         </div>
 
                         <!-- Locked Achievement -->
-                        <div class="achievement-badge bg-gray-200 opacity-60 relative group" title="Logro Bloqueado">
-                            <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="achievement-badge opacity-40 relative group" title="Logro Bloqueado" style="background: rgba(255, 255, 255, 0.04);">
+                            <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
                             </svg>
                         </div>
 
                         <!-- Locked Achievement -->
-                        <div class="achievement-badge bg-gray-200 opacity-60 relative group" title="Logro Bloqueado">
-                            <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="achievement-badge opacity-40 relative group" title="Logro Bloqueado" style="background: rgba(255, 255, 255, 0.04);">
+                            <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
                             </svg>
                         </div>
@@ -264,60 +501,60 @@
 
                 <!-- Contribution Timeline -->
                 <section class="compact-card p-5">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Actividad Reciente</h2>
+                    <h2 class="text-lg font-semibold text-white section-title mb-4">Actividad Reciente</h2>
                     
                     <div id="activitiesContainer" class="space-y-3">
                         <!-- Timeline Item 1 -->
                         <div class="flex items-start gap-3">
-                            <div class="flex-shrink-0 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
-                                <svg class="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center" style="background: rgba(202, 138, 4, 0.15);">
+                                <svg class="w-4 h-4" style="color: #CA8A04;" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-start justify-between">
-                                    <p class="text-sm text-gray-900 font-medium">+50 puntos</p>
+                                    <p class="text-sm text-white font-medium font-josefin">+50 puntos</p>
                                     <span class="text-xs text-gray-500 ml-2">2h</span>
                                 </div>
-                                <p class="text-xs text-gray-600 truncate">Desafío completado</p>
+                                <p class="text-xs text-gray-400 truncate">Desafio completado</p>
                             </div>
                         </div>
 
                         <!-- Timeline Item 2 -->
                         <div class="flex items-start gap-3">
-                            <div class="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                <svg class="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center" style="background: rgba(147, 51, 234, 0.15);">
+                                <svg class="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-start justify-between">
-                                    <p class="text-sm text-gray-900 font-medium">Discusión popular</p>
+                                    <p class="text-sm text-white font-medium font-josefin">Discusion popular</p>
                                     <span class="text-xs text-gray-500 ml-2">1d</span>
                                 </div>
-                                <p class="text-xs text-gray-600 truncate">47 respuestas</p>
+                                <p class="text-xs text-gray-400 truncate">47 respuestas</p>
                             </div>
                         </div>
 
                         <!-- Timeline Item 3 -->
                         <div class="flex items-start gap-3">
-                            <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center" style="background: rgba(22, 163, 74, 0.15);">
+                                <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-start justify-between">
-                                    <p class="text-sm text-gray-900 font-medium">Contribución destacada</p>
+                                    <p class="text-sm text-white font-medium font-josefin">Contribucion destacada</p>
                                     <span class="text-xs text-gray-500 ml-2">3d</span>
                                 </div>
-                                <p class="text-xs text-gray-600 truncate">Análisis: Severus Snape</p>
+                                <p class="text-xs text-gray-400 truncate">Analisis: Severus Snape</p>
                             </div>
                         </div>
                     </div>
                     
                     <div class="text-center mt-4">
-                        <button class="text-sm text-gray-600 hover:text-gray-900">
+                        <button class="text-sm font-josefin transition-colors duration-200" style="color: #CA8A04;" onmouseover="this.style.color='#EAB308'" onmouseout="this.style.color='#CA8A04'">
                             Ver todo →
                         </button>
                     </div>
@@ -328,57 +565,57 @@
             <div class="space-y-5">
                 <!-- Personal Statistics -->
                 <section class="compact-card p-5">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Estadísticas</h3>
+                    <h3 class="text-lg font-semibold text-white section-title mb-3">Estadisticas</h3>
                     
                     <div class="space-y-3">
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-600">Posts</span>
-                            <span class="font-medium text-gray-900" data-stat="posts">0</span>
+                        <div class="flex justify-between items-center text-sm font-josefin">
+                            <span class="text-gray-400">Posts</span>
+                            <span class="font-medium text-white" data-stat="posts">0</span>
                         </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-600">Comentarios</span>
-                            <span class="font-medium text-gray-900" data-stat="comments">0</span>
+                        <div class="flex justify-between items-center text-sm font-josefin">
+                            <span class="text-gray-400">Comentarios</span>
+                            <span class="font-medium text-white" data-stat="comments">0</span>
                         </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-600">Me gusta</span>
-                            <span class="font-medium text-gray-900" data-stat="likes">0</span>
+                        <div class="flex justify-between items-center text-sm font-josefin">
+                            <span class="text-gray-400">Me gusta</span>
+                            <span class="font-medium text-white" data-stat="likes">0</span>
                         </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-600">Vistas</span>
-                            <span class="font-medium text-gray-900" data-stat="views">0</span>
+                        <div class="flex justify-between items-center text-sm font-josefin">
+                            <span class="text-gray-400">Vistas</span>
+                            <span class="font-medium text-white" data-stat="views">0</span>
                         </div>
                     </div>
                 </section>
 
                 <!-- Magical Specialties -->
                 <section class="compact-card p-5">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Especialidades</h3>
+                    <h3 class="text-lg font-semibold text-white section-title mb-3">Especialidades</h3>
                     
                     <div class="space-y-3">
                         <div>
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-sm text-gray-600">Teorías Mágicas</span>
-                                <span class="text-xs font-medium text-gray-900">95%</span>
+                                <span class="text-sm text-gray-400 font-josefin">Teorias Magicas</span>
+                                <span class="text-xs font-medium text-white font-josefin">95%</span>
                             </div>
-                            <div class="w-full h-1.5 bg-gray-200 rounded-full">
-                                <div class="w-[95%] h-1.5 bg-amber-500 rounded-full"></div>
+                            <div class="w-full h-1.5 progress-track">
+                                <div class="w-[95%] h-1.5 rounded-full" style="background: #CA8A04;"></div>
                             </div>
                         </div>
                         <div>
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-sm text-gray-600">Historia</span>
-                                <span class="text-xs font-medium text-gray-900">85%</span>
+                                <span class="text-sm text-gray-400 font-josefin">Historia</span>
+                                <span class="text-xs font-medium text-white font-josefin">85%</span>
                             </div>
-                            <div class="w-full h-1.5 bg-gray-200 rounded-full">
+                            <div class="w-full h-1.5 progress-track">
                                 <div class="w-[85%] h-1.5 bg-purple-500 rounded-full"></div>
                             </div>
                         </div>
                         <div>
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-sm text-gray-600">Análisis</span>
-                                <span class="text-xs font-medium text-gray-900">90%</span>
+                                <span class="text-sm text-gray-400 font-josefin">Analisis</span>
+                                <span class="text-xs font-medium text-white font-josefin">90%</span>
                             </div>
-                            <div class="w-full h-1.5 bg-gray-200 rounded-full">
+                            <div class="w-full h-1.5 progress-track">
                                 <div class="w-[90%] h-1.5 bg-blue-500 rounded-full"></div>
                             </div>
                         </div>
@@ -387,27 +624,27 @@
 
                 <!-- Social Connections -->
                 <section class="compact-card p-5">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Conexiones</h3>
+                    <h3 class="text-lg font-semibold text-white section-title mb-3">Conexiones</h3>
                     
-                    <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="grid grid-cols-2 gap-3 text-sm font-josefin">
                         <div class="text-center">
-                            <p class="font-semibold text-gray-900">89</p>
-                            <p class="text-xs text-gray-600">Amigos</p>
+                            <p class="font-semibold text-white">89</p>
+                            <p class="text-xs text-gray-500">Amigos</p>
                         </div>
                         <div class="text-center">
-                            <p class="font-semibold text-gray-900">234</p>
-                            <p class="text-xs text-gray-600">Seguidores</p>
+                            <p class="font-semibold text-white">234</p>
+                            <p class="text-xs text-gray-500">Seguidores</p>
                         </div>
                     </div>
                     
-                    <div class="mt-4 pt-4 border-t border-gray-100">
-                        <p class="text-sm font-medium text-gray-900 mb-2">Amigos recientes</p>
+                    <div class="mt-4 pt-4 border-t border-white/5">
+                        <p class="text-sm font-medium text-gray-300 mb-2 font-josefin">Amigos recientes</p>
                         <div class="flex -space-x-2">
-                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop" alt="Friend" class="w-8 h-8 rounded-full border-2 border-white">
-                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop" alt="Friend" class="w-8 h-8 rounded-full border-2 border-white">
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop" alt="Friend" class="w-8 h-8 rounded-full border-2 border-white">
-                            <div class="w-8 h-8 bg-gray-200 rounded-full border-2 border-white flex items-center justify-center">
-                                <span class="text-xs font-medium text-gray-600">+5</span>
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop" alt="Friend" class="w-8 h-8 rounded-full border-2" style="border-color: #111111;">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop" alt="Friend" class="w-8 h-8 rounded-full border-2" style="border-color: #111111;">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop" alt="Friend" class="w-8 h-8 rounded-full border-2" style="border-color: #111111;">
+                            <div class="w-8 h-8 rounded-full border-2 flex items-center justify-center" style="background: rgba(255,255,255,0.06); border-color: #111111;">
+                                <span class="text-xs font-medium text-gray-400">+5</span>
                             </div>
                         </div>
                     </div>
@@ -417,7 +654,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12 mt-16">
+    <footer style="background: #0D0D0D;" class="text-gray-300 py-12 border-t border-white/5">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-8">
                 <!-- Brand -->
@@ -427,31 +664,26 @@
                             <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
                             <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
                         </svg>
-                        <span class="font-accent text-xl font-medium">Hogwarts Community Hub</span>
+                        <span class="font-cinzel text-xl font-medium text-white">Hogwarts Community Hub</span>
                     </div>
-                    <p class="text-gray-300 mb-4 max-w-md">
-                        La comunidad mágica más grande de habla hispana. Donde los fans de Harry Potter 
-                        encuentran su verdadero hogar mágico.
+                    <p class="text-gray-400 mb-4 max-w-md font-josefin">
+                        La comunidad magica mas grande de habla hispana. Donde los fans de Harry Potter 
+                        encuentran su verdadero hogar magico.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                        <a href="javascript:void(0)" class="text-gray-500 hover:text-secondary transition-colors duration-200">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clip-rule="evenodd"/>
                             </svg>
                         </a>
-                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                        <a href="javascript:void(0)" class="text-gray-500 hover:text-secondary transition-colors duration-200">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"/>
                             </svg>
                         </a>
-                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001 12.017.001z"/>
-                            </svg>
-                        </a>
-                        <a href="javascript:void(0)" class="text-gray-400 hover:text-secondary magical-transition">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0C5.374 0 0 5.373 0 12s5.374 12 12 12 12-5.373 12-12S18.626 0 12 0zm5.568 8.16c-.169 1.858-.896 3.433-2.173 4.72-1.277 1.287-2.851 2.023-4.709 2.204V8.16h1.415V6.84H10.686V5.484c0-.476.19-.932.53-1.25.34-.317.8-.484 1.289-.484h.82V2.76h-.82c-.777 0-1.52.309-2.067.859-.546.55-.853 1.297-.853 2.076V6.84H8.17V8.16h1.415v6.924C7.617 14.861 6.3 13.676 5.76 12.16H7.2V10.84H4.56c-.034-.386-.034-.774 0-1.16H7.2V8.36H5.76c.54-1.516 1.857-2.701 3.825-2.924V8.16z"/>
+                        <a href="javascript:void(0)" class="text-gray-500 hover:text-secondary transition-colors duration-200">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12.017 0C18.624 0 20 1.376 20 8.017v3.966C20 18.624 18.624 20 12.017 20H7.983C1.376 20 0 18.624 0 11.983V8.017C0 1.376 1.376 0 7.983 0h4.034zm0 1.8H7.983C2.276 1.8 1.8 2.276 1.8 7.983v4.034c0 5.707.476 6.183 6.183 6.183h4.034c5.707 0 6.183-.476 6.183-6.183V7.983c0-5.707-.476-6.183-6.183-6.183zM10 5.4a4.6 4.6 0 110 9.2 4.6 4.6 0 010-9.2zm0 1.8a2.8 2.8 0 100 5.6 2.8 2.8 0 000-5.6zm5.4-3.6a1.1 1.1 0 110 2.2 1.1 1.1 0 010-2.2z" clip-rule="evenodd"/>
                             </svg>
                         </a>
                     </div>
@@ -459,30 +691,30 @@
                 
                 <!-- Quick Links -->
                 <div>
-                    <h3 class="font-cta text-lg font-semibold mb-4">Enlaces Rápidos</h3>
-                    <ul class="space-y-2">
-                        <li><a href="homepage_sorting_hat_experience.html" class="text-gray-300 hover:text-secondary magical-transition">Inicio</a></li>
-                        <li><a href="house_selection_portal_sorting_hat_quiz.html" class="text-gray-300 hover:text-secondary magical-transition">Selección de Casa</a></li>
-                        <li><a href="interactive_forum_hub.html" class="text-gray-300 hover:text-secondary magical-transition">Foro</a></li>
-                        <li><a href="community_events_challenges_center.html" class="text-gray-300 hover:text-secondary magical-transition">Eventos</a></li>
+                    <h4 class="font-cinzel font-semibold mb-4 text-white text-sm uppercase tracking-wider">Enlaces Rapidos</h4>
+                    <ul class="space-y-2 font-josefin">
+                        <li><a href="homepage_sorting_hat_experience.html" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Inicio</a></li>
+                        <li><a href="house_selection_portal_sorting_hat_quiz.html" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Seleccion de Casa</a></li>
+                        <li><a href="interactive_forum_hub.html" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Foro Principal</a></li>
+                        <li><a href="community_events_challenges_center.html" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Eventos</a></li>
                     </ul>
                 </div>
                 
                 <!-- Community -->
                 <div>
-                    <h3 class="font-cta text-lg font-semibold mb-4">Comunidad</h3>
-                    <ul class="space-y-2">
-                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Reglas</a></li>
-                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Moderadores</a></li>
-                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Ayuda</a></li>
-                        <li><a href="javascript:void(0)" class="text-gray-300 hover:text-secondary magical-transition">Contacto</a></li>
+                    <h4 class="font-cinzel font-semibold mb-4 text-white text-sm uppercase tracking-wider">Comunidad</h4>
+                    <ul class="space-y-2 font-josefin">
+                        <li><a href="javascript:void(0)" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Normas de la Comunidad</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Ayuda y Soporte</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Contacto</a></li>
+                        <li><a href="javascript:void(0)" class="text-gray-400 hover:text-secondary transition-colors duration-200 text-sm">Politica de Privacidad</a></li>
                     </ul>
                 </div>
             </div>
             
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-                <p class="text-gray-400">
-                    © 2024 Hogwarts Community Hub. Hecho con ✨ magia y ❤️ para la comunidad de Harry Potter.
+            <div class="border-t border-white/5 mt-8 pt-8 text-center">
+                <p class="text-gray-500 font-josefin text-sm">
+                    2025 Hogwarts Community Hub. Todos los derechos reservados.
                 </p>
             </div>
         </div>
@@ -546,6 +778,29 @@
             transform: translateX(0px);
         }
     </style>
+
+    <!-- Floating Sparkles Generator -->
+    <script>
+        (function() {
+            const container = document.getElementById('pageSparkles');
+            if (!container || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            
+            const SPARKLE_COUNT = 25;
+            const sizes = ['small', '', 'large'];
+            const types = ['', '', '', 'white'];
+            
+            for (let i = 0; i < SPARKLE_COUNT; i++) {
+                const sparkle = document.createElement('div');
+                const size = sizes[Math.floor(Math.random() * sizes.length)];
+                const type = types[Math.floor(Math.random() * types.length)];
+                sparkle.className = 'page-sparkle' + (size ? ' ' + size : '') + (type ? ' ' + type : '');
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.animationDuration = (12 + Math.random() * 20) + 's';
+                sparkle.style.animationDelay = (Math.random() * 15) + 's';
+                container.appendChild(sparkle);
+            }
+        })();
+    </script>
 
 <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
 </body>

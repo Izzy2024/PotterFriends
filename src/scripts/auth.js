@@ -808,3 +808,14 @@ window.HogwartsAuth = {
     saveUserHouse,
     getUserHouse
 };
+
+// Back-compat: several pages/scripts expect these globals.
+window.initSupabase = window.initSupabase || initSupabase;
+window.getCurrentUser = window.getCurrentUser || getCurrentUser;
+
+// Best-effort eager init so feature pages can query immediately.
+try {
+    initSupabase().catch(() => {});
+} catch (e) {
+    // ignore
+}

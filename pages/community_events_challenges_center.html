@@ -7,9 +7,134 @@
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        body.theme-events {
+            font-family: 'Josefin Sans', sans-serif;
+            background:
+                linear-gradient(180deg, rgba(0,0,0,.44), rgba(0,0,0,.72)),
+                radial-gradient(circle at 12% -20%, rgba(182,19,23,.32), transparent 40%),
+                radial-gradient(circle at 88% 118%, rgba(201,169,97,.26), transparent 44%),
+                linear-gradient(160deg, #160b0a, #2a1410 45%, #2b1322 100%);
+            color: #f3dfba;
+            position: relative;
+        }
+        body.theme-events::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 10% 14%, rgba(255, 123, 0, 0.16), transparent 30%),
+                radial-gradient(circle at 92% 20%, rgba(159, 212, 255, 0.18), transparent 32%),
+                radial-gradient(circle at 78% 86%, rgba(201, 169, 97, 0.2), transparent 34%),
+                linear-gradient(130deg, rgba(182,19,23,.1), rgba(96,165,250,.08) 45%, transparent 70%);
+        }
+        body.theme-events > * {
+            position: relative;
+            z-index: 1;
+        }
+        .theme-events .font-headline,
+        .theme-events h1,
+        .theme-events h2,
+        .theme-events h3,
+        .theme-events h4,
+        .theme-events .text-text-primary {
+            color: #f3dfba !important;
+        }
+        .theme-events .text-text-secondary,
+        .theme-events .text-gray-300,
+        .theme-events .text-gray-400,
+        .theme-events .text-gray-500 {
+            color: rgba(236,220,185,.84) !important;
+        }
+        .theme-events .text-accent,
+        .theme-events .text-ravenclaw {
+            color: #9fd4ff !important;
+        }
+        .theme-events .bg-accent\/10,
+        .theme-events .bg-ravenclaw\/10 {
+            background-color: rgba(159,212,255,.16) !important;
+        }
+        .theme-events .border-accent,
+        .theme-events .border-ravenclaw {
+            border-color: rgba(159,212,255,.56) !important;
+        }
+        .font-headline,.font-accent { font-family: 'Cinzel', serif !important; letter-spacing: .03em; }
+        nav {
+            background: linear-gradient(180deg, rgba(26,12,10,.97), rgba(14,7,6,.96)) !important;
+            border-bottom: 1px solid rgba(199,167,101,.35) !important;
+            box-shadow: 0 12px 26px rgba(0,0,0,.45), inset 0 -1px 0 rgba(199,167,101,.1);
+        }
+        nav .hidden.md\:flex.items-center.space-x-8 {
+            background: linear-gradient(180deg, rgba(20,10,8,.92), rgba(10,5,5,.88));
+            border: 1px solid rgba(199,167,101,.45);
+            border-radius: 999px;
+            padding: .62rem 1.25rem;
+            gap: 1rem;
+        }
+        nav a { letter-spacing: .08em; text-transform: uppercase; font-size: .79rem; }
+        nav .btn-primary {
+            background: linear-gradient(180deg, #cb1b1f, #8f1115) !important;
+            border: 1px solid #e36f6f !important;
+            color: #fff4dd !important;
+        }
+        section.py-16, section.relative.py-16 {
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(18,8,8,.94), rgba(11,6,6,.98)),
+                repeating-linear-gradient(90deg, rgba(255,255,255,.01) 0 1px, transparent 1px 22px) !important;
+        }
+        section.py-16::after, section.relative.py-16::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 82% 18%, rgba(96, 165, 250, 0.22), transparent 34%),
+                radial-gradient(circle at 16% 78%, rgba(245, 158, 11, 0.2), transparent 30%),
+                linear-gradient(120deg, rgba(59,130,246,.07), transparent 42%);
+        }
+        section.py-16 > *, section.relative.py-16 > * {
+            position: relative;
+            z-index: 1;
+        }
+        .card {
+            background: linear-gradient(180deg, rgba(25,12,10,.9), rgba(13,7,6,.92)) !important;
+            border: 1px solid rgba(199,167,101,.24) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 12px 26px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.07);
+        }
+        .bg-surface,.bg-surface\/20 {
+            background: rgba(30,15,11,.75) !important;
+            border-color: rgba(199,167,101,.22) !important;
+        }
+        .bg-gray-200 { background: rgba(255,245,225,.12) !important; }
+        .text-gray-300,.text-gray-400,.text-gray-500,.text-text-secondary { color: rgba(236,220,185,.82) !important; }
+        .btn-secondary {
+            background: linear-gradient(180deg, rgba(53,27,17,.88), rgba(27,14,10,.88)) !important;
+            border: 1px solid rgba(199,167,101,.45) !important;
+            color: #f3e3bb !important;
+        }
+        /* Unique touch: festive ribbon glow */
+        .relative.py-16::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 18% 22%, rgba(182,19,23,.2), transparent 30%),
+                radial-gradient(circle at 82% 66%, rgba(201,169,97,.24), transparent 34%);
+            animation: events-ribbon 7s ease-in-out infinite;
+        }
+        @keyframes events-ribbon { 0%,100%{opacity:.55} 50%{opacity:.9} }
+    </style>
 
 </head>
-<body class="bg-background text-text-primary">
+<body class="bg-background text-text-primary theme-events">
     <!-- Navigation Header -->
     <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

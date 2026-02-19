@@ -9,6 +9,55 @@
     let currentUser = null;
     let events = [];
     let editingEvent = null;
+
+    function ensureToastHost() {
+        let host = document.getElementById('app-toast-host');
+        if (!host) {
+            host = document.createElement('div');
+            host.id = 'app-toast-host';
+            host.className = 'fixed top-4 right-4 z-[100] space-y-2 pointer-events-none';
+            document.body.appendChild(host);
+        }
+        return host;
+    }
+
+    function showToast(message, type = 'success') {
+        const host = ensureToastHost();
+        const toast = document.createElement('div');
+        const palette = {
+            success: 'bg-success text-white border-success/70',
+            error: 'bg-error text-white border-error/70',
+            info: 'bg-primary text-white border-primary/70'
+        };
+        const style = palette[type] || palette.info;
+        toast.className = `pointer-events-auto border ${style} shadow-xl rounded-lg px-4 py-3 transform transition-all duration-300 ease-out opacity-0 translate-x-8`;
+        toast.innerHTML = `<p class="text-sm font-medium">${message}</p>`;
+        host.appendChild(toast);
+
+        requestAnimationFrame(() => {
+            toast.classList.remove('opacity-0', 'translate-x-8');
+        });
+
+        setTimeout(() => {
+            toast.classList.add('opacity-0', 'translate-x-8');
+            setTimeout(() => toast.remove(), 280);
+        }, 2800);
+    }
+
+    function getParticipantsCount(event) {
+        const participants = event?.event_participants;
+        if (Array.isArray(participants)) {
+            if (participants.length > 0 && participants[0] && typeof participants[0].count !== 'undefined') {
+                const countValue = parseInt(participants[0].count, 10);
+                return Number.isNaN(countValue) ? 0 : countValue;
+            }
+            return participants.length;
+        }
+        if (typeof event?.participants_count === 'number') {
+            return event.participants_count;
+        }
+        return 0;
+    }
     
     // Wait for Supabase client
     async function waitForSupabase() {
@@ -44,7 +93,29 @@
             .order('created_at', { ascending: false });
             
         if (error) throw error;
-        return data || [];
+
+        const eventsData = data || [];
+        const eventIds = eventsData.map(event => event.id).filter(Boolean);
+        let countsByEventId = {};
+
+        if (eventIds.length > 0) {
+            const { data: participantsData, error: participantsError } = await client
+                .from('event_participants')
+                .select('event_id')
+                .in('event_id', eventIds);
+
+            if (!participantsError && Array.isArray(participantsData)) {
+                countsByEventId = participantsData.reduce((acc, row) => {
+                    acc[row.event_id] = (acc[row.event_id] || 0) + 1;
+                    return acc;
+                }, {});
+            }
+        }
+
+        return eventsData.map(event => ({
+            ...event,
+            participants_count: countsByEventId[event.id] ?? getParticipantsCount(event)
+        }));
     }
     
     // Create or update event
@@ -198,7 +269,7 @@
         container.innerHTML = eventsToRender.map(event => {
             const typeConfig = getEventTypeConfig(event.type);
             const statusConfig = getStatusConfig(event.status);
-            const participantsCount = Array.isArray(event.event_participants) ? event.event_participants.length : 0;
+            const participantsCount = getParticipantsCount(event);
             const startDate = new Date(event.start_at).toLocaleDateString('es-ES');
             const endDate = new Date(event.end_at).toLocaleDateString('es-ES');
             
@@ -312,7 +383,6 @@
     async function handleEventSubmit(e) {
         e.preventDefault();
         
-        const formData = new FormData(e.target);
         const eventData = {
             title: document.getElementById('event-title-input').value,
             slug: document.getElementById('event-slug-input').value,
@@ -333,10 +403,10 @@
             document.getElementById('event-modal').classList.add('hidden');
             await loadEvents();
             
-            alert(editingEvent ? 'Evento actualizado exitosamente' : 'Evento creado exitosamente');
+            showToast(editingEvent ? 'Evento actualizado exitosamente' : 'Evento creado exitosamente', 'success');
         } catch (error) {
             console.error('Error saving event:', error);
-            alert('Error al guardar el evento: ' + (error.message || 'Error desconocido'));
+            showToast('Error al guardar el evento: ' + (error.message || 'Error desconocido'), 'error');
         }
     }
     
@@ -361,10 +431,10 @@
         try {
             await deleteEvent(eventId);
             await loadEvents();
-            alert('Evento eliminado exitosamente');
+            showToast('Evento eliminado exitosamente', 'success');
         } catch (error) {
             console.error('Error deleting event:', error);
-            alert('Error al eliminar el evento: ' + (error.message || 'Error desconocido'));
+            showToast('Error al eliminar el evento: ' + (error.message || 'Error desconocido'), 'error');
         }
     }
     
@@ -388,7 +458,7 @@
     function updateStats() {
         const activeEvents = events.filter(e => e.status === 'active').length;
         const totalParticipants = events.reduce((sum, event) => {
-            return sum + (Array.isArray(event.event_participants) ? event.event_participants.length : 0);
+            return sum + getParticipantsCount(event);
         }, 0);
         
         const thisMonth = new Date();

@@ -9,6 +9,40 @@
     let currentEvent = null;
     let currentUser = null;
     let userParticipation = null;
+
+    function ensureToastHost() {
+        let host = document.getElementById('app-toast-host');
+        if (!host) {
+            host = document.createElement('div');
+            host.id = 'app-toast-host';
+            host.className = 'fixed top-4 right-4 z-[100] space-y-2 pointer-events-none';
+            document.body.appendChild(host);
+        }
+        return host;
+    }
+
+    function showToast(message, type = 'success') {
+        const host = ensureToastHost();
+        const toast = document.createElement('div');
+        const palette = {
+            success: 'bg-success text-white border-success/70',
+            error: 'bg-error text-white border-error/70',
+            info: 'bg-primary text-white border-primary/70'
+        };
+        const style = palette[type] || palette.info;
+        toast.className = `pointer-events-auto border ${style} shadow-xl rounded-lg px-4 py-3 transform transition-all duration-300 ease-out opacity-0 translate-x-8`;
+        toast.innerHTML = `<p class="text-sm font-medium">${message}</p>`;
+        host.appendChild(toast);
+
+        requestAnimationFrame(() => {
+            toast.classList.remove('opacity-0', 'translate-x-8');
+        });
+
+        setTimeout(() => {
+            toast.classList.add('opacity-0', 'translate-x-8');
+            setTimeout(() => toast.remove(), 280);
+        }, 2800);
+    }
     
     // Get event slug from URL
     function getEventSlug() {
@@ -18,9 +52,18 @@
     
     // Wait for Supabase client
     async function waitForSupabase() {
-        for (let i = 0; i < 20; i++) {
+        // Kick auth init if available
+        try {
+            if (window.HogwartsAuth?.initSupabase) {
+                await window.HogwartsAuth.initSupabase();
+            }
+        } catch (e) {
+            // ignore and keep waiting
+        }
+
+        for (let i = 0; i < 40; i++) {
             if (window.supabaseClient) return window.supabaseClient;
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 200));
         }
         throw new Error('Supabase client not available');
     }
@@ -28,39 +71,67 @@
     // Fetch event details
     async function fetchEventDetails(slug) {
         const client = await waitForSupabase();
-        
-        const { data: event, error } = await client
-            .from('events')
-            .select(`
-                *,
-                event_participants(
-                    user_id,
-                    status,
-                    submission_url,
-                    points_awarded,
-                    joined_at
-                )
-            `)
-            .eq('slug', slug)
-            .single();
-            
-        if (error) throw error;
-        return event;
+
+        // Prefer RPCs (they provide counts + usernames/houses).
+        try {
+            const [{ data: eventRows, error: eventError }, { data: participantsRows, error: participantsError }] = await Promise.all([
+                client.rpc('get_event_by_slug', { in_slug: slug }),
+                client.rpc('get_event_participants', { in_event_slug: slug })
+            ]);
+            if (eventError) throw eventError;
+            if (participantsError) throw participantsError;
+
+            const event = Array.isArray(eventRows) ? eventRows[0] : eventRows;
+            if (!event) throw new Error('Event not found');
+
+            return {
+                ...event,
+                event_participants: Array.isArray(participantsRows) ? participantsRows : []
+            };
+        } catch (e) {
+            // Fallback to direct table reads if RPCs are not available
+            const { data: event, error } = await client
+                .from('events')
+                .select('*')
+                .eq('slug', slug)
+                .single();
+            if (error) throw error;
+
+            const { data: participants, error: participantsError } = await client
+                .from('event_participants')
+                .select('user_id,status,submission_url,points_awarded,joined_at')
+                .eq('event_id', event.id);
+            if (participantsError) throw participantsError;
+
+            return {
+                ...event,
+                event_participants: Array.isArray(participants) ? participants : []
+            };
+        }
     }
     
     // Fetch user participation status
-    async function fetchUserParticipation(eventId, userId) {
-        if (!userId) return null;
-        
+    async function fetchUserParticipation(eventId, userId, eventSlug) {
         const client = await waitForSupabase();
-        
+
+        // Prefer auth-aware RPC (does not require a userId on the client).
+        if (eventSlug) {
+            try {
+                const { data, error } = await client.rpc('get_user_participation', { in_event_slug: eventSlug });
+                if (error) throw error;
+                return Array.isArray(data) ? (data[0] || null) : data;
+            } catch (e) {
+                // fall through
+            }
+        }
+
+        if (!userId) return null;
         const { data, error } = await client
             .from('event_participants')
             .select('*')
             .eq('event_id', eventId)
             .eq('user_id', userId)
             .single();
-            
         if (error && error.code !== 'PGRST116') throw error;
         return data;
     }
@@ -84,6 +155,11 @@
         const diffTime = end - now;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return Math.max(0, diffDays);
+    }
+
+    function toInt(value, fallback = 0) {
+        const n = typeof value === 'number' ? value : parseInt(String(value ?? '').replace(/[^0-9-]/g, ''), 10);
+        return Number.isFinite(n) ? n : fallback;
     }
     
     // Get event type configuration
@@ -115,8 +191,12 @@
     function renderEventDetails(event) {
         const config = getEventTypeConfig(event.type);
         const daysRemaining = getDaysRemaining(event.end_at);
-        const participantsCount = event.event_participants?.length || 0;
-        const submissionsCount = event.event_participants?.filter(p => p.submission_url).length || 0;
+        const participantsCount = event.participants_count != null
+            ? toInt(event.participants_count, 0)
+            : (event.event_participants?.length || 0);
+        const submissionsCount = event.submissions_count != null
+            ? toInt(event.submissions_count, 0)
+            : (event.event_participants?.filter(p => p.submission_url).length || 0);
         
         // Update page title and breadcrumb
         document.title = `${event.title} - Hogwarts Community Hub`;
@@ -295,9 +375,9 @@
                         </svg>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="font-medium text-text-primary">Participante ${participant.user_id.slice(-4)}</p>
+                        <p class="font-medium text-text-primary">${participant.username || `Participante ${String(participant.user_id || '').slice(-4)}`}</p>
                         <p class="text-sm text-text-secondary">
-                            ${participant.status === 'submitted' ? 'Ha enviado su trabajo' : 'Participando'}
+                            ${participant.house_name ? `${participant.house_name} · ` : ''}${participant.status === 'submitted' ? 'Ha enviado su trabajo' : 'Participando'}
                         </p>
                     </div>
                     ${participant.status === 'winner' ? `
@@ -349,15 +429,21 @@
             const client = await waitForSupabase();
             await client.rpc('join_event', { in_slug: currentEvent.slug });
             
+            // Refresh event and counters immediately after joining
+            currentEvent = await fetchEventDetails(currentEvent.slug);
+
             // Refresh participation status
-            userParticipation = await fetchUserParticipation(currentEvent.id, currentUser.id);
+            userParticipation = await fetchUserParticipation(currentEvent.id, currentUser?.id, currentEvent.slug);
+            renderEventDetails(currentEvent);
             renderParticipationPanel(currentEvent, userParticipation);
+            renderEventDetailsTab(currentEvent);
+            renderParticipants(currentEvent?.event_participants);
             
             // Show success message
-            alert('¡Te has unido al evento exitosamente!');
+            showToast('¡Te has unido al evento exitosamente!', 'success');
         } catch (error) {
             console.error('Error joining event:', error);
-            alert('Error al unirse al evento. Inténtalo de nuevo.');
+            showToast('Error al unirse al evento. Inténtalo de nuevo.', 'error');
         }
     }
     
@@ -437,11 +523,11 @@
             
             // Close modal and show success
             document.getElementById('submission-modal').classList.add('hidden');
-            alert('¡Trabajo enviado exitosamente!');
+            showToast('¡Trabajo enviado exitosamente!', 'success');
             
         } catch (error) {
             console.error('Error submitting work:', error);
-            alert('Error al enviar el trabajo. Inténtalo de nuevo.');
+            showToast('Error al enviar el trabajo. Inténtalo de nuevo.', 'error');
         }
     }
     
@@ -455,17 +541,21 @@
             }
             
             // Get current user
-            if (window.getCurrentUser) {
-                currentUser = await window.getCurrentUser();
+            try {
+                if (window.getCurrentUser) {
+                    currentUser = await window.getCurrentUser();
+                } else if (window.HogwartsAuth?.getCurrentUser) {
+                    currentUser = await window.HogwartsAuth.getCurrentUser();
+                }
+            } catch (e) {
+                currentUser = null;
             }
             
             // Fetch event details
             currentEvent = await fetchEventDetails(slug);
             
             // Fetch user participation if logged in
-            if (currentUser) {
-                userParticipation = await fetchUserParticipation(currentEvent.id, currentUser.id);
-            }
+            userParticipation = await fetchUserParticipation(currentEvent.id, currentUser?.id, currentEvent.slug);
             
             // Render everything
             renderEventDetails(currentEvent);

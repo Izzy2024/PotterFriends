@@ -209,5 +209,4 @@ GRANT EXECUTE ON FUNCTION public.list_calendar_events_detailed TO authenticated;
 
 -- Add comments
 COMMENT ON FUNCTION public.activate_event IS 'Activate a draft event (make it visible on the main page)';
-COMMENT ON FUNCTION public.list_calendar_events_detailed IS 'Get detailed calendar events for a specific month';</content>
-<parameter name="filePath">supabase/migrations/20250925_event_crud_rpcs.sql
+COMMENT ON FUNCTION public.list_calendar_events_detailed IS 'Get detailed calendar events for a specific month';

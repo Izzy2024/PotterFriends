@@ -79,17 +79,78 @@ function safeNumber(n) {
   return 0;
 }
 
+function unwrapRpcObject(data, key) {
+  if (Array.isArray(data)) {
+    if (data.length === 1 && data[0] && typeof data[0] === 'object' && key in data[0]) {
+      return data[0][key];
+    }
+    return data;
+  }
+  return data;
+}
+
 async function ensureClient() {
   if (window.supabaseClient) return window.supabaseClient;
-  
-  // Wait for auth.js to initialize Supabase
-  for (let i = 0; i < 20; i++) {
-    if (window.supabaseClient) return window.supabaseClient;
-    await new Promise(r => setTimeout(r, 100));
+
+  // Kick auth init if available (some pages load this module before auth finishes).
+  try {
+    if (window.HogwartsAuth?.initSupabase) {
+      await window.HogwartsAuth.initSupabase();
+      if (window.supabaseClient) return window.supabaseClient;
+    }
+  } catch (e) {
+    // ignore; we'll keep waiting below
   }
-  
-  console.warn('[community-events] Supabase client no disponible después de 2 segundos');
+
+  // Wait for auth.js to initialize Supabase (up to ~8s)
+  for (let i = 0; i < 40; i++) {
+    if (window.supabaseClient) return window.supabaseClient;
+    await new Promise(r => setTimeout(r, 200));
+  }
+
+  console.warn('[community-events] Supabase client no disponible después de 8 segundos');
   return null;
+}
+
+async function fetchQuickStatsFallback(client) {
+  const nowIso = new Date().toISOString();
+  const { data: activeEvents, error: activeError } = await client
+    .from('events')
+    .select('id,reward_points,end_at,start_at,status')
+    .eq('status', 'active')
+    .lte('start_at', nowIso)
+    .gte('end_at', nowIso);
+
+  if (activeError) throw activeError;
+
+  const events = Array.isArray(activeEvents) ? activeEvents : [];
+  const eventIds = events.map(e => e.id).filter(Boolean);
+
+  let participants = [];
+  if (eventIds.length > 0) {
+    const { data: participantsData, error: participantsError } = await client
+      .from('event_participants')
+      .select('event_id,user_id')
+      .in('event_id', eventIds);
+    if (participantsError) throw participantsError;
+    participants = Array.isArray(participantsData) ? participantsData : [];
+  }
+
+  // Distinct users across active events (not per-event).
+  const uniqueParticipants = new Set(participants.map(p => p.user_id)).size;
+
+  const pointsInPlay = events.reduce((sum, event) => sum + safeNumber(event.reward_points), 0);
+
+  const remainingDays = events
+    .map(event => Math.ceil((new Date(event.end_at) - new Date()) / (1000 * 60 * 60 * 24)))
+    .filter(days => Number.isFinite(days) && days >= 0);
+
+  return {
+    active_events_count: events.length,
+    active_participants_count: uniqueParticipants,
+    points_in_play: pointsInPlay,
+    min_days_remaining: remainingDays.length ? Math.min(...remainingDays) : 0
+  };
 }
 
 async function fetchQuickStats() {
@@ -98,10 +159,17 @@ async function fetchQuickStats() {
   try {
     const { data, error } = await client.rpc('get_quick_stats');
     if (error) throw error;
-    return data || null;
+    const normalized = unwrapRpcObject(data, 'get_quick_stats');
+    if (normalized && !Array.isArray(normalized)) return normalized;
+    return await fetchQuickStatsFallback(client);
   } catch (e) {
     console.error('[community-events] get_quick_stats error', e);
-    return null;
+    try {
+      return await fetchQuickStatsFallback(client);
+    } catch (fallbackError) {
+      console.error('[community-events] quick stats fallback error', fallbackError);
+      return null;
+    }
   }
 }
 
@@ -398,6 +466,11 @@ function renderRecentPollResults(items) {
   list.insertAdjacentHTML('afterbegin', html);
 }
 
+async function refreshQuickStatsUI() {
+  const stats = await fetchQuickStats();
+  renderQuickStats(stats);
+}
+
 async function handleClicks(e) {
   const t = e.target;
   const client = await ensureClient();
@@ -410,6 +483,10 @@ async function handleClicks(e) {
         await client.rpc('join_event', { in_slug: slug });
         btn.textContent = '¡Participando!';
         btn.disabled = true;
+        await refreshQuickStatsUI();
+        // If this page shows featured events, refresh to update counts.
+        const featured = await fetchFeaturedEvents(6);
+        renderFeaturedEvents(featured);
       }
     }
     if (t.closest('.js-submit-attempt')) {
@@ -419,6 +496,7 @@ async function handleClicks(e) {
         await client.rpc('submit_challenge_attempt', { in_slug: slug, in_evidence_url: null });
         btn.textContent = 'Intento creado';
         btn.disabled = true;
+        await refreshQuickStatsUI();
       }
     }
     if (t.closest('.js-vote-option')) {
@@ -428,6 +506,7 @@ async function handleClicks(e) {
       if (pollSlug && optionId) {
         await client.rpc('vote_poll', { in_slug: pollSlug, in_option: optionId });
         opt.classList.add('border-primary','bg-primary/5');
+        await refreshQuickStatsUI();
       }
     }
   } catch (err) {
@@ -863,4 +942,3 @@ async function showLeaderboard() {
 }
 
 document.addEventListener('DOMContentLoaded', () => { init().catch(e => console.error(e)); });
-

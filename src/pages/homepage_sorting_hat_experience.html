@@ -23,7 +23,52 @@
             position: relative;
             transition: all 0.8s ease-in-out;
         }
-        
+
+        /* Video de fondo */
+        .hero-media {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .hero-audio-toggle {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 6;
+            background: rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+            border: 1px solid rgba(201, 169, 97, 0.6);
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .hero-audio-toggle:hover {
+            transform: translateY(-1px);
+            background: rgba(0, 0, 0, 0.85);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        }
+
+        .hero-audio-toggle:focus-visible {
+            outline: 2px solid rgba(201, 169, 97, 0.8);
+            outline-offset: 2px;
+        }
+
         /* Fallback para navegadores que no soporten background-attachment: fixed */
         @media (max-width: 768px) {
             .owl-hero-section {
@@ -167,7 +212,7 @@
             filter: blur(1px);
             animation: float-magical 8s ease-in-out infinite;
         }
-        
+
         .orb-1 { width: 20px; height: 20px; top: 10%; left: 15%; animation-delay: 0s; }
         .orb-2 { width: 15px; height: 15px; top: 20%; right: 20%; animation-delay: 1s; background: radial-gradient(circle, rgba(116, 0, 1, 0.8) 0%, rgba(116, 0, 1, 0.4) 50%, transparent 100%); }
         .orb-3 { width: 25px; height: 25px; top: 60%; left: 10%; animation-delay: 2s; background: radial-gradient(circle, rgba(14, 26, 64, 0.8) 0%, rgba(14, 26, 64, 0.4) 50%, transparent 100%); }
@@ -184,7 +229,7 @@
             box-shadow: 0 0 10px rgba(201, 169, 97, 0.8);
             animation: sparkle-twinkle 3s ease-in-out infinite;
         }
-        
+
         .sparkle-1 { top: 15%; left: 25%; animation-delay: 0s; }
         .sparkle-2 { top: 25%; right: 30%; animation-delay: 0.5s; background: rgba(116, 0, 1, 0.9); box-shadow: 0 0 10px rgba(116, 0, 1, 0.8); }
         .sparkle-3 { top: 45%; left: 20%; animation-delay: 1s; background: rgba(14, 26, 64, 0.9); box-shadow: 0 0 10px rgba(14, 26, 64, 0.8); }
@@ -268,6 +313,7 @@
                 min-height: 70vh;
             }
         }
+
     </style>
 
 </head>
@@ -310,6 +356,15 @@
 
     <!-- Hero Section with Owl Background -->
     <section class="relative min-h-screen overflow-hidden owl-hero-section">
+        <div class="hero-media" aria-hidden="true">
+            <video class="hero-video" autoplay muted loop playsinline poster="../public/owl-6820989_1280.jpg">
+                <source src="../public/video/Hero_section_landing_202602072204_wzi88.mp4" type="video/mp4" />
+            </video>
+            <button id="heroAudioToggle" class="hero-audio-toggle" type="button" aria-pressed="false">
+                Activar audio
+            </button>
+        </div>
+
         <!-- Animated Background Elements -->
         <div class="absolute inset-0">
             <!-- Floating Candles -->
@@ -948,6 +1003,35 @@
     <!-- Auth Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../scripts/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroVideo = document.querySelector('.hero-video');
+            const audioToggle = document.getElementById('heroAudioToggle');
+            if (!heroVideo || !audioToggle) return;
+
+            heroVideo.muted = true;
+            audioToggle.textContent = 'Activar audio';
+            audioToggle.setAttribute('aria-pressed', 'false');
+
+            audioToggle.addEventListener('click', async function() {
+                try {
+                    if (heroVideo.muted) {
+                        heroVideo.muted = false;
+                        heroVideo.volume = 1;
+                        await heroVideo.play();
+                        audioToggle.textContent = 'Audio activado';
+                        audioToggle.setAttribute('aria-pressed', 'true');
+                    } else {
+                        heroVideo.muted = true;
+                        audioToggle.textContent = 'Activar audio';
+                        audioToggle.setAttribute('aria-pressed', 'false');
+                    }
+                } catch (error) {
+                    console.error('No se pudo activar el audio:', error);
+                }
+            });
+        });
+    </script>
     <script>
         // Update navigation based on auth status
         async function updateNavigation() {

@@ -53,6 +53,18 @@ function authMiddleware(req, res, next) {
   }
 }
 
+function optionalAuthMiddleware(req, _res, next) {
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (!token) return next();
+  try {
+    req.user = jwt.verify(token, JWT_SECRET);
+  } catch (_err) {
+    // Ignore invalid tokens for optional-auth routes
+  }
+  return next();
+}
+
 async function getUserByEmail(client, email) {
   const { rows } = await client.query(
     `SELECT id, email, encrypted_password, raw_user_meta_data, role
@@ -619,7 +631,7 @@ app.post('/api/db/delete', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/api/db/rpc', async (req, res) => {
+app.post('/api/db/rpc', optionalAuthMiddleware, async (req, res) => {
   const { fn, args } = req.body || {};
   if (!fn) return res.status(400).json({ error: 'fn_required' });
 
@@ -629,11 +641,27 @@ app.post('/api/db/rpc', async (req, res) => {
     const name = parts.length === 2 ? parts[1] : parts[0];
     if (!validateIdent(schema) || !validateIdent(name)) throw new Error('invalid_function');
 
-    const values = args ? Object.values(args) : [];
-    const placeholders = values.map((_, i) => `$${i + 1}`).join(', ');
+    const entries = args ? Object.entries(args) : [];
+    const values = entries.map(([, value]) => value);
+    const placeholders = entries
+      .map(([argName], i) => {
+        if (!validateIdent(argName)) throw new Error(`invalid_arg:${argName}`);
+        return `${quoteIdent(argName)} => $${i + 1}`;
+      })
+      .join(', ');
 
     const client = await pool.connect();
     try {
+      if (req.user?.sub) {
+        // Emulate Supabase JWT context so auth.uid() works in SQL functions.
+        await client.query(
+          `SELECT
+            set_config('request.jwt.claim.sub', $1, false),
+            set_config('request.jwt.claim.role', $2, false)`,
+          [req.user.sub, req.user.role || 'authenticated']
+        );
+      }
+
       let result;
       try {
         result = await client.query(

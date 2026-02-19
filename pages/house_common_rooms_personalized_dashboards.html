@@ -8,10 +8,233 @@
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --alley-wood-deep: #160b0a;
+            --alley-wood-mid: #2a1410;
+            --alley-wood-wine: #2f1322;
+            --alley-gold: #c7a765;
+            --alley-gold-soft: #8d7142;
+            --alley-cream: #efe0b8;
+            --alley-red: #b61317;
+            --alley-red-deep: #6b0e12;
+        }
+
+        body.theme-common {
+            font-family: 'Josefin Sans', sans-serif;
+            background:
+                linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.7)),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.01) 0px,
+                    rgba(255, 255, 255, 0.01) 2px,
+                    transparent 2px,
+                    transparent 18px
+                ),
+                radial-gradient(circle at 30% -20%, #4a2319 0%, transparent 45%),
+                radial-gradient(circle at 100% 120%, #301123 0%, transparent 50%),
+                linear-gradient(160deg, var(--alley-wood-deep), var(--alley-wood-mid) 45%, var(--alley-wood-wine) 100%);
+            color: #f1e6c9;
+            position: relative;
+        }
+
+        body.theme-common::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 14% 18%, rgba(201, 169, 101, 0.22), transparent 32%),
+                radial-gradient(circle at 88% 20%, rgba(159, 212, 255, 0.16), transparent 34%),
+                radial-gradient(circle at 82% 82%, rgba(116, 0, 1, 0.2), transparent 34%),
+                linear-gradient(145deg, rgba(201,169,101,.08), rgba(159,212,255,.06) 45%, transparent 70%);
+        }
+
+        body.theme-common > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .font-headline,
+        .font-accent {
+            font-family: 'Cinzel', serif !important;
+            letter-spacing: 0.03em;
+        }
+
+        nav {
+            background: linear-gradient(180deg, rgba(26, 12, 10, 0.97), rgba(14, 7, 6, 0.96)) !important;
+            border-bottom: 1px solid rgba(199, 167, 101, 0.35) !important;
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45), inset 0 -1px 0 rgba(199, 167, 101, 0.1);
+            backdrop-filter: blur(9px);
+        }
+
+        nav .hidden.md\:flex.items-center.space-x-8 {
+            background: linear-gradient(180deg, rgba(20, 10, 8, 0.92), rgba(10, 5, 5, 0.88));
+            border: 1px solid rgba(199, 167, 101, 0.45);
+            border-radius: 999px;
+            padding: 0.62rem 1.25rem;
+            gap: 1.05rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.45);
+        }
+
+        nav a {
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.79rem;
+        }
+
+        nav .btn-primary,
+        #userMenuButton {
+            background: linear-gradient(180deg, #cb1b1f, #8f1115) !important;
+            border: 1px solid #e36f6f !important;
+            color: #fff4dd !important;
+            box-shadow: 0 6px 16px rgba(130, 10, 13, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(25, 12, 10, 0.9), rgba(13, 7, 6, 0.92)) !important;
+            border: 1px solid rgba(199, 167, 101, 0.24) !important;
+            border-radius: 14px !important;
+            box-shadow:
+                0 12px 26px rgba(0, 0, 0, 0.42),
+                inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.55);
+            color: #f3ddbb;
+        }
+
+        .card:hover {
+            border-color: rgba(199, 167, 101, 0.52) !important;
+            box-shadow:
+                0 20px 36px rgba(0, 0, 0, 0.52),
+                0 0 0 1px rgba(199, 167, 101, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.09);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(180deg, rgba(53, 27, 17, 0.88), rgba(27, 14, 10, 0.88)) !important;
+            border: 1px solid rgba(199, 167, 101, 0.45) !important;
+            color: #f3e3bb !important;
+        }
+
+        .btn-secondary:hover {
+            border-color: rgba(226, 196, 134, 0.72) !important;
+            background: linear-gradient(180deg, rgba(66, 34, 21, 0.9), rgba(36, 17, 11, 0.9)) !important;
+        }
+
+        /* Fix contraste: superficies claras y azules en tema oscuro */
+        .bg-surface,
+        .bg-surface\/95 {
+            background: linear-gradient(180deg, rgba(21, 10, 8, 0.95), rgba(10, 5, 4, 0.93)) !important;
+            color: #f3dfba !important;
+        }
+
+        #userDropdown {
+            background: linear-gradient(180deg, rgba(22, 11, 9, 0.98), rgba(10, 5, 4, 0.98)) !important;
+            border-color: rgba(199, 167, 101, 0.35) !important;
+        }
+
+        .bg-gray-50,
+        .hover\:bg-gray-50:hover {
+            background: rgba(32, 16, 12, 0.66) !important;
+        }
+
+        .bg-gray-200 {
+            background: rgba(255, 245, 225, 0.12) !important;
+        }
+
+        .border-gray-200 {
+            border-color: rgba(199, 167, 101, 0.22) !important;
+        }
+
+        .text-gray-500,
+        .text-gray-400,
+        .text-gray-300 {
+            color: rgba(236, 220, 185, 0.74) !important;
+        }
+
+        .text-accent {
+            color: #d6bf8f !important;
+        }
+
+        .bg-accent\/10 {
+            background-color: rgba(199, 167, 101, 0.14) !important;
+        }
+
+        .text-ravenclaw {
+            color: #9fb8ff !important;
+        }
+
+        .border-ravenclaw {
+            border-color: rgba(159, 184, 255, 0.58) !important;
+        }
+
+        .bg-ravenclaw\/10 {
+            background-color: rgba(159, 184, 255, 0.16) !important;
+        }
+
+        #houseModal > div > div {
+            background: linear-gradient(180deg, rgba(22, 11, 9, 0.96), rgba(11, 6, 5, 0.96)) !important;
+            border: 1px solid rgba(199, 167, 101, 0.34);
+            box-shadow: 0 24px 58px rgba(0, 0, 0, 0.52), 0 0 0 1px rgba(199, 167, 101, 0.1) inset;
+        }
+
+        .text-text-primary,
+        .font-medium.text-text-primary {
+            color: #f3dfba !important;
+        }
+
+        .text-text-secondary,
+        span.text-text-secondary {
+            color: rgba(236, 220, 185, 0.82) !important;
+        }
+
+        .card p,
+        .card li,
+        .card .text-sm,
+        .card .text-xs {
+            color: rgba(236, 220, 185, 0.82);
+        }
+
+        .max-w-7xl.mx-auto.px-4.sm\:px-6.lg\:px-8.py-8 {
+            position: relative;
+            overflow: hidden;
+        }
+        .max-w-7xl.mx-auto.px-4.sm\:px-6.lg\:px-8.py-8::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 86% 14%, rgba(159, 212, 255, 0.16), transparent 32%),
+                radial-gradient(circle at 12% 84%, rgba(201, 169, 101, 0.2), transparent 30%),
+                linear-gradient(120deg, rgba(59,130,246,.06), transparent 38%);
+        }
+        .max-w-7xl.mx-auto.px-4.sm\:px-6.lg\:px-8.py-8 > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        footer {
+            background: linear-gradient(180deg, rgba(12, 6, 6, 0.98), rgba(6, 3, 3, 0.98)) !important;
+            border-top: 1px solid rgba(199, 167, 101, 0.25) !important;
+        }
+
+        footer h4,
+        footer .font-accent {
+            color: #f1dbb2 !important;
+        }
+
+        footer a:hover {
+            color: #f3e3bb !important;
+        }
+    </style>
 
 </head>
 
-<body class="bg-background text-text-primary">
+<body class="bg-background text-text-primary theme-common">
     <!-- Navigation Header -->
     <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
