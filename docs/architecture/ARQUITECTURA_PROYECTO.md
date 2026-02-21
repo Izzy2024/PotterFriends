@@ -1,5 +1,31 @@
 # 🏰 ARQUITECTURA DEL PROYECTO - Hogwarts PotterFriends
 
+## ⚠️ Estado Actual (Actualizado: 19 de febrero de 2026)
+
+Este documento nació con enfoque **Supabase BaaS**, pero hoy el proyecto opera con arquitectura híbrida local:
+
+- Frontend en `pages/` + `js/`
+- Backend local en `/Users/admin/Documents/Paginas web/hogwarts_PotterFriends/server/index.js` (Express)
+- Base de datos PostgreSQL local
+- Cliente unificado en `/Users/admin/Documents/Paginas web/hogwarts_PotterFriends/src/scripts/auth.js` que emula API estilo Supabase (`from`, `rpc`, etc.)
+
+### Cambios clave respecto al documento original
+
+- No se usa CDN de `supabase-client.js` en páginas funcionales.
+- Las operaciones DB pasan por API local (`/api/db/select`, `/api/db/insert`, `/api/db/update`, `/api/db/delete`, `/api/db/rpc`).
+- El sistema de logros automáticos se ejecuta por RPC local + fallback backend.
+- Vistas de foro/perfil se adaptaron al esquema real de `user_profiles` (usar `display_name`).
+
+### Estado del sistema de logros (real)
+
+- Tablas base presentes: `achievement_types`, `user_achievements`, `user_statistics`, `user_profiles`.
+- Flujo automático activo:
+  - `update_user_stat`
+  - `check_and_award_achievements`
+- El perfil ahora fuerza chequeo de logros antes de renderizar, para mostrar logros nuevos inmediatamente.
+
+---
+
 ## 📋 Resumen Ejecutivo
 
 **Hogwarts PotterFriends** es una aplicación web interactiva que simula la experiencia de la comunidad mágica de Hogwarts. Los usuarios pueden unirse a casas, ganar puntos, participar en foros, completar logros y vivir una experiencia inmersiva del mundo mágico de Harry Potter.

@@ -12,6 +12,50 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <!-- Cargar auth.js primero para tener el cliente global -->
     <script src="../scripts/auth.js"></script>
+    <style>
+        body {
+            background: linear-gradient(180deg, #f7f9fc 0%, #eef3fa 100%);
+            color: #1f2937;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.96) !important;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2) !important;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(8px);
+        }
+
+        nav a,
+        nav span {
+            color: #1f2937 !important;
+        }
+
+        .bg-surface {
+            background: #ffffff !important;
+            border: 1px solid #e5e7eb !important;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+        }
+
+        .text-text-primary {
+            color: #111827 !important;
+        }
+
+        .text-text-secondary {
+            color: #4b5563 !important;
+        }
+
+        #houseMembersContainer > div,
+        #recentActivityContainer > div {
+            background: #f8fafc !important;
+            border: 1px solid #e5e7eb;
+        }
+
+        #memberSearch {
+            background: #ffffff;
+            border-color: #d1d5db;
+            color: #111827;
+        }
+    </style>
 </head>
 <body class="bg-background text-text-primary">
     <!-- Navigation Header -->
@@ -24,11 +68,12 @@
                         <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
                         <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
                     </svg>
-                    <span class="font-accent text-xl font-medium text-primary">Panel de Jefe de Casa</span>
+                    <span class="font-accent text-xl font-medium text-primary">Potter Friends Admin</span>
                 </div>
                 
                 <!-- Admin Navigation -->
                 <div class="hidden md:flex items-center space-x-4">
+                    <a href="admin_center.html" class="text-text-secondary hover:text-primary magical-transition px-2 py-1">Admin Center</a>
                     <a href="#dashboard" class="text-primary font-medium border-b-2 border-primary pb-1 px-2">Dashboard</a>
                     <a href="#assign-achievements" class="text-text-secondary hover:text-primary magical-transition px-2 py-1">Asignar Logros</a>
                     <a href="#manage-activities" class="text-text-secondary hover:text-primary magical-transition px-2 py-1">Actividades</a>
@@ -118,7 +163,7 @@
             <h2 class="font-headline text-2xl font-medium text-text-primary mb-6">Acciones Rápidas</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Assign Achievement -->
-                <div class="bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer" id="quickAssignAchievement">
+                <div class="admin-quick-action bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer" id="quickAssignAchievement">
                     <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center mb-4">
                         <i class="fas fa-medal fa-2x"></i>
                     </div>
@@ -127,7 +172,7 @@
                 </div>
 
                 <!-- Manage Activities -->
-                <div class="bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer">
+                <div class="admin-quick-action bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer">
                     <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center mb-4">
                         <i class="fas fa-calendar-alt fa-2x"></i>
                     </div>
@@ -136,7 +181,7 @@
                 </div>
 
                 <!-- View Statistics -->
-                <div class="bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer">
+                <div class="admin-quick-action bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer">
                     <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center mb-4">
                         <i class="fas fa-chart-bar fa-2x"></i>
                     </div>
@@ -145,7 +190,7 @@
                 </div>
 
                 <!-- Moderation Tools -->
-                <div class="bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer">
+                <div class="admin-quick-action bg-surface rounded-xl p-6 hover-scale magical-transition cursor-pointer">
                     <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-red-600 rounded-lg flex items-center justify-center mb-4">
                         <i class="fas fa-shield-alt fa-2x"></i>
                     </div>

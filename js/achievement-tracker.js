@@ -40,6 +40,7 @@ class AchievementTracker {
     setupTracking() {
         // Rastrear visitas a páginas
         this.trackPageVisit();
+        this.trackDailyVisit();
 
         // Rastrear tiempo en la página
         this.trackTimeSpent();
@@ -234,8 +235,9 @@ class AchievementTracker {
                     p_user_id: this.currentUser.id
                 });
 
-            if (!error && data && data.achievements_awarded > 0) {
-                this.showAchievementNotification(data);
+            const result = Array.isArray(data) ? data[0] : data;
+            if (!error && result && result.achievements_awarded > 0) {
+                this.showAchievementNotification(result);
             }
         } catch (error) {
             console.log('Error checking achievements:', error);

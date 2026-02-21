@@ -1,6 +1,4 @@
 // Profile Activity Tracker
-import { supabase as supabaseReady } from '../src/scripts/supabase-client.js';
-
 class ProfileActivityTracker {
     constructor() {
         this.activities = [];
@@ -16,11 +14,21 @@ class ProfileActivityTracker {
 
     async init() {
         try {
-            this.supabase = await supabaseReady;
+            if (window.supabaseClient) {
+                this.supabase = window.supabaseClient;
+            } else if (window.HogwartsAuth?.initDatabase) {
+                this.supabase = await window.HogwartsAuth.initDatabase();
+            }
         } catch (e) {
-            console.error('Supabase client not ready:', e);
+            console.error('Database client not ready:', e);
             return;
         }
+
+        if (!this.supabase) {
+            console.error('Database client unavailable for ProfileActivityTracker');
+            return;
+        }
+
         await this.loadUserStats();
         await this.loadRecentActivities();
         this.updateDisplay();
@@ -30,10 +38,11 @@ class ProfileActivityTracker {
     async loadUserStats() {
         if (!this.supabase) return;
         try {
-            const { data: user } = await this.supabase.auth.getUser();
-            if (!user?.user) return;
+            const { data } = await this.supabase.auth.getUser();
+            const authUser = data?.user?.user || data?.user || null;
+            if (!authUser) return;
 
-            const userId = user.user.id;
+            const userId = authUser.id;
 
             // Get posts count and total views
             const { data: posts, count: postsCount } = await this.supabase
@@ -69,10 +78,11 @@ class ProfileActivityTracker {
     async loadRecentActivities() {
         if (!this.supabase) return;
         try {
-            const { data: user } = await this.supabase.auth.getUser();
-            if (!user?.user) return;
+            const { data } = await this.supabase.auth.getUser();
+            const authUser = data?.user?.user || data?.user || null;
+            if (!authUser) return;
 
-            const userId = user.user.id;
+            const userId = authUser.id;
             const activities = [];
 
             // Get recent posts

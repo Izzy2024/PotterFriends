@@ -1,0 +1,149 @@
+/* header.css - Immersive Header Styles (Wonder Games inspired) */
+
+/* Core Header Container */
+.wm-header {
+  background: rgba(
+    13,
+    13,
+    13,
+    0.15
+  ); /* Soft transparent for video visibility */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 0.4s ease, backdrop-filter 0.4s ease,
+    border-color 0.4s ease, box-shadow 0.4s ease, transform 0.5s ease;
+}
+
+.wm-header.scrolled {
+  background: rgba(10, 5, 4, 0.85); /* Darker OLED-like glass when scrolled */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(199, 167, 101, 0.15);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6);
+}
+
+.wm-header.hidden-up {
+  transform: translateY(-100%); /* Optional: hide on scroll down, show on up */
+}
+
+/* Logo specific interactions */
+.wm-logo-container {
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.wm-logo-container:hover {
+  transform: scale(1.05);
+}
+
+/* Interactive Navigation Links */
+.wm-link {
+  position: relative;
+  padding: 0.5rem 0;
+  transition: color 0.3s ease;
+  display: inline-block;
+  will-change: transform;
+}
+
+.wm-link::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background: currentColor;
+  transform-origin: bottom right;
+  transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);
+}
+
+.wm-link:hover::after,
+.wm-link.active::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.wm-link:hover {
+  color: #c7a765; /* Alley gold */
+}
+
+/* Primary Call to Action Button */
+.wm-cta {
+  background: linear-gradient(135deg, #1f0808 0%, #3a0a0b 100%);
+  border: 1px solid rgba(199, 167, 101, 0.3);
+  color: #efe0b8; /* Alley cream */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+  position: relative;
+  overflow: hidden;
+}
+
+.wm-cta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.7s ease;
+}
+
+.wm-cta:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #2a0a0a 0%, #4d0b0c 100%);
+  border-color: rgba(199, 167, 101, 0.7);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(113, 13, 17, 0.6),
+    0 0 12px rgba(199, 167, 101, 0.2);
+}
+
+.wm-cta:hover::before {
+  left: 200%;
+}
+
+/* Staggered Entrance Animation For Initial Load */
+@keyframes navItemEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wm-header .nav-links > * {
+  opacity: 0;
+  animation: navItemEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.wm-header .nav-links > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.wm-header .nav-links > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.wm-header .nav-links > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.wm-header .nav-links > *:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.wm-header .nav-links > *:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.wm-header #authButton {
+  opacity: 0;
+  animation: navItemEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.6s;
+}

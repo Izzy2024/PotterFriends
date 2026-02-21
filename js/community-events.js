@@ -126,30 +126,46 @@ async function fetchQuickStatsFallback(client) {
   const events = Array.isArray(activeEvents) ? activeEvents : [];
   const eventIds = events.map(e => e.id).filter(Boolean);
 
-  let participants = [];
-  if (eventIds.length > 0) {
-    const { data: participantsData, error: participantsError } = await client
-      .from('event_participants')
-      .select('event_id,user_id')
-      .in('event_id', eventIds);
-    if (participantsError) throw participantsError;
-    participants = Array.isArray(participantsData) ? participantsData : [];
+  // Use the new RPC to get participant count (bypasses RLS)
+  let uniqueParticipants = 0;
+  try {
+    const { data: countData, error: countError } = await client.rpc('get_active_event_participants_count');
+    if (!countError && countData !== null) {
+      uniqueParticipants = safeNumber(countData);
+    }
+  } catch (e) {
+    // Fallback to direct query if RPC doesn't exist yet
+    console.warn('[community-events] get_active_event_participants_count RPC not available, using fallback');
+    if (eventIds.length > 0) {
+      const { data: participantsData, error: participantsError } = await client
+        .from('event_participants')
+        .select('event_id,user_id')
+        .in('event_id', eventIds);
+      if (!participantsError && Array.isArray(participantsData)) {
+        uniqueParticipants = new Set(participantsData.map(p => p.user_id)).size;
+      }
+    }
   }
-
-  // Distinct users across active events (not per-event).
-  const uniqueParticipants = new Set(participants.map(p => p.user_id)).size;
 
   const pointsInPlay = events.reduce((sum, event) => sum + safeNumber(event.reward_points), 0);
 
-  const remainingDays = events
-    .map(event => Math.ceil((new Date(event.end_at) - new Date()) / (1000 * 60 * 60 * 24)))
-    .filter(days => Number.isFinite(days) && days >= 0);
+  // Calculate days remaining for the most recently started event (not the minimum)
+  // Sort by start_at descending and take the first one
+  let minDaysRemaining = 0;
+  if (events.length > 0) {
+    const sortedEvents = [...events].sort((a, b) => 
+      new Date(b.start_at).getTime() - new Date(a.start_at).getTime()
+    );
+    const mostRecentEvent = sortedEvents[0];
+    const daysRemaining = Math.ceil((new Date(mostRecentEvent.end_at) - new Date()) / (1000 * 60 * 60 * 24));
+    minDaysRemaining = Number.isFinite(daysRemaining) && daysRemaining >= 0 ? daysRemaining : 0;
+  }
 
   return {
     active_events_count: events.length,
     active_participants_count: uniqueParticipants,
     points_in_play: pointsInPlay,
-    min_days_remaining: remainingDays.length ? Math.min(...remainingDays) : 0
+    min_days_remaining: minDaysRemaining
   };
 }
 

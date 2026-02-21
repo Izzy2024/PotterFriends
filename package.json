@@ -1,9 +1,12 @@
 {
+  "name": "hogwarts-potterfriends",
+  "version": "1.0.0",
+  "description": "Hogwarts Community Hub - Local PostgreSQL backend",
   "scripts": {
-    "api": "node server/index.js"
+    "api": "node server/index.js",
+    "start": "node server/index.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.75.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

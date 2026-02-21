@@ -1,12 +1,16 @@
 import { forumAPI } from './services/forumApi.js';
-import { supabase as supabaseImport } from './supabase-client.js';
+let supabase = window.supabaseClient || null;
 
-// Manejar el caso cuando supabase es una promesa
-let supabase = supabaseImport;
-if (supabaseImport instanceof Promise) {
-    supabaseImport.then(client => {
-        supabase = client;
-    });
+async function ensureSupabaseClient() {
+    if (window.supabaseClient) {
+        supabase = window.supabaseClient;
+        return supabase;
+    }
+    if (window.HogwartsAuth?.initDatabase) {
+        supabase = await window.HogwartsAuth.initDatabase();
+        return supabase;
+    }
+    throw new Error('Database client not available. Ensure auth.js is loaded first.');
 }
 
 class PostDetailController {
@@ -22,10 +26,7 @@ class PostDetailController {
     }
 
     async init() {
-        // Wait for supabase if it's a promise
-        if (supabaseImport instanceof Promise) {
-            await supabaseImport;
-        }
+        await ensureSupabaseClient();
 
         // Get current user
         const { data: { user } } = await supabase.auth.getUser();

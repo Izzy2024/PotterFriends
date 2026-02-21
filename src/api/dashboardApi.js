@@ -1,11 +1,36 @@
-import { supabase as supabaseImport } from '../scripts/supabase-client.js';
+// Resolve DB client from global auth bootstrap (`auth.js`)
+let supabase = window.supabaseClient || null;
+let supabaseImport = null;
 
-// Manejar el caso cuando supabase es una promesa
-let supabase = supabaseImport;
-if (supabaseImport instanceof Promise) {
-    supabaseImport.then(client => {
-        supabase = client;
-    });
+if (window.HogwartsAuth?.initDatabase) {
+    try {
+        supabaseImport = window.HogwartsAuth.initDatabase();
+    } catch (error) {
+        console.warn('Could not initialize database client from HogwartsAuth:', error);
+    }
+}
+
+async function ensureSupabaseClient() {
+    if (window.supabaseClient) {
+        supabase = window.supabaseClient;
+        return supabase;
+    }
+
+    if (supabase) {
+        return supabase;
+    }
+
+    if (supabaseImport instanceof Promise) {
+        supabase = await supabaseImport;
+        return supabase;
+    }
+
+    if (window.HogwartsAuth?.initSupabase) {
+        supabase = await window.HogwartsAuth.initSupabase();
+        return supabase;
+    }
+
+    throw new Error('Database client not available. Ensure auth.js is loaded first.');
 }
 
 class DashboardAPI {
@@ -16,10 +41,7 @@ class DashboardAPI {
     // ESTADÍSTICAS DE CASA
     async getHouseStandings() {
         try {
-            // Esperar a que supabase esté disponible si es una promesa
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             // Usar RPC function para obtener leaderboard de casas (período total)
             const { data: allTimeData, error: allTimeError } = await supabase
@@ -74,9 +96,7 @@ class DashboardAPI {
 
     async getHousePointsBreakdown(houseId) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             // Usar la función RPC get_house_points_breakdown
             const { data, error } = await supabase
@@ -112,9 +132,7 @@ class DashboardAPI {
 
     async getUserHouseRank(userId, houseId) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             // Usar función leaderboard_users para obtener ranking de usuarios
             const { data: userLeaderboard, error } = await supabase
@@ -157,9 +175,7 @@ class DashboardAPI {
     // ACTIVIDAD DE LA CASA
     async getHouseActivity(houseId, limit = 10) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             // Obtener actividad del foro
             const { data: forumActivity } = await supabase
@@ -293,9 +309,7 @@ class DashboardAPI {
     // LOGROS Y ACHIEVEMENTS
     async getUserAchievements(userId) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             // Obtener todos los tipos de logros
             const { data: allAchievements, error: achievementError } = await supabase
@@ -357,9 +371,7 @@ class DashboardAPI {
 
     async getHouseAchievements(houseId, limit = 5) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             const houseName = getHouseName(houseId);
 
@@ -445,9 +457,7 @@ class DashboardAPI {
     // MIEMBROS DE LA CASA
     async getHouseMembers(houseId, limit = 10) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             // Obtener miembros de la casa (profiles -> public_profiles -> user_profiles)
             let members = [];
@@ -524,9 +534,7 @@ class DashboardAPI {
     // EVENTOS Y CALENDARIO
     async getUpcomingEvents(limit = 5) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             const now = new Date().toISOString();
 
@@ -550,9 +558,7 @@ class DashboardAPI {
     // ESTADÍSTICAS PERSONALES
     async getUserStats(userId) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             // Perfil básico desde user_profiles (tolerante a errores)
             let profile = null;

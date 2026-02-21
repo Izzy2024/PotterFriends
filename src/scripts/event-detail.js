@@ -84,11 +84,22 @@
             const event = Array.isArray(eventRows) ? eventRows[0] : eventRows;
             if (!event) throw new Error('Event not found');
 
+            const participants = Array.isArray(participantsRows) ? participantsRows : [];
+            
+            // Debug logging
+            console.log('[event-detail] Fetched event:', event?.slug);
+            console.log('[event-detail] participants_count from RPC:', event?.participants_count);
+            console.log('[event-detail] event_participants array length:', participants.length);
+            console.log('[event-detail] event_participants:', participants);
+
             return {
                 ...event,
-                event_participants: Array.isArray(participantsRows) ? participantsRows : []
+                // Ensure participants_count is always accurate
+                participants_count: participants.length,
+                event_participants: participants
             };
         } catch (e) {
+            console.warn('[event-detail] RPC failed, using fallback:', e);
             // Fallback to direct table reads if RPCs are not available
             const { data: event, error } = await client
                 .from('events')
@@ -97,15 +108,19 @@
                 .single();
             if (error) throw error;
 
+            // Note: This fallback may return limited results due to RLS
             const { data: participants, error: participantsError } = await client
                 .from('event_participants')
                 .select('user_id,status,submission_url,points_awarded,joined_at')
                 .eq('event_id', event.id);
             if (participantsError) throw participantsError;
 
+            const participantsList = Array.isArray(participants) ? participants : [];
+            
             return {
                 ...event,
-                event_participants: Array.isArray(participants) ? participants : []
+                participants_count: participantsList.length,
+                event_participants: participantsList
             };
         }
     }
@@ -191,12 +206,15 @@
     function renderEventDetails(event) {
         const config = getEventTypeConfig(event.type);
         const daysRemaining = getDaysRemaining(event.end_at);
-        const participantsCount = event.participants_count != null
-            ? toInt(event.participants_count, 0)
-            : (event.event_participants?.length || 0);
+        
+        // Calculate participants count - prefer the actual array length for accuracy
+        const participantsCount = event.event_participants?.length ?? toInt(event.participants_count, 0);
         const submissionsCount = event.submissions_count != null
             ? toInt(event.submissions_count, 0)
             : (event.event_participants?.filter(p => p.submission_url).length || 0);
+        
+        // Debug log
+        console.log('[event-detail] Rendering - participantsCount:', participantsCount, 'submissionsCount:', submissionsCount);
         
         // Update page title and breadcrumb
         document.title = `${event.title} - Hogwarts Community Hub`;
@@ -357,6 +375,8 @@
     function renderParticipants(participants) {
         const grid = document.getElementById('participants-grid');
         
+        console.log('[event-detail] Rendering participants:', participants?.length || 0, participants);
+        
         if (!participants || participants.length === 0) {
             grid.innerHTML = `
                 <div class="col-span-full text-center py-8">
@@ -427,13 +447,29 @@
     async function handleJoinEvent() {
         try {
             const client = await waitForSupabase();
-            await client.rpc('join_event', { in_slug: currentEvent.slug });
+            console.log('[event-detail] Joining event:', currentEvent.slug);
+            
+            const { error: joinError } = await client.rpc('join_event', { in_slug: currentEvent.slug });
+            if (joinError) {
+                console.error('[event-detail] join_event RPC error:', joinError);
+                throw joinError;
+            }
+            
+            console.log('[event-detail] Successfully joined, refreshing data...');
+            
+            // Small delay to ensure database has committed the transaction
+            await new Promise(resolve => setTimeout(resolve, 300));
             
             // Refresh event and counters immediately after joining
             currentEvent = await fetchEventDetails(currentEvent.slug);
+            
+            console.log('[event-detail] After refresh - participants:', currentEvent?.event_participants?.length);
 
             // Refresh participation status
             userParticipation = await fetchUserParticipation(currentEvent.id, currentUser?.id, currentEvent.slug);
+            
+            console.log('[event-detail] User participation status:', userParticipation);
+            
             renderEventDetails(currentEvent);
             renderParticipationPanel(currentEvent, userParticipation);
             renderEventDetailsTab(currentEvent);

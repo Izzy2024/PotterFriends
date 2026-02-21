@@ -14,18 +14,11 @@ class ProfileSystem {
 
     async init() {
         try {
-            // Reutilizar cliente de Supabase existente o crear uno nuevo
+            // Usar el cliente global de auth.js (conecta al backend local)
             if (window.supabaseClient) {
                 this.supabase = window.supabaseClient;
-            } else if (window.supabase && window.supabase.createClient) {
-                this.supabase = window.supabase.createClient(
-                    'https://vdcclritlgnwwdxloayt.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E'
-                );
-                // Guardar como referencia global para otros scripts
-                window.supabaseClient = this.supabase;
             } else {
-                throw new Error('Supabase no está disponible');
+                throw new Error('Cliente de base de datos no está disponible. Asegúrate de que auth.js esté cargado.');
             }
 
             // Verificar usuario autenticado
@@ -637,26 +630,105 @@ class ProfileSystem {
 
     async loadAchievements() {
         try {
+            await this.ensureBaselineAchievements();
+
+            // Force an automatic check first so newly triggered achievements appear immediately
+            await this.supabase.rpc('check_and_award_achievements', {
+                p_user_id: this.currentUser.id
+            });
+
             const { data: achievements, error } = await this.supabase
                 .from('user_achievements')
-                .select(`
-                    *,
-                    achievement_types (*)
-                `)
+                .select('*')
                 .eq('user_id', this.currentUser.id)
                 .order('awarded_at', { ascending: false });
 
             if (error) throw error;
 
-            this.renderAchievements(achievements || []);
+            const achievementRows = achievements || [];
+            if (achievementRows.length === 0) {
+                this.renderAchievements([]);
+                return;
+            }
+
+            const typeIds = [...new Set(achievementRows.map(a => a.achievement_type_id).filter(Boolean))];
+            const { data: types, error: typesError } = await this.supabase
+                .from('achievement_types')
+                .select('id, name, description, icon, points_reward, category')
+                .in('id', typeIds);
+
+            if (typesError) throw typesError;
+
+            const typesMap = new Map((types || []).map(t => [t.id, t]));
+            const enrichedAchievements = achievementRows.map(achievement => ({
+                ...achievement,
+                achievement_types: typesMap.get(achievement.achievement_type_id) || null
+            }));
+
+            this.renderAchievements(enrichedAchievements);
         } catch (error) {
             console.error('Error cargando logros:', error);
         }
     }
 
+    async ensureBaselineAchievements() {
+        try {
+            const { data: existing } = await this.supabase
+                .from('user_achievements')
+                .select('id')
+                .eq('user_id', this.currentUser.id)
+                .limit(1);
+
+            if (Array.isArray(existing) && existing.length > 0) {
+                return;
+            }
+
+            const { data: welcomeType, error: welcomeError } = await this.supabase
+                .from('achievement_types')
+                .select('id, points_reward, name')
+                .eq('trigger_condition', 'user_registration')
+                .maybeSingle();
+
+            if (welcomeError || !welcomeType) {
+                return;
+            }
+
+            const { error: insertError } = await this.supabase
+                .from('user_achievements')
+                .insert({
+                    user_id: this.currentUser.id,
+                    achievement_type_id: welcomeType.id,
+                    awarded_by: this.currentUser.id,
+                    reason: 'Logro base automático de bienvenida'
+                });
+
+            if (insertError && insertError.code !== '23505') {
+                // Ignore duplicate errors; log only unexpected ones
+                console.warn('No se pudo insertar logro base:', insertError);
+                return;
+            }
+
+            const points = Number(welcomeType.points_reward) || 0;
+            if (points > 0) {
+                await this.supabase.rpc('update_user_stat', {
+                    p_user_id: this.currentUser.id,
+                    p_stat_name: 'trigger_user_registration',
+                    p_increment: 1
+                });
+            }
+        } catch (error) {
+            console.warn('ensureBaselineAchievements falló:', error);
+        }
+    }
+
     renderAchievements(achievements) {
         const container = document.getElementById('achievementsContainer');
+        const achievementCount = document.getElementById('achievementCount');
         if (!container) return;
+
+        if (achievementCount) {
+            achievementCount.textContent = `${achievements.length} desbloqueados`;
+        }
 
         if (!achievements || achievements.length === 0) {
             container.innerHTML = `

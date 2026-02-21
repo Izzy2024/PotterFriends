@@ -16,11 +16,14 @@ class ProfileRedesigned {
 
     async init() {
         try {
-            // Inicializar Supabase mediante HogwartsAuth y usar cliente global
-            await (window.HogwartsAuth && window.HogwartsAuth.initSupabase
-                ? window.HogwartsAuth.initSupabase()
-                : Promise.resolve());
+            // Usar el cliente global de auth.js (conecta al backend local)
             this.supabase = window.supabaseClient;
+            
+            if (!this.supabase) {
+                console.error('❌ Cliente de base de datos no disponible. Asegúrate de que auth.js esté cargado.');
+                this.showError('Error: Cliente de base de datos no disponible');
+                return;
+            }
 
             // Verificar usuario autenticado
             const { data: { user } } = await this.supabase.auth.getUser();

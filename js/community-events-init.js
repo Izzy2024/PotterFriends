@@ -52,10 +52,14 @@
         if (!client) return false;
         
         try {
-            // Simple test query
-            const { data, error } = await client.from('events').select('count').limit(1).single();
-            if (error && error.code !== 'PGRST116') { // PGRST116 = no rows, which is ok
-                throw error;
+            // Simple test query using RPC which is more reliable
+            const { data, error: rpcError } = await client.rpc('get_quick_stats', {});
+            if (rpcError) {
+                // Fallback: try a simple select without .single()
+                const { error: selectError } = await client.from('events').select('id').limit(1);
+                if (selectError) {
+                    throw selectError;
+                }
             }
             success('Database connection successful');
             return true;
@@ -80,12 +84,13 @@
         
         for (const rpcName of rpcs) {
             try {
-                const { data, error } = await client.rpc(rpcName, 
+                const { data, error: rpcError } = await client.rpc(
+                    rpcName,
                     rpcName.includes('list_') ? { in_limit: 1 } : {}
                 );
                 
-                if (error) {
-                    error(`RPC ${rpcName} failed`, error);
+                if (rpcError) {
+                    error(`RPC ${rpcName} failed`, rpcError);
                 } else {
                     success(`RPC ${rpcName} working`, data);
                 }

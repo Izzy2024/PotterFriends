@@ -11,6 +11,14 @@
       "type": "sse",
       "url": "http://127.0.0.1:3845/sse"
     },
+    "context7": {
+      "type": "sse",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "ctx7sk-27888238-ffdf-49a6-b839-e55750e28479"
+      },
+      "enabled": true
+    },
     "playwright": {
       "command": "npx",
       "args": [

@@ -2,24 +2,24 @@
  * Hogwarts Community Hub - Authentication Module
  * 
  * This module handles user authentication functionality including:
- * - Login/logout using Supabase
- * - Token management
+ * - Login/logout using local PostgreSQL backend
+ * - Token management (JWT)
  * - User session persistence
  * - Authentication state UI updates
+ * 
+ * Backend: Express.js + PostgreSQL (server/index.js)
+ * Database: Local PostgreSQL on localhost:5432
  */
 
-// Supabase configuration (production fallback)
-const SUPABASE_URL = 'https://vdcclritlgnwwdxloayt.supabase.co';
-// Using the correct anon key from your Supabase project
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E';
-
+// Application configuration
 const APP_CONFIG = window.APP_CONFIG || {
-    USE_LOCAL_BACKEND: true,
     API_BASE_URL: 'http://localhost:3001'
 };
 
+/**
+ * Log client events to backend for debugging
+ */
 async function clientLog(event, data = {}) {
-    if (!APP_CONFIG.USE_LOCAL_BACKEND) return;
     try {
         await fetch(`${APP_CONFIG.API_BASE_URL}/client-log`, {
             method: 'POST',
@@ -40,21 +40,24 @@ async function clientLog(event, data = {}) {
 const STORAGE_KEYS = {
     USER: 'hogwarts_user',
     REGISTERED_EMAIL: 'registeredEmail',
+    AUTH_TOKEN: 'local_auth_token'
 };
 
-// Global Supabase client
-let supabaseClient = null;
+// Global database client
+let dbClient = null;
 
-// Promise to prevent duplicate initialization
-let supabaseInitPromise = null;
+/**
+ * Create database client that communicates with local Express backend
+ * This client provides a query-builder interface similar to Supabase for compatibility
+ */
+function createDatabaseClient(baseUrl) {
+    const getToken = () => localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+    const setToken = (token) => localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+    const clearToken = () => localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
 
-function createLocalSupabaseClient(baseUrl) {
-    const TOKEN_KEY = 'local_auth_token';
-
-    const getToken = () => localStorage.getItem(TOKEN_KEY);
-    const setToken = (token) => localStorage.setItem(TOKEN_KEY, token);
-    const clearToken = () => localStorage.removeItem(TOKEN_KEY);
-
+    /**
+     * Make HTTP request to backend API
+     */
     const request = async (path, options = {}) => {
         const token = getToken();
         const headers = {
@@ -76,6 +79,9 @@ function createLocalSupabaseClient(baseUrl) {
         return { data, error: null };
     };
 
+    /**
+     * Authentication methods
+     */
     const auth = {
         async signUp({ email, password, options }) {
             const meta = options?.data || {};
@@ -100,6 +106,7 @@ function createLocalSupabaseClient(baseUrl) {
                 error: null
             };
         },
+
         async signInWithPassword({ email, password }) {
             const { data, error } = await request('/auth/login', {
                 method: 'POST',
@@ -115,18 +122,21 @@ function createLocalSupabaseClient(baseUrl) {
                 error: null
             };
         },
+
         async signOut() {
             await request('/auth/logout', { method: 'POST' });
             clearToken();
             clientLog('auth_logout', { ok: true });
             return { error: null };
         },
+
         async getSession() {
             const token = getToken();
             clientLog('auth_get_session', { hasToken: !!token });
             if (!token) return { data: { session: null }, error: null };
             return { data: { session: { access_token: token, token_type: 'bearer' } }, error: null };
         },
+
         async getUser() {
             const token = getToken();
             clientLog('auth_get_user', { hasToken: !!token });
@@ -135,6 +145,7 @@ function createLocalSupabaseClient(baseUrl) {
             if (error) return { data: { user: null }, error };
             return { data: { user: data.user }, error: null };
         },
+
         async resetPasswordForEmail(email) {
             const { data, error } = await request('/auth/request-reset', {
                 method: 'POST',
@@ -143,6 +154,7 @@ function createLocalSupabaseClient(baseUrl) {
             if (error) return { data: null, error };
             return { data, error: null };
         },
+
         async updateUser({ password }) {
             const { data, error } = await request('/auth/update', {
                 method: 'POST',
@@ -153,6 +165,10 @@ function createLocalSupabaseClient(baseUrl) {
         }
     };
 
+    /**
+     * Create query builder for database operations
+     * Provides chainable interface: client.from('table').select('*').eq('id', 1)
+     */
     const createQueryBuilder = (table) => {
         const state = {
             table,
@@ -167,15 +183,23 @@ function createLocalSupabaseClient(baseUrl) {
             values: null,
             returning: null,
             single: false,
-            maybeSingle: false
+            maybeSingle: false,
+            or: null
         };
 
         const builder = {
             select(columns = '*', options = {}) {
-                state.op = 'select';
-                state.columns = columns;
-                state.count = options.count || null;
-                state.head = options.head || false;
+                // Supabase compatibility:
+                // insert/update/delete().select(...) means RETURNING columns,
+                // not switching back to a plain SELECT query.
+                if (state.op === 'insert' || state.op === 'update' || state.op === 'delete') {
+                    state.returning = columns || '*';
+                } else {
+                    state.op = 'select';
+                    state.columns = columns;
+                    state.count = options.count || null;
+                    state.head = options.head || false;
+                }
                 return builder;
             },
             insert(values, options = {}) {
@@ -272,16 +296,13 @@ function createLocalSupabaseClient(baseUrl) {
                 state.maybeSingle = true;
                 return builder;
             },
-            async rpc(fn, args) {
-                const { data, error } = await request('/api/db/rpc', {
-                    method: 'POST',
-                    body: JSON.stringify({ fn, args })
-                });
-                if (error) return { data: null, error };
-                return { data: data.data, error: null };
-            },
+
+            /**
+             * Execute the built query
+             */
             async _execute() {
                 let result;
+
                 if (state.op === 'select') {
                     result = await request('/api/db/select', {
                         method: 'POST',
@@ -355,8 +376,32 @@ function createLocalSupabaseClient(baseUrl) {
                 }
 
                 if (result.error) return { data: null, error: result.error };
-                return { data: result.data.data, error: null };
+
+                let data = result.data.data;
+                let error = null;
+
+                // Apply .single()/.maybeSingle() semantics for write operations too
+                if (state.single || state.maybeSingle) {
+                    const rows = Array.isArray(data) ? data : (data == null ? [] : [data]);
+                    if (rows.length === 0) {
+                        if (state.maybeSingle) {
+                            data = null;
+                        } else {
+                            error = { message: 'No rows', code: 'PGRST116' };
+                            data = null;
+                        }
+                    } else if (rows.length > 1) {
+                        error = { message: 'Multiple rows', code: 'PGRST116' };
+                        data = null;
+                    } else {
+                        data = rows[0];
+                    }
+                }
+
+                return { data, error };
             },
+
+            // Make the builder thenable so await works directly
             then(resolve, reject) {
                 return builder._execute().then(resolve, reject);
             }
@@ -365,10 +410,33 @@ function createLocalSupabaseClient(baseUrl) {
         return builder;
     };
 
+    // Return the database client interface
     return {
         auth,
         from: (table) => createQueryBuilder(table),
-        rpc: async (fn, args) => createQueryBuilder(null).rpc(fn, args),
+        
+        /**
+         * Call a PostgreSQL stored function (RPC)
+         */
+        rpc: async (fn, args) => {
+            const { data, error } = await request('/api/db/rpc', {
+                method: 'POST',
+                body: JSON.stringify({ fn, args })
+            });
+            if (error) return { data: null, error };
+            const raw = data.data;
+            if (Array.isArray(raw) && raw.length === 1 && raw[0] && typeof raw[0] === 'object') {
+                const fnName = String(fn || '').split('.').pop();
+                if (fnName && Object.prototype.hasOwnProperty.call(raw[0], fnName)) {
+                    return { data: raw[0][fnName], error: null };
+                }
+            }
+            return { data: raw, error: null };
+        },
+
+        /**
+         * Real-time channels (stub - not implemented in local backend)
+         */
         channel: () => {
             const channel = {
                 on: () => channel,
@@ -379,56 +447,33 @@ function createLocalSupabaseClient(baseUrl) {
             return channel;
         },
         removeChannel: () => {},
-        supabaseUrl: baseUrl
+        
+        // Base URL for reference
+        apiUrl: baseUrl
     };
 }
 
 /**
- * Initialize Supabase client
- * @returns {Object} Supabase client
+ * Initialize database client
+ * @returns {Promise<Object>} Database client
  */
-function initSupabase() {
-    if (supabaseClient) {
-        return Promise.resolve(supabaseClient);
-    }
-    if (supabaseInitPromise) {
-        return supabaseInitPromise;
+function initDatabase() {
+    if (dbClient) {
+        return Promise.resolve(dbClient);
     }
 
-    if (APP_CONFIG.USE_LOCAL_BACKEND) {
-        supabaseClient = createLocalSupabaseClient(APP_CONFIG.API_BASE_URL);
-        window.supabaseClient = supabaseClient;
-        window.supabase = window.supabase || { createClient: () => supabaseClient };
-        return Promise.resolve(supabaseClient);
-    }
-
-    const createClient = () => {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        // Hacer el cliente disponible globalmente
-        window.supabaseClient = supabaseClient;
-        return supabaseClient;
-    };
-
-    if (window.supabase) {
-        supabaseInitPromise = Promise.resolve(createClient());
-    } else {
-        console.warn('Supabase client not available. Loading from CDN...');
-        let script = document.querySelector('script[data-supabase-cdn]');
-        if (!script) {
-            script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-            script.async = true;
-            script.setAttribute('data-supabase-cdn', 'true');
-            document.head.appendChild(script);
-        }
-        supabaseInitPromise = new Promise((resolve, reject) => {
-            script.onload = () => resolve(createClient());
-            script.onerror = () => reject(new Error('Failed to load Supabase client from CDN'));
-        });
-    }
-
-    return supabaseInitPromise;
+    dbClient = createDatabaseClient(APP_CONFIG.API_BASE_URL);
+    
+    // Make client available globally for compatibility
+    // Some scripts still use window.supabaseClient - this provides backward compatibility
+    window.supabaseClient = dbClient;
+    window.supabase = { createClient: () => dbClient };
+    
+    return Promise.resolve(dbClient);
 }
+
+// Alias for backward compatibility
+const initSupabase = initDatabase;
 
 /**
  * Check if user is authenticated
@@ -436,8 +481,8 @@ function initSupabase() {
  */
 async function isAuthenticated() {
     try {
-        const supabase = await initSupabase();
-        const { data: { session } } = await supabase.auth.getSession();
+        const client = await initDatabase();
+        const { data: { session } } = await client.auth.getSession();
         return !!session;
     } catch (error) {
         console.error('Authentication check error:', error);
@@ -451,13 +496,13 @@ async function isAuthenticated() {
  */
 async function getCurrentUser() {
     try {
-        const supabase = await initSupabase();
-        const { data: { user } } = await supabase.auth.getUser();
+        const client = await initDatabase();
+        const { data: { user } } = await client.auth.getUser();
         
         if (user) {
             try {
                 // Get additional user data from profiles table
-                const { data: profile } = await supabase
+                const { data: profile } = await client
                     .from('user_profiles')
                     .select('*')
                     .eq('id', user.id)
@@ -484,18 +529,18 @@ async function getCurrentUser() {
  */
 async function login(email, password) {
     try {
-        const supabase = await initSupabase();
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const client = await initDatabase();
+        const { data, error } = await client.auth.signInWithPassword({
             email,
             password
         });
 
         if (error) {
-            return { success: false, error: error.message || 'Error en el inicio de sesión' };
+            return { success: false, error: error.message || 'Error en el inicio de sesion' };
         }
 
         // Get user profile data
-        const { data: profile } = await supabase
+        const { data: profile } = await client
             .from('user_profiles')
             .select('*')
             .eq('id', data.user.id)
@@ -511,7 +556,7 @@ async function login(email, password) {
         return { success: true, data: { user: userData } };
     } catch (error) {
         console.error('Login error:', error);
-        return { success: false, error: 'Error de conexión. Por favor verifica tu conexión a internet.' };
+        return { success: false, error: 'Error de conexion. Verifica que el servidor este ejecutandose.' };
     }
 }
 
@@ -522,8 +567,8 @@ async function login(email, password) {
  */
 async function register(userData) {
     try {
-        const supabase = await initSupabase();
-        const { data, error } = await supabase.auth.signUp({
+        const client = await initDatabase();
+        const { data, error } = await client.auth.signUp({
             email: userData.email,
             password: userData.password,
             options: {
@@ -544,7 +589,7 @@ async function register(userData) {
         
         try {
             // Create profile record
-            const { error: profileError } = await supabase.from('user_profiles').insert([
+            const { error: profileError } = await client.from('user_profiles').insert([
                 {
                     id: data.user.id,
                     first_name: userData.firstName,
@@ -564,7 +609,7 @@ async function register(userData) {
         return { success: true, data };
     } catch (error) {
         console.error('Registration error:', error);
-        return { success: false, error: 'Error de conexión. Por favor verifica tu conexión a internet.' };
+        return { success: false, error: 'Error de conexion. Verifica que el servidor este ejecutandose.' };
     }
 }
 
@@ -574,13 +619,14 @@ async function register(userData) {
  */
 async function logout() {
     try {
-        const supabase = await initSupabase();
-        await supabase.auth.signOut();
+        const client = await initDatabase();
+        await client.auth.signOut();
     } catch (error) {
         console.error('Logout error:', error);
     } finally {
         // Clear local storage
         localStorage.removeItem(STORAGE_KEYS.USER);
+        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
         
         // Update UI
         await updateAuthUI();
@@ -602,6 +648,7 @@ async function updateAuthUI() {
     if (authenticated) {
         const user = await getCurrentUser();
         const displayName = user?.wizard_name || user?.user_metadata?.wizard_name || 'Usuario';
+        const canAccessAdminCenter = user?.role === 'admin' || user?.role === 'house_head' || user?.is_house_head === true;
         
         // Create dropdown menu
         authButton.innerHTML = `
@@ -616,7 +663,8 @@ async function updateAuthUI() {
                     <div class="py-1">
                         <a href="user_profile_achievement_system.html" class="block px-4 py-2 text-sm text-text-primary hover:bg-primary/10">Mi Perfil</a>
                         ${user?.house ? `<a href="house_common_rooms_personalized_dashboards.html" class="block px-4 py-2 text-sm text-text-primary hover:bg-primary/10">Mi Casa</a>` : ''}
-                        <button id="logoutButton" class="block w-full text-left px-4 py-2 text-sm text-error hover:bg-error/10">Cerrar Sesión</button>
+                        ${canAccessAdminCenter ? `<a href="admin_center.html" class="block px-4 py-2 text-sm text-yellow-400 hover:bg-yellow-500/10">Admin Center</a>` : ''}
+                        <button id="logoutButton" class="block w-full text-left px-4 py-2 text-sm text-error hover:bg-error/10">Cerrar Sesion</button>
                     </div>
                 </div>
             </div>
@@ -642,7 +690,7 @@ async function updateAuthUI() {
         // Show login/register buttons
         authButton.innerHTML = `
             <div class="flex space-x-2">
-                <a href="user_login.html" class="btn-primary text-sm px-4 py-2 rounded-lg">Iniciar Sesión</a>
+                <a href="user_login.html" class="btn-primary text-sm px-4 py-2 rounded-lg">Iniciar Sesion</a>
                 <a href="user_registration.html" class="btn-secondary text-sm px-4 py-2 rounded-lg">Registrarse</a>
             </div>
         `;
@@ -656,19 +704,19 @@ async function updateAuthUI() {
  */
 async function resetPassword(email) {
     try {
-        const supabase = await initSupabase();
-        const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        const client = await initDatabase();
+        const { data, error } = await client.auth.resetPasswordForEmail(email, {
             redirectTo: `${window.location.origin}/pages/reset_password.html`
         });
 
         if (error) {
-            return { success: false, error: error.message || 'Error al enviar el correo de recuperación' };
+            return { success: false, error: error.message || 'Error al enviar el correo de recuperacion' };
         }
 
         return { success: true, resetToken: data?.reset_token || null };
     } catch (error) {
         console.error('Reset password error:', error);
-        return { success: false, error: 'Error de conexión. Por favor verifica tu conexión a internet.' };
+        return { success: false, error: 'Error de conexion. Verifica que el servidor este ejecutandose.' };
     }
 }
 
@@ -677,8 +725,8 @@ async function resetPassword(email) {
  */
 async function initAuth() {
     try {
-        // Initialize Supabase client
-        await initSupabase();
+        // Initialize database client
+        await initDatabase();
         
         // Update UI based on auth state
         await updateAuthUI();
@@ -688,13 +736,13 @@ async function initAuth() {
         if (authenticated) {
             const user = await getCurrentUser();
             
-        // If user has no house assigned, redirect to sorting hat quiz
-        if (user && window.location.pathname.includes('house_common_rooms_personalized_dashboards.html')) {
-            const house = await getUserHouse();
-            if (!house) {
-                window.location.href = 'house_selection_portal_sorting_hat_quiz.html';
+            // If user has no house assigned, redirect to sorting hat quiz
+            if (user && window.location.pathname.includes('house_common_rooms_personalized_dashboards.html')) {
+                const house = await getUserHouse();
+                if (!house) {
+                    window.location.href = 'house_selection_portal_sorting_hat_quiz.html';
+                }
             }
-        }
         }
     } catch (error) {
         console.error('Auth initialization error:', error);
@@ -705,14 +753,14 @@ async function initAuth() {
 document.addEventListener('DOMContentLoaded', initAuth);
 
 /**
- * Save user's house selection to Supabase
+ * Save user's house selection to database
  * @param {string} house The selected house (gryffindor, hufflepuff, ravenclaw, slytherin)
  * @returns {Promise<Object>} Save response
  */
 async function saveUserHouse(house) {
     try {
-        const supabase = await initSupabase();
-        const { data: { user } } = await supabase.auth.getUser();
+        const client = await initDatabase();
+        const { data: { user } } = await client.auth.getUser();
         
         if (!user) {
             // Fallback local even if not authenticated
@@ -722,11 +770,11 @@ async function saveUserHouse(house) {
             return { success: false, error: 'Usuario no autenticado (guardado localmente)' };
         }
 
-        // Save to Supabase profiles tables (compatibilidad con ambas)
+        // Save to profiles tables
         let error = null;
         const houseSelectedAt = new Date().toISOString();
 
-        const respProfiles = await supabase
+        const respProfiles = await client
             .from('profiles')
             .update({
                 house: house,
@@ -737,7 +785,7 @@ async function saveUserHouse(house) {
             error = respProfiles.error;
         }
 
-        const respUserProfiles = await supabase
+        const respUserProfiles = await client
             .from('user_profiles')
             .update({
                 house: house
@@ -748,7 +796,7 @@ async function saveUserHouse(house) {
         }
             
         if (error) {
-            console.error('Error saving house to Supabase:', error);
+            console.error('Error saving house to database:', error);
             // Fallback to localStorage only
             localStorage.setItem('userHouse', house);
             localStorage.setItem('selectedHouse', house);
@@ -766,19 +814,19 @@ async function saveUserHouse(house) {
         // Fallback to localStorage
         localStorage.setItem('userHouse', house);
         localStorage.setItem('selectedHouse', house);
-        return { success: false, error: 'Error de conexión, guardado localmente' };
+        return { success: false, error: 'Error de conexion, guardado localmente' };
     }
 }
 
 /**
- * Get user's house from Supabase or localStorage
+ * Get user's house from database or localStorage
  * @returns {Promise<string|null>} User's house or null
  */
 async function getUserHouse() {
     try {
         const user = await getCurrentUser();
         
-        // First try to get from Supabase user profile
+        // First try to get from user profile
         if (user?.house) {
             // Update localStorage cache
             localStorage.setItem('userHouse', user.house);
@@ -797,7 +845,8 @@ async function getUserHouse() {
 
 // Export auth functions
 window.HogwartsAuth = {
-    initSupabase,
+    initSupabase: initDatabase, // Backward compatibility alias
+    initDatabase,
     login,
     register,
     logout,
@@ -809,13 +858,13 @@ window.HogwartsAuth = {
     getUserHouse
 };
 
-// Back-compat: several pages/scripts expect these globals.
-window.initSupabase = window.initSupabase || initSupabase;
-window.getCurrentUser = window.getCurrentUser || getCurrentUser;
+// Backward compatibility: several pages/scripts expect these globals
+window.initSupabase = initDatabase;
+window.getCurrentUser = getCurrentUser;
 
-// Best-effort eager init so feature pages can query immediately.
+// Eager init so feature pages can query immediately
 try {
-    initSupabase().catch(() => {});
+    initDatabase().catch(() => {});
 } catch (e) {
     // ignore
 }

@@ -13,16 +13,19 @@
 
 <body class="bg-background text-text-primary">
     <!-- Navigation Header -->
-    <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
+    <nav class="bg-surface/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50" style="z-index: 3000; overflow: visible;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <svg class="h-10 w-10 text-primary mr-3" viewBox="0 0 100 100" fill="currentColor">
-                        <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z" />
-                        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2" />
+                    <svg class="h-10 w-10 text-primary mr-3" viewBox="0 0 64 64" aria-hidden="true">
+                        <circle cx="32" cy="32" r="21" fill="none" stroke="currentColor" stroke-width="3"></circle>
+                        <path d="M18 43 L44 17" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"></path>
+                        <path d="M32 16 L34.5 22 L41 24 L35.5 28 L36.8 34.4 L32 31.2 L27.2 34.4 L28.5 28 L23 24 L29.5 22 Z" fill="currentColor"></path>
+                        <circle cx="46.5" cy="15.5" r="2" fill="currentColor"></circle>
+                        <circle cx="14.5" cy="47.5" r="1.6" fill="currentColor"></circle>
                     </svg>
-                    <span class="font-accent text-xl font-medium text-primary">Hogwarts Community Hub</span>
+                    <span class="font-accent text-xl font-medium text-primary">Potter Friends</span>
                 </div>
 
                 <!-- Desktop Navigation -->
@@ -38,7 +41,7 @@
                     <a href="community_events_challenges_center.html"
                         class="text-text-secondary hover:text-primary magical-transition">Eventos</a>
                     <!-- User Menu with Logout -->
-                    <div class="relative">
+                    <div class="relative" style="z-index: 3001;">
                         <button id="userMenuButton" class="btn-primary text-sm px-4 py-2 font-medium border-b-2 border-primary pb-1 flex items-center">
                             <span id="userHouseName">Mi Casa</span>
                             <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,7 +49,7 @@
                             </svg>
                         </button>
                         <!-- Dropdown Menu -->
-                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-surface rounded-lg shadow-elevated border border-primary/20 z-50">
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-surface rounded-lg shadow-elevated border border-primary/20 z-50" style="z-index: 3100;">
                             <div class="py-2">
                                 <div class="px-4 py-2 border-b border-primary/20">
                                     <p class="text-sm font-medium text-text-primary" id="userWizardName">Mago</p>
@@ -56,8 +59,8 @@
                                     Mi Perfil
                                 </a>
                                 <!-- Admin Panel Button (only for house heads) -->
-                                <a href="house_head_admin_panel.html" id="adminPanelLink" class="hidden block px-4 py-2 text-sm text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/5 magical-transition">
-                                    🏰 Panel de Administración
+                                <a href="admin_center.html" id="adminPanelLink" class="hidden block px-4 py-2 text-sm text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/5 magical-transition">
+                                    Admin Center
                                 </a>
                                 <a href="house_selection_portal_sorting_hat_quiz.html?retake=true" class="block px-4 py-2 text-sm text-text-secondary hover:text-primary hover:bg-primary/5 magical-transition">
                                     Cambiar Casa
@@ -83,7 +86,7 @@
     </nav>
 
     <!-- House Selection Modal (Initially Hidden) -->
-    <div id="houseModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
+    <div id="houseModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden" style="z-index: 4000;">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-surface rounded-lg p-8 max-w-md w-full shadow-elevated">
                 <h3 class="font-headline text-2xl font-medium text-text-primary mb-4 text-center">Selecciona tu Casa
@@ -335,11 +338,14 @@
                 <!-- Brand -->
                 <div class="md:col-span-2">
                     <div class="flex items-center mb-4">
-                        <svg class="h-8 w-8 text-secondary mr-3" viewBox="0 0 100 100" fill="currentColor">
-                            <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z" />
-                            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2" />
+                        <svg class="h-8 w-8 text-secondary mr-3" viewBox="0 0 64 64" aria-hidden="true">
+                            <circle cx="32" cy="32" r="21" fill="none" stroke="currentColor" stroke-width="3"></circle>
+                            <path d="M18 43 L44 17" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"></path>
+                            <path d="M32 16 L34.5 22 L41 24 L35.5 28 L36.8 34.4 L32 31.2 L27.2 34.4 L28.5 28 L23 24 L29.5 22 Z" fill="currentColor"></path>
+                            <circle cx="46.5" cy="15.5" r="2" fill="currentColor"></circle>
+                            <circle cx="14.5" cy="47.5" r="1.6" fill="currentColor"></circle>
                         </svg>
-                        <span class="font-accent text-xl font-medium">Hogwarts Community Hub</span>
+                        <span class="font-accent text-xl font-medium">Potter Friends</span>
                     </div>
                     <p class="text-gray-300 mb-4 max-w-md">
                         La comunidad mágica más grande de habla hispana. Donde los fans de Harry Potter
@@ -600,7 +606,6 @@
     </script>
 
     <!-- Auth Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../scripts/auth.js"></script>
     <script type="module" src="../api/dashboardApi.js"></script>
     <script>

@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portal de Selección - Quiz del Sombrero Seleccionador | Hogwarts Community Hub</title>
     <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/ritual.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;500;600;700&family=EB+Garamond:wght@400;500;600&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
         :root {
             --wood-a: #180d0b;
@@ -120,11 +121,14 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <svg class="h-10 w-10 text-primary mr-3" viewBox="0 0 100 100" fill="currentColor">
-                        <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
-                        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <svg class="h-10 w-10 text-primary mr-3" viewBox="0 0 64 64" aria-hidden="true">
+                        <circle cx="32" cy="32" r="21" fill="none" stroke="currentColor" stroke-width="3"></circle>
+                        <path d="M18 43 L44 17" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"></path>
+                        <path d="M32 16 L34.5 22 L41 24 L35.5 28 L36.8 34.4 L32 31.2 L27.2 34.4 L28.5 28 L23 24 L29.5 22 Z" fill="currentColor"></path>
+                        <circle cx="46.5" cy="15.5" r="2" fill="currentColor"></circle>
+                        <circle cx="14.5" cy="47.5" r="1.6" fill="currentColor"></circle>
                     </svg>
-                    <span class="font-accent text-xl font-medium text-primary">Hogwarts Community Hub</span>
+                    <span class="font-accent text-xl font-medium text-primary">Potter Friends</span>
                 </div>
                 
                 <!-- Desktop Navigation -->
@@ -160,207 +164,149 @@
     </nav>
 
     <!-- Quiz Container -->
-    <div class="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-background relative overflow-hidden">
-        <!-- Animated Background Elements -->
-        <div class="absolute inset-0">
-            <!-- Floating Candles -->
-            <div class="absolute top-20 left-10 w-2 h-8 bg-secondary rounded-full opacity-80 animate-pulse"></div>
-            <div class="absolute top-32 right-20 w-2 h-8 bg-secondary rounded-full opacity-60 animate-pulse" style="animation-delay: 1s;"></div>
-            <div class="absolute top-40 left-1/4 w-2 h-8 bg-secondary rounded-full opacity-70 animate-pulse" style="animation-delay: 2s;"></div>
-            <div class="absolute top-24 right-1/3 w-2 h-8 bg-secondary rounded-full opacity-90 animate-pulse" style="animation-delay: 0.5s;"></div>
-            
-            <!-- Particle Effects -->
-            <div class="absolute top-1/4 left-1/6 w-1 h-1 bg-secondary rounded-full opacity-50 animate-ping"></div>
-            <div class="absolute top-1/3 right-1/4 w-1 h-1 bg-secondary rounded-full opacity-40 animate-ping" style="animation-delay: 1.5s;"></div>
-            <div class="absolute bottom-1/3 left-1/3 w-1 h-1 bg-secondary rounded-full opacity-60 animate-ping" style="animation-delay: 3s;"></div>
+    <div class="min-h-screen relative overflow-hidden flex flex-col items-center justify-center">
+        <!-- Cinematic Dust Background -->
+        <div class="cinematic-dust"></div>
+        
+        <!-- Animated Background Elements (Subtle) -->
+        <div class="absolute inset-0 z-0">
+            <!-- Floating Candles (reduced opacity for void effect) -->
+            <div class="absolute top-20 left-10 w-2 h-8 bg-secondary rounded-full opacity-30 animate-pulse"></div>
+            <div class="absolute top-32 right-20 w-2 h-8 bg-secondary rounded-full opacity-20 animate-pulse" style="animation-delay: 1s;"></div>
+            <div class="absolute top-40 left-1/4 w-2 h-8 bg-secondary rounded-full opacity-25 animate-pulse" style="animation-delay: 2s;"></div>
+            <div class="absolute top-24 right-1/3 w-2 h-8 bg-secondary rounded-full opacity-40 animate-pulse" style="animation-delay: 0.5s;"></div>
         </div>
 
         <!-- Welcome Screen -->
-        <div id="welcomeScreen" class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-            <div class="text-center">
-                <!-- Sorting Hat Image -->
-                <div class="mb-8 flex justify-center">
-                    <div class="relative">
-                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Sombrero Seleccionador" class="w-80 h-80 object-cover rounded-full shadow-elevated hover-scale magical-transition" onerror="this.src='https://images.pexels.com/photos/1029141/pexels-photo-1029141.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'; this.onerror=null;" />
-                        <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-full"></div>
-                        <div class="absolute inset-0 animate-pulse bg-secondary/10 rounded-full"></div>
-                    </div>
+        <div id="welcomeScreen" class="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col items-center justify-center min-h-[80vh]">
+            <div class="text-center w-full">
+                <!-- Sorting Hat Image (The Artefact) -->
+                <div class="mb-12 flex justify-center artefact-container">
+                    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=2940&auto=format&fit=crop" alt="Sombrero Seleccionador" class="w-64 h-64 object-cover artefact mix-blend-luminosity opacity-80" onerror="this.src='https://images.pexels.com/photos/1029141/pexels-photo-1029141.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'; this.onerror=null;" />
+                    <!-- Subdued Glow behind artefact -->
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-incantation-gold opacity-5 blur-[60px] rounded-full pointer-events-none"></div>
                 </div>
                 
                 <!-- Welcome Text -->
-                <h1 class="font-headline text-4xl md:text-6xl font-medium text-white mb-6 text-shadow">
-                    El Sombrero Seleccionador
-                    <br /><span class="text-secondary">Te Está Esperando</span>
+                <h1 class="font-headline text-5xl md:text-7xl mb-6 tracking-widest leading-tight">
+                    LA CEREMONIA<br/>DE SELECCIÓN
                 </h1>
                 
-                <p class="font-body text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-                    Ha llegado el momento más importante de tu viaje mágico. El Sombrero Seleccionador 
-                    analizará tu personalidad, valores y espíritu para determinar tu verdadero hogar en Hogwarts.
+                <p class="font-body text-xl md:text-2xl text-faded-ink mb-12 max-w-2xl mx-auto leading-relaxed" style="color: var(--faded-ink);">
+                    Aproxima tu mente. El Sombrero requiere absoluta honestidad para ver la verdad oculta en tu alma.
                 </p>
                 
-                <!-- Instructions -->
-                <div class="bg-surface/20 backdrop-blur-sm rounded-lg p-6 mb-8 border border-white/10 max-w-2xl mx-auto">
-                    <h3 class="font-headline text-xl font-medium text-white mb-4">Instrucciones de la Ceremonia</h3>
-                    <ul class="text-gray-300 space-y-2 text-left">
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-secondary mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            Responde con honestidad - el Sombrero puede ver a través de las mentiras
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-secondary mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            Tómate tu tiempo - cada pregunta es importante para tu destino
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-secondary mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            Una vez asignado, tu casa será tu hogar para siempre
-                        </li>
-                    </ul>
-                </div>
-                
                 <!-- Sound Toggle -->
-                <div class="mb-8">
-                    <label class="flex items-center justify-center text-gray-300 cursor-pointer">
+                <div class="mb-12">
+                    <label class="flex items-center justify-center cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
                         <input type="checkbox" id="soundToggle" class="sr-only" checked />
                         <div class="relative">
-                            <div class="w-10 h-6 bg-gray-600 rounded-full shadow-inner"></div>
-                            <div class="absolute w-4 h-4 bg-secondary rounded-full shadow top-1 left-1 transition-transform duration-300 ease-in-out transform translate-x-4"></div>
+                            <div class="w-10 h-6 bg-obsidian border border-gray-800 rounded-full shadow-inner transition-colors" id="soundToggleBg"></div>
+                            <div class="absolute w-4 h-4 rounded-full shadow top-1 left-1 transition-transform duration-300 ease-in-out transform translate-x-4 bg-incantation-gold" id="soundToggleKnob"></div>
                         </div>
-                        <span class="ml-3">Efectos de sonido atmosféricos</span>
+                        <span class="ml-3 ritual-metadata">Mantrato Auditivo</span>
                     </label>
                 </div>
                 
                 <!-- Start Button -->
-                <button onclick="startQuiz()" class="btn-primary text-lg px-8 py-4 rounded-lg hover-scale magical-transition inline-flex items-center">
-                    <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                <button onclick="startQuiz()" class="btn-ritual-primary text-sm md:text-base px-10 py-5 mx-auto flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
                     </svg>
-                    Comenzar la Selección
+                    Comenzar el Ritual
                 </button>
             </div>
         </div>
 
         <!-- Quiz Screen -->
-        <div id="quizScreen" class="hidden relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-            <!-- Progress Bar -->
-            <div class="mb-8">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-gray-300 font-cta text-sm">Pregunta <span id="currentQuestion">1</span> de 12</span>
-                    <span class="text-gray-300 font-cta text-sm"><span id="progressPercent">8</span>% Completado</span>
+        <div id="quizScreen" class="hidden relative z-10 w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col min-h-[80vh]">
+            
+            <!-- Progress Spire -->
+            <div class="mb-16">
+                <div class="flex justify-between items-center mb-4 ritual-metadata">
+                    <span>Inquisición <span id="currentQuestion" class="text-parchment-white">1</span> / 12</span>
+                    <span><span id="progressPercent" class="text-parchment-white">8</span>% Revelado</span>
                 </div>
-                <div class="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
-                    <div id="progressBar" class="h-full bg-gradient-to-r from-gryffindor via-hufflepuff via-ravenclaw to-slytherin transition-all duration-500 ease-out" style="width: 8.33%"></div>
+                <div class="progress-spire-container">
+                    <div id="progressBar" class="progress-spire-fill" style="width: 8.33%">
+                        <div class="progress-spire-head"></div>
+                    </div>
                 </div>
             </div>
             
             <!-- Question Container -->
-            <div class="bg-surface/20 backdrop-blur-sm rounded-lg p-8 border border-white/10 mb-8">
-                <h2 id="questionText" class="font-headline text-2xl md:text-3xl font-medium text-white mb-8 text-center leading-relaxed">
+            <div class="mb-12">
+                <h2 id="questionText" class="font-headline text-3xl md:text-4xl text-center leading-relaxed">
                     <!-- Question will be inserted here -->
                 </h2>
-                
-                <!-- Answer Options -->
-                <div id="answerOptions" class="space-y-4">
-                    <!-- Options will be inserted here -->
-                </div>
+            </div>
+            
+            <!-- Answer Options -->
+            <div id="answerOptions" class="space-y-6 flex-grow flex flex-col justify-center">
+                <!-- Options will be inserted here -->
             </div>
             
             <!-- Navigation Buttons -->
-            <div class="flex justify-between items-center">
-                <button id="prevButton" onclick="previousQuestion()" class="btn-secondary px-6 py-3 rounded-lg hover-scale magical-transition opacity-50 cursor-not-allowed" disabled>
-                    <svg class="w-5 h-5 mr-2 inline" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                    Anterior
+            <div class="flex justify-between items-center mt-16 pt-8 border-t border-white/5">
+                <button id="prevButton" onclick="previousQuestion()" class="btn-ritual-secondary px-6 py-3" disabled>
+                    Regresar
                 </button>
                 
-                <button id="nextButton" onclick="nextQuestion()" class="btn-primary px-6 py-3 rounded-lg hover-scale magical-transition opacity-50 cursor-not-allowed" disabled>
-                    Siguiente
-                    <svg class="w-5 h-5 ml-2 inline" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                    </svg>
+                <button id="nextButton" onclick="nextQuestion()" class="btn-ritual-primary px-8 py-3" disabled>
+                    Avanzar
                 </button>
             </div>
         </div>
 
         <!-- Results Screen -->
-        <div id="resultsScreen" class="hidden relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-            <div class="text-center">
-                <!-- House Reveal Animation -->
-                <div id="houseReveal" class="mb-8">
-                    <div class="relative">
-                        <img id="houseImage" src alt="Escudo de Casa" class="w-64 h-64 object-cover rounded-full shadow-elevated mx-auto mb-6 opacity-0 transform scale-50 transition-all duration-1000 ease-out" />
-                        <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-full"></div>
+        <div id="resultsScreen" class="hidden relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 min-h-[80vh] flex flex-col items-center justify-center">
+            <div class="text-center w-full">
+                <!-- House Reveal Animation (The Artefact) -->
+                <div id="houseReveal" class="mb-12 artefact-container">
+                    <div class="relative inline-block">
+                        <img id="houseImage" src alt="Escudo de Casa" class="w-64 h-64 md:w-80 md:h-80 object-cover artefact mix-blend-luminosity opacity-0 transform scale-95 transition-all duration-[2000ms] ease-out shadow-2xl" />
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-current opacity-10 blur-[80px] rounded-full pointer-events-none" id="houseGlow"></div>
                     </div>
                 </div>
                 
                 <!-- House Announcement -->
-                <div id="houseAnnouncement" class="opacity-0 transform translate-y-8 transition-all duration-1000 ease-out">
-                    <h1 class="font-headline text-5xl md:text-7xl font-medium text-white mb-4 text-shadow">
-                        ¡Bienvenido a
-                        <br /><span id="houseName" class="text-secondary"><!-- House name --></span>!
+                <div id="houseAnnouncement" class="opacity-0 transform translate-y-8 transition-all duration-[1500ms] ease-out">
+                    <h1 class="font-headline text-5xl md:text-7xl mb-6 tracking-widest leading-tight text-parchment-white">
+                        TU DESTINO<br/>ES <span id="houseName" class="text-incantation-gold drop-shadow-lg"><!-- House name --></span>
                     </h1>
                     
-                    <p id="houseWelcome" class="font-body text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                    <p id="houseWelcome" class="font-body text-xl md:text-2xl mb-16 max-w-3xl mx-auto leading-relaxed" style="color: var(--faded-ink);">
                         <!-- House welcome message -->
                     </p>
                 </div>
                 
-                <!-- House Details -->
-                <div id="houseDetails" class="opacity-0 transform translate-y-8 transition-all duration-1000 ease-out" style="transition-delay: 500ms;">
-                    <div class="grid md:grid-cols-2 gap-8 mb-8">
-                        <!-- House Values -->
-                        <div class="bg-surface/20 backdrop-blur-sm rounded-lg p-6 border border-white/10">
-                            <h3 class="font-headline text-xl font-medium text-white mb-4">Valores de tu Casa</h3>
-                            <ul id="houseValues" class="text-gray-300 space-y-2">
-                                <!-- Values will be inserted here -->
-                            </ul>
-                        </div>
-                        
-                        <!-- Famous Members -->
-                        <div class="bg-surface/20 backdrop-blur-sm rounded-lg p-6 border border-white/10">
-                            <h3 class="font-headline text-xl font-medium text-white mb-4">Miembros Famosos</h3>
-                            <ul id="famousMembers" class="text-gray-300 space-y-2">
-                                <!-- Famous members will be inserted here -->
-                            </ul>
-                        </div>
+                <!-- House Details (Minimalist) -->
+                <div id="houseDetails" class="opacity-0 transform translate-y-8 transition-all duration-[1500ms] ease-out max-w-2xl mx-auto space-y-12" style="transition-delay: 800ms;">
+                    <!-- Values List -->
+                    <div>
+                        <h3 class="ritual-metadata mb-6 text-center border-b border-white/10 pb-4">Los Pilares de tu Alma</h3>
+                        <ul id="houseValues" class="text-parchment-white text-lg space-y-3 font-body text-center">
+                            <!-- Values will be inserted here -->
+                        </ul>
                     </div>
-                    
+
                     <!-- Sorting Explanation -->
-                    <div class="bg-surface/20 backdrop-blur-sm rounded-lg p-6 border border-white/10 mb-8">
-                        <h3 class="font-headline text-xl font-medium text-white mb-4">¿Por qué fuiste seleccionado?</h3>
-                        <p id="sortingExplanation" class="text-gray-300 leading-relaxed">
+                    <div>
+                        <h3 class="ritual-metadata mb-6 text-center border-b border-white/10 pb-4">El Veredicto del Sombrero</h3>
+                        <p id="sortingExplanation" class="text-faded-ink text-lg leading-relaxed text-center font-body italic">
                             <!-- Explanation will be inserted here -->
                         </p>
                     </div>
                 </div>
                 
                 <!-- Action Buttons -->
-                <div id="actionButtons" class="opacity-0 transform translate-y-8 transition-all duration-1000 ease-out space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center" style="transition-delay: 1000ms;">
-                    <a href="house_common_rooms_personalized_dashboards.html" class="btn-primary text-lg px-8 py-4 rounded-lg hover-scale magical-transition inline-flex items-center">
-                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                        </svg>
-                        Ir a Mi Sala Común
+                <div id="actionButtons" class="opacity-0 transform translate-y-8 transition-all duration-[1500ms] ease-out mt-20 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex sm:justify-center" style="transition-delay: 1600ms;">
+                    <a href="house_common_rooms_personalized_dashboards.html" class="btn-ritual-primary text-sm md:text-base px-10 py-5">
+                        Adentrarse en la Sala Común
                     </a>
                     
-                    <a href="user_profile_achievement_system.html" class="btn-secondary text-lg px-8 py-4 rounded-lg hover-scale magical-transition inline-flex items-center">
-                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                        </svg>
-                        Crear Mi Perfil
-                    </a>
-                    
-                    <button onclick="shareResults()" class="btn-secondary text-lg px-8 py-4 rounded-lg hover-scale magical-transition inline-flex items-center">
-                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"/>
-                        </svg>
-                        Compartir Resultado
+                    <button onclick="shareResults()" class="btn-ritual-secondary text-sm md:text-base px-10 py-5">
+                        Proclamar Destino
                     </button>
                 </div>
             </div>
@@ -374,11 +320,14 @@
                 <!-- Brand -->
                 <div class="md:col-span-2">
                     <div class="flex items-center mb-4">
-                        <svg class="h-8 w-8 text-secondary mr-3" viewBox="0 0 100 100" fill="currentColor">
-                            <path d="M50 10 L60 30 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 30 Z"/>
-                            <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <svg class="h-8 w-8 text-secondary mr-3" viewBox="0 0 64 64" aria-hidden="true">
+                            <circle cx="32" cy="32" r="21" fill="none" stroke="currentColor" stroke-width="3"></circle>
+                            <path d="M18 43 L44 17" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"></path>
+                            <path d="M32 16 L34.5 22 L41 24 L35.5 28 L36.8 34.4 L32 31.2 L27.2 34.4 L28.5 28 L23 24 L29.5 22 Z" fill="currentColor"></path>
+                            <circle cx="46.5" cy="15.5" r="2" fill="currentColor"></circle>
+                            <circle cx="14.5" cy="47.5" r="1.6" fill="currentColor"></circle>
                         </svg>
-                        <span class="font-accent text-xl font-medium">Hogwarts Community Hub</span>
+                        <span class="font-accent text-xl font-medium">Potter Friends</span>
                     </div>
                     <p class="text-gray-300 mb-4 max-w-md">
                         La comunidad mágica más grande de habla hispana. Donde los fans de Harry Potter 
@@ -700,13 +649,13 @@
             // Create answer buttons
             question.answers.forEach((answer, answerIndex) => {
                 const button = document.createElement('button');
-                button.className = 'w-full text-left p-4 rounded-lg bg-surface/10 border border-white/20 text-white hover:bg-surface/20 magical-transition hover-scale';
+                button.className = 'ritual-plate w-full';
                 button.textContent = answer.text;
                 button.onclick = () => selectAnswer(answerIndex);
                 
                 // Mark as selected if this answer was previously chosen
                 if (answers[index] === answerIndex) {
-                    button.classList.add('bg-secondary/20', 'border-secondary');
+                    button.classList.add('selected-plate');
                 }
                 
                 answerOptions.appendChild(button);
@@ -714,17 +663,11 @@
             
             // Update navigation buttons
             prevButton.disabled = index === 0;
-            prevButton.className = index === 0 
-                ? 'btn-secondary px-6 py-3 rounded-lg hover-scale magical-transition opacity-50 cursor-not-allowed'
-                : 'btn-secondary px-6 py-3 rounded-lg hover-scale magical-transition';
             
             const hasAnswer = answers[index] !== undefined;
             nextButton.disabled = !hasAnswer;
-            nextButton.className = !hasAnswer
-                ? 'btn-primary px-6 py-3 rounded-lg hover-scale magical-transition opacity-50 cursor-not-allowed'
-                : 'btn-primary px-6 py-3 rounded-lg hover-scale magical-transition';
             
-            nextButton.textContent = index === quizQuestions.length - 1 ? 'Ver Resultado' : 'Siguiente';
+            nextButton.textContent = index === quizQuestions.length - 1 ? 'Revelar Destino' : 'Avanzar';
         }
 
         // Select answer
@@ -735,15 +678,14 @@
             const buttons = answerOptions.querySelectorAll('button');
             buttons.forEach((button, index) => {
                 if (index === answerIndex) {
-                    button.classList.add('bg-secondary/20', 'border-secondary');
+                    button.classList.add('selected-plate');
                 } else {
-                    button.classList.remove('bg-secondary/20', 'border-secondary');
+                    button.classList.remove('selected-plate');
                 }
             });
             
             // Enable next button
             nextButton.disabled = false;
-            nextButton.className = 'btn-primary px-6 py-3 rounded-lg hover-scale magical-transition';
         }
 
         // Previous question
@@ -886,7 +828,7 @@
             setTimeout(() => {
                 document.getElementById('actionButtons').style.opacity = '1';
                 document.getElementById('actionButtons').style.transform = 'translateY(0)';
-            }, 2000);
+            }, 3000); // 3000ms delay to respect the new slower animation curve
         }
 
         // Show elegant message when user already has a house
@@ -1046,7 +988,6 @@
     </script>
 
     <!-- Universal Navigation -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../src/scripts/auth.js"></script>
     <script src="../js/universal-nav.js"></script>
 

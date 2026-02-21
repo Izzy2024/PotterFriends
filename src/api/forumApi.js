@@ -1,20 +1,43 @@
-import { supabase as supabaseImport } from '../scripts/supabase-client.js';
+// Resolve DB client from auth bootstrap (`auth.js`)
+let supabase = window.supabaseClient || null;
+let supabaseImport = null;
 
-// Manejar el caso cuando supabase es una promesa
-let supabase = supabaseImport;
-if (supabaseImport instanceof Promise) {
-    supabaseImport.then(client => {
-        supabase = client;
-    });
+if (window.HogwartsAuth?.initDatabase) {
+    try {
+        supabaseImport = window.HogwartsAuth.initDatabase();
+    } catch (error) {
+        console.warn('Could not initialize database client from HogwartsAuth:', error);
+    }
+}
+
+async function ensureSupabaseClient() {
+    if (window.supabaseClient) {
+        supabase = window.supabaseClient;
+        return supabase;
+    }
+
+    if (supabase) {
+        return supabase;
+    }
+
+    if (supabaseImport instanceof Promise) {
+        supabase = await supabaseImport;
+        return supabase;
+    }
+
+    if (window.HogwartsAuth?.initSupabase) {
+        supabase = await window.HogwartsAuth.initSupabase();
+        return supabase;
+    }
+
+    throw new Error('Database client not available. Ensure auth.js is loaded first.');
 }
 
 async function normalizeUserProfile(profile, userId = null) {
     // Si no hay perfil pero tenemos userId, intentar obtener datos del usuario autenticado actual
     if (!profile && userId) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
             const { data: { user } } = await supabase.auth.getUser();
             
             // Si el userId coincide con el usuario actual, usar sus datos
@@ -70,10 +93,7 @@ class ForumAPI {
     // Posts CRUD Operations
     async createPost(postData) {
         try {
-            // Esperar a que supabase esté disponible si es una promesa
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             const { data: user, error: userError } = await supabase.auth.getUser();
             if (userError) throw userError;
@@ -104,10 +124,7 @@ class ForumAPI {
 
     async getPosts(filters = {}) {
         try {
-            // Esperar a que supabase esté disponible si es una promesa
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             // First get the posts
             let query = supabase
@@ -171,7 +188,7 @@ class ForumAPI {
     async enrichPostWithRelations(post) {
         try {
             const [userResult, houseResult, categoryResult, likesResult, commentsResult] = await Promise.all([
-                post.user_id ? supabase.from('user_profiles').select('id, wizard_name, display_name, avatar_url').eq('id', post.user_id).single() : { data: null },
+                post.user_id ? supabase.from('user_profiles').select('id, display_name, avatar_url').eq('id', post.user_id).single() : { data: null },
                 post.house_id ? supabase.from('houses').select('id, name').eq('id', post.house_id).single() : { data: null },
                 post.category_id ? supabase.from('categories').select('id, name, description, icon').eq('id', post.category_id).single() : { data: null },
                 supabase.from('likes').select('*', { count: 'exact', head: true }).eq('post_id', post.id),
@@ -209,7 +226,7 @@ class ForumAPI {
 
             // Fetch related data in parallel
             const [usersResult, housesResult, categoriesResult, likesResult, commentsResult] = await Promise.all([
-                userIds.length > 0 ? supabase.from('user_profiles').select('id, wizard_name, display_name, avatar_url').in('id', userIds) : { data: [] },
+                userIds.length > 0 ? supabase.from('user_profiles').select('id, display_name, avatar_url').in('id', userIds) : { data: [] },
                 houseIds.length > 0 ? supabase.from('houses').select('id, name').in('id', houseIds) : { data: [] },
                 categoryIds.length > 0 ? supabase.from('categories').select('id, name, description, icon').in('id', categoryIds) : { data: [] },
                 supabase.from('likes').select('post_id').in('post_id', postIds),
@@ -277,9 +294,7 @@ class ForumAPI {
     async getCategories() {
         try {
             // Esperar a que supabase esté disponible si es una promesa
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             const { data, error } = await supabase
                 .from('categories')
@@ -297,9 +312,7 @@ class ForumAPI {
     async getHouses() {
         try {
             // Esperar a que supabase esté disponible si es una promesa
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             const { data, error } = await supabase
                 .from('houses')
@@ -323,9 +336,7 @@ class ForumAPI {
     async getForumStats() {
         try {
             // Esperar a que supabase esté disponible si es una promesa
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -413,9 +424,7 @@ class ForumAPI {
     // Post detail and interactions
     async getPost(postId) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             const { data: post, error } = await supabase
                 .from('posts')
@@ -436,7 +445,7 @@ class ForumAPI {
             const { data: { user: currentUser } = { user: null } } = await supabase.auth.getUser();
 
             const [userResult, houseResult, categoryResult, likesHead, userLike] = await Promise.all([
-                post.user_id ? supabase.from('user_profiles').select('id, wizard_name, display_name, avatar_url').eq('id', post.user_id).single() : Promise.resolve({ data: null }),
+                post.user_id ? supabase.from('user_profiles').select('id, display_name, avatar_url').eq('id', post.user_id).single() : Promise.resolve({ data: null }),
                 post.house_id ? supabase.from('houses').select('id, name').eq('id', post.house_id).single() : Promise.resolve({ data: null }),
                 post.category_id ? supabase.from('categories').select('id, name, description, icon').eq('id', post.category_id).single() : Promise.resolve({ data: null }),
                 supabase.from('likes').select('*', { count: 'exact', head: true }).eq('post_id', postId),
@@ -466,9 +475,7 @@ class ForumAPI {
 
     async updatePost(postId, updates) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             const { data, error } = await supabase
                 .from('posts')
@@ -486,9 +493,7 @@ class ForumAPI {
 
     async deletePost(postId) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             const { error } = await supabase
                 .from('posts')
@@ -504,9 +509,7 @@ class ForumAPI {
 
     async getComments(postId, page = 1) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             let query = supabase
                 .from('comments')
@@ -536,7 +539,7 @@ class ForumAPI {
 
             const [{ data: usersResult }, { data: likesResult }, { data: { user: currentUser } = { user: null } }] = await Promise.all([
                 userIds.length > 0
-                    ? supabase.from('user_profiles').select('id, wizard_name, display_name, avatar_url').in('id', userIds)
+                    ? supabase.from('user_profiles').select('id, display_name, avatar_url').in('id', userIds)
                     : Promise.resolve({ data: [] }),
                 supabase.from('likes').select('comment_id, user_id').in('comment_id', commentIds),
                 supabase.auth.getUser()
@@ -589,9 +592,7 @@ class ForumAPI {
 
     async createComment(postId, content) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error('Usuario no autenticado');
@@ -612,9 +613,7 @@ class ForumAPI {
 
     async toggleLike(targetId, targetType = 'post') {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error('Usuario no autenticado');
@@ -682,9 +681,7 @@ class ForumAPI {
 
     async getFeaturedPosts(limit = 2) {
         try {
-            if (supabaseImport instanceof Promise) {
-                supabase = await supabaseImport;
-            }
+            await ensureSupabaseClient();
 
             // First try featured flag
             let { data: posts, error } = await supabase

@@ -87,6 +87,124 @@ async function getUserById(client, id) {
   return rows[0] || null;
 }
 
+async function upsertUserStat(client, userId, statName, increment = 1) {
+  const safeIncrement = Number.isFinite(Number(increment)) ? Number(increment) : 1;
+  const { rows } = await client.query(
+    `INSERT INTO public.user_statistics (user_id, stat_name, stat_value, updated_at)
+     VALUES ($1, $2, $3, NOW())
+     ON CONFLICT (user_id, stat_name)
+     DO UPDATE SET
+       stat_value = public.user_statistics.stat_value + EXCLUDED.stat_value,
+       updated_at = NOW()
+     RETURNING stat_value`,
+    [userId, statName, safeIncrement]
+  );
+
+  return rows[0]?.stat_value ?? 0;
+}
+
+async function checkAndAwardAchievements(client, userId) {
+  const [achievementsResult, statsResult, profileResult, existingResult] = await Promise.all([
+    client.query(
+      `SELECT id, name, trigger_condition, points_reward
+       FROM public.achievement_types
+       WHERE COALESCE(auto_award, true) = true
+       AND COALESCE(is_active, true) = true`
+    ),
+    client.query(
+      `SELECT stat_name, stat_value
+       FROM public.user_statistics
+       WHERE user_id = $1`,
+      [userId]
+    ),
+    client.query(
+      `SELECT house, COALESCE(house_points, 0) AS house_points, COALESCE(display_name, '') AS display_name
+       FROM public.user_profiles
+       WHERE id = $1
+       LIMIT 1`,
+      [userId]
+    ),
+    client.query(
+      `SELECT achievement_type_id
+       FROM public.user_achievements
+       WHERE user_id = $1`,
+      [userId]
+    )
+  ]);
+
+  const stats = new Map(statsResult.rows.map((r) => [r.stat_name, Number(r.stat_value) || 0]));
+  const profile = profileResult.rows[0] || { house: null, house_points: 0, display_name: '' };
+  const existing = new Set(existingResult.rows.map((r) => Number(r.achievement_type_id)));
+
+  let awardedCount = 0;
+  let pointsAdded = 0;
+  const awardedNames = [];
+
+  const shouldAward = (achievement) => {
+    const trigger = achievement.trigger_condition;
+    if (!trigger) return false;
+
+    const triggerStat = stats.get(`trigger_${trigger}`) || 0;
+    if (triggerStat > 0) return true;
+
+    switch (trigger) {
+      case 'user_registration':
+        return true;
+      case 'posts_count_50':
+        return (stats.get('forum_posts') || 0) >= 50 || (stats.get('posts_count') || 0) >= 50;
+      case 'daily_visits_7':
+        return (stats.get('consecutive_days') || 0) >= 7;
+      case 'active_days_30':
+        return (stats.get('active_days') || 0) >= 30 || (stats.get('consecutive_days') || 0) >= 30;
+      case 'house_points_100':
+        return Number(profile.house_points || 0) >= 100;
+      case 'house_selection':
+        return !!profile.house;
+      case 'profile_completion':
+        return String(profile.display_name || '').trim().length > 0;
+      default:
+        return false;
+    }
+  };
+
+  for (const achievement of achievementsResult.rows) {
+    if (existing.has(Number(achievement.id))) continue;
+    if (!shouldAward(achievement)) continue;
+
+    const insertResult = await client.query(
+      `INSERT INTO public.user_achievements (user_id, achievement_type_id, awarded_by, reason, awarded_at)
+       VALUES ($1, $2, $1, $3, NOW())
+       ON CONFLICT (user_id, achievement_type_id) DO NOTHING
+       RETURNING id`,
+      [userId, achievement.id, `Logro automático (${achievement.trigger_condition || 'sin_trigger'})`]
+    );
+
+    if (insertResult.rowCount > 0) {
+      awardedCount += 1;
+      pointsAdded += Number(achievement.points_reward) || 0;
+      awardedNames.push(achievement.name);
+      existing.add(Number(achievement.id));
+    }
+  }
+
+  if (pointsAdded > 0) {
+    await client.query(
+      `UPDATE public.user_profiles
+       SET house_points = COALESCE(house_points, 0) + $2
+       WHERE id = $1`,
+      [userId, pointsAdded]
+    );
+  }
+
+  return {
+    success: true,
+    achievements_awarded: awardedCount,
+    points_added: pointsAdded,
+    achievements: awardedNames,
+    message: awardedCount > 0 ? `¡${awardedCount} logro(s) desbloqueado(s)!` : 'No hay nuevos logros disponibles'
+  };
+}
+
 app.get('/health', async (_req, res) => {
   try {
     await pool.query('SELECT 1');
@@ -146,6 +264,14 @@ app.post('/auth/signup', async (req, res) => {
        ON CONFLICT (id) DO NOTHING`,
       [id, wizard_name || email.split('@')[0], house || null]
     );
+
+    // Best effort: registrar evento de alta y otorgar logros automáticos iniciales
+    try {
+      await upsertUserStat(client, id, 'trigger_user_registration', 1);
+      await checkAndAwardAchievements(client, id);
+    } catch (achievementError) {
+      console.warn('[achievements] signup bootstrap failed:', achievementError.message);
+    }
 
     await client.query('COMMIT');
 
@@ -397,7 +523,15 @@ function parseOrFilter(orString, params) {
 }
 
 function buildWhere(filters, params, orString) {
-  if (!filters || filters.length === 0) return { clause: '', params };
+  // Handle filters being undefined, null, empty array, or empty object
+  if (!filters || (Array.isArray(filters) && filters.length === 0) || (typeof filters === 'object' && Object.keys(filters).length === 0)) {
+    // Still process OR filter if present
+    const orClause = parseOrFilter(orString, params);
+    if (orClause) {
+      return { clause: `WHERE ${orClause}`, params };
+    }
+    return { clause: '', params };
+  }
   const clauses = [];
 
   for (const f of filters) {
@@ -652,6 +786,38 @@ app.post('/api/db/rpc', optionalAuthMiddleware, async (req, res) => {
 
     const client = await pool.connect();
     try {
+      // Debug: log auth info
+      console.log(`[RPC] fn=${fn}, user.sub=${req.user?.sub || 'none'}, hasAuth=${!!req.headers.authorization}`);
+
+      // Local fallback handlers for critical achievement RPCs.
+      if (schema === 'public' && name === 'update_user_stat') {
+        const userId = args?.p_user_id || req.user?.sub;
+        const statName = args?.p_stat_name;
+        const increment = args?.p_increment ?? 1;
+        if (!userId || !statName) {
+          return res.status(400).json({ error: 'rpc_failed', detail: 'p_user_id and p_stat_name are required' });
+        }
+        const newValue = await upsertUserStat(client, userId, statName, increment);
+        return res.json({
+          data: [{
+            update_user_stat: {
+              success: true,
+              stat_name: statName,
+              new_value: newValue
+            }
+          }]
+        });
+      }
+
+      if (schema === 'public' && name === 'check_and_award_achievements') {
+        const userId = args?.p_user_id || req.user?.sub;
+        if (!userId) {
+          return res.status(400).json({ error: 'rpc_failed', detail: 'p_user_id is required' });
+        }
+        const result = await checkAndAwardAchievements(client, userId);
+        return res.json({ data: [{ check_and_award_achievements: result }] });
+      }
+      
       if (req.user?.sub) {
         // Emulate Supabase JWT context so auth.uid() works in SQL functions.
         await client.query(

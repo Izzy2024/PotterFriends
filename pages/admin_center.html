@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Center | Potter Friends</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <style>
+        :root {
+            --admin-bg-1: #070b14;
+            --admin-bg-2: #0f1728;
+            --admin-panel: rgba(12, 20, 36, 0.78);
+            --admin-panel-strong: rgba(17, 27, 47, 0.9);
+            --admin-border: rgba(132, 166, 255, 0.25);
+            --admin-border-soft: rgba(132, 166, 255, 0.14);
+            --admin-accent: #91c1ff;
+            --admin-accent-2: #f3cf87;
+            --admin-text-1: #edf4ff;
+            --admin-text-2: #b4c4e8;
+            --admin-good: #7ef0b4;
+            --admin-warn: #ffd27d;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 6% 6%, rgba(145, 193, 255, 0.19), transparent 30%),
+                radial-gradient(circle at 90% 10%, rgba(243, 207, 135, 0.15), transparent 32%),
+                linear-gradient(160deg, var(--admin-bg-1) 0%, var(--admin-bg-2) 45%, #090f1e 100%);
+            color: var(--admin-text-1);
+            min-height: 100vh;
+        }
+
+        .brand-mark {
+            width: 2.35rem;
+            height: 2.35rem;
+            margin-right: 0.7rem;
+        }
+
+        .brand-mark .ring,
+        .brand-mark .star,
+        .brand-mark .wand,
+        .brand-mark .spark {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .brand-mark .star { fill: currentColor; opacity: 0.92; }
+        .brand-mark .spark { fill: currentColor; stroke: none; }
+
+        .glass-nav {
+            border-bottom: 1px solid var(--admin-border);
+            background: rgba(7, 11, 20, 0.82) !important;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-panel,
+        .ux-card {
+            border: 1px solid var(--admin-border-soft);
+            background: linear-gradient(160deg, var(--admin-panel) 0%, var(--admin-panel-strong) 100%);
+            box-shadow: 0 18px 34px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            border-radius: 999px;
+            border: 1px solid var(--admin-border);
+            padding: 0.38rem 0.75rem;
+            color: var(--admin-text-2);
+            font-size: 0.78rem;
+            background: rgba(145, 193, 255, 0.08);
+        }
+
+        .kpi-card {
+            border-radius: 14px;
+            border: 1px solid var(--admin-border-soft);
+            background: linear-gradient(155deg, rgba(20, 30, 54, 0.9), rgba(12, 18, 34, 0.94));
+            transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--admin-border);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+        }
+
+        .kpi-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            border: 1px solid rgba(145, 193, 255, 0.24);
+            background: rgba(145, 193, 255, 0.09);
+            color: var(--admin-accent);
+        }
+
+        .module-card {
+            position: relative;
+            border-radius: 14px;
+            border: 1px solid var(--admin-border-soft);
+            background: linear-gradient(150deg, rgba(18, 28, 51, 0.95), rgba(11, 18, 33, 0.96));
+            transition: transform .2s ease, border-color .2s ease;
+        }
+
+        .module-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--admin-border);
+        }
+
+        .module-tag {
+            font-size: 0.72rem;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: var(--admin-accent-2);
+            background: rgba(243, 207, 135, 0.12);
+            border: 1px solid rgba(243, 207, 135, 0.28);
+            border-radius: 999px;
+            padding: 0.2rem 0.55rem;
+        }
+
+        .table-shell {
+            border-radius: 14px;
+            border: 1px solid var(--admin-border-soft);
+            background: linear-gradient(160deg, rgba(16, 24, 44, 0.96), rgba(10, 16, 30, 0.95));
+            overflow: hidden;
+        }
+
+        .table-shell thead tr {
+            background: rgba(145, 193, 255, 0.08);
+        }
+
+        .table-shell tr + tr {
+            border-top: 1px solid rgba(132, 166, 255, 0.13);
+        }
+
+        .status-strip {
+            border-radius: 10px;
+            border: 1px solid rgba(126, 240, 180, 0.25);
+            background: rgba(126, 240, 180, 0.08);
+            color: var(--admin-good);
+            padding: 0.58rem 0.82rem;
+            font-size: 0.84rem;
+        }
+
+        .text-text-secondary { color: var(--admin-text-2) !important; }
+        .text-text-primary { color: var(--admin-text-1) !important; }
+
+        #adminStatus.text-error {
+            border-color: rgba(255, 125, 125, 0.45);
+            background: rgba(255, 95, 95, 0.09);
+            color: #ff9d9d !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="glass-nav sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="homepage_sorting_hat_experience.html" class="flex items-center">
+                    <svg class="brand-mark text-primary" viewBox="0 0 64 64" aria-hidden="true">
+                        <circle class="ring" cx="32" cy="32" r="21"></circle>
+                        <path class="wand" d="M18 43 L44 17"></path>
+                        <path class="star" d="M32 16 L34.5 22 L41 24 L35.5 28 L36.8 34.4 L32 31.2 L27.2 34.4 L28.5 28 L23 24 L29.5 22 Z"></path>
+                        <circle class="spark" cx="46.5" cy="15.5" r="2"></circle>
+                        <circle class="spark" cx="14.5" cy="47.5" r="1.6"></circle>
+                    </svg>
+                    <span class="font-accent text-xl font-medium text-primary">Potter Friends</span>
+                </a>
+                <div class="flex items-center gap-3">
+                    <a href="house_common_rooms_personalized_dashboards.html" class="btn-secondary text-sm px-4 py-2">Mi Casa</a>
+                    <button id="logoutAdminBtn" class="btn-primary text-sm px-4 py-2">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <section class="hero-panel rounded-2xl p-6 lg:p-8">
+            <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6">
+                <div>
+                    <div class="hero-pill mb-4">Control central de comunidad</div>
+                    <h1 class="font-headline text-3xl lg:text-4xl text-text-primary">Admin Center</h1>
+                    <p class="text-text-secondary mt-3 max-w-2xl">Panel de mando para operar comunidad, participación y progreso de casas con una vista unificada.</p>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span class="hero-pill">Usuarios</span>
+                        <span class="hero-pill">Foro</span>
+                        <span class="hero-pill">Puntos de casa</span>
+                        <span class="hero-pill">Logros</span>
+                        <span class="hero-pill">Sorting Hat</span>
+                    </div>
+                </div>
+                <div class="ux-card rounded-xl px-4 py-3 min-w-[240px]">
+                    <p class="text-xs uppercase tracking-wide text-text-secondary">Sesión activa</p>
+                    <p id="adminDisplayName" class="font-medium text-text-primary mt-1">Cargando...</p>
+                    <p class="text-sm mt-1"><span id="adminRoleBadge" class="text-primary font-semibold">-</span> · <span id="adminHouse" class="text-text-secondary">-</span></p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4">
+                <article class="kpi-card p-4">
+                    <div class="flex justify-between items-start">
+                        <p class="text-xs text-text-secondary">Usuarios</p>
+                        <span class="kpi-icon">U</span>
+                    </div>
+                    <p id="usersCount" class="font-headline text-2xl text-primary mt-2">0</p>
+                </article>
+                <article class="kpi-card p-4">
+                    <div class="flex justify-between items-start">
+                        <p class="text-xs text-text-secondary">Posts</p>
+                        <span class="kpi-icon">P</span>
+                    </div>
+                    <p id="postsCount" class="font-headline text-2xl text-primary mt-2">0</p>
+                </article>
+                <article class="kpi-card p-4">
+                    <div class="flex justify-between items-start">
+                        <p class="text-xs text-text-secondary">Comentarios</p>
+                        <span class="kpi-icon">C</span>
+                    </div>
+                    <p id="commentsCount" class="font-headline text-2xl text-primary mt-2">0</p>
+                </article>
+                <article class="kpi-card p-4">
+                    <div class="flex justify-between items-start">
+                        <p class="text-xs text-text-secondary">Puntos Casas</p>
+                        <span class="kpi-icon">H</span>
+                    </div>
+                    <p id="housePointsCount" class="font-headline text-2xl text-primary mt-2">0</p>
+                </article>
+                <article class="kpi-card p-4">
+                    <div class="flex justify-between items-start">
+                        <p class="text-xs text-text-secondary">Logros dados</p>
+                        <span class="kpi-icon">L</span>
+                    </div>
+                    <p id="achievementsAwardedCount" class="font-headline text-2xl text-primary mt-2">0</p>
+                </article>
+                <article class="kpi-card p-4">
+                    <div class="flex justify-between items-start">
+                        <p class="text-xs text-text-secondary">Tipos de Logro</p>
+                        <span class="kpi-icon">T</span>
+                    </div>
+                    <p id="achievementTypesCount" class="font-headline text-2xl text-primary mt-2">0</p>
+                </article>
+                <article class="kpi-card p-4">
+                    <div class="flex justify-between items-start">
+                        <p class="text-xs text-text-secondary">Preguntas Sombrero</p>
+                        <span class="kpi-icon">S</span>
+                    </div>
+                    <p id="sortingQuestionsCount" class="font-headline text-2xl text-primary mt-2">0</p>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-headline text-2xl">Módulos de Administración</h2>
+                <span class="text-sm text-text-secondary">Flujo recomendado: datos, moderación y crecimiento</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="house_head_admin_panel.html" class="module-card block p-5">
+                    <span class="module-tag">Operación diaria</span>
+                    <h3 class="font-cta text-lg text-text-primary mt-3">Usuarios, Puntos y Logros</h3>
+                    <p class="text-text-secondary mt-2">Asignación de logros, revisión de miembros y seguimiento de puntos por casa.</p>
+                </a>
+                <a href="interactive_forum_hub.html" class="module-card block p-5">
+                    <span class="module-tag">Comunidad</span>
+                    <h3 class="font-cta text-lg text-text-primary mt-3">Foro y Moderación</h3>
+                    <p class="text-text-secondary mt-2">Monitoreo de discusiones, participación y acceso al detalle de publicaciones.</p>
+                </a>
+                <a href="event-admin.html" class="module-card block p-5">
+                    <span class="module-tag">Engagement</span>
+                    <h3 class="font-cta text-lg text-text-primary mt-3">Eventos y Desafíos</h3>
+                    <p class="text-text-secondary mt-2">Planifica actividades para mantener la comunidad activa y alineada por casa.</p>
+                </a>
+                <a href="house_selection_portal_sorting_hat_quiz.html" class="module-card block p-5">
+                    <span class="module-tag">Configuración</span>
+                    <h3 class="font-cta text-lg text-text-primary mt-3">Preguntas del Sombrero</h3>
+                    <p class="text-text-secondary mt-2">Control del cuestionario de selección para evolución futura del sistema.</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <article class="table-shell p-5">
+                <h2 class="font-headline text-xl mb-4">Ranking de Casas</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr>
+                                <th class="text-left px-4 py-3 text-text-secondary font-medium">Pos.</th>
+                                <th class="text-left px-4 py-3 text-text-secondary font-medium">Casa</th>
+                                <th class="text-right px-4 py-3 text-text-secondary font-medium">Puntos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="houseRankingBody">
+                            <tr>
+                                <td colspan="3" class="px-4 py-3 text-text-secondary">Cargando ranking...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="table-shell p-5">
+                <h2 class="font-headline text-xl mb-4">Discusiones Recientes</h2>
+                <div id="recentPostsList" class="space-y-3">
+                    <p class="text-text-secondary">Cargando discusiones...</p>
+                </div>
+            </article>
+        </section>
+
+        <p id="adminStatus" class="status-strip">Inicializando panel...</p>
+    </main>
+
+    <script src="../src/scripts/auth.js"></script>
+    <script src="../js/admin-center.js"></script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

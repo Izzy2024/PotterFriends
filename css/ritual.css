@@ -1,0 +1,221 @@
+        /* ----------------------------------------- */
+        /* PORTAL DE SELECCION: DARK RITUAL THEME    */
+        /* ----------------------------------------- */
+        :root {
+            --vantablack: #050303;
+            --obsidian: #0F0A0A;
+            --incantation-gold: #DFB15B;
+            --ember-red: #8F1115;
+            --parchment-white: #ECE1CD;
+            --faded-ink: #8A8172;
+            --spectral-cyan: #9FD4FF;
+        }
+
+        body.theme-selection {
+            font-family: 'EB Garamond', 'Josefin Sans', serif;
+            background-color: var(--vantablack);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(143, 17, 21, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(223, 177, 91, 0.05) 0%, transparent 40%);
+            color: var(--parchment-white);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Típografía Ceremonial */
+        .theme-selection .font-headline,
+        .theme-selection h1,
+        .theme-selection h2 {
+            font-family: 'Cinzel', serif !important;
+            color: var(--parchment-white) !important;
+            letter-spacing: 0.05em;
+            font-weight: 400;
+        }
+
+        /* Fondo general */
+        .min-h-screen.bg-gradient-to-b {
+            background: transparent !important; /* Overriding previous tailwind */
+        }
+
+        /* Polvo Cinemático (Atmosphere) */
+        .cinematic-dust {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.04"/%3E%3C/svg%3E');
+            z-index: 0;
+            mix-blend-mode: screen;
+        }
+
+        /* El Artefacto (Image masking & levitation) */
+        .artefact-container {
+            position: relative;
+            animation: levitate 12s ease-in-out infinite;
+        }
+        .artefact {
+            mask-image: radial-gradient(circle, black 40%, transparent 70%);
+            -webkit-mask-image: radial-gradient(circle, black 40%, transparent 70%);
+            filter: grayscale(20%) contrast(1.2);
+        }
+        @keyframes levitate {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* ----------------------------------------- */
+        /* CONTAINERS & CARDS                        */
+        /* ----------------------------------------- */
+        /* The void strategy: no visible boxes, just existence in darkness */
+        #welcomeScreen .bg-surface\/20,
+        #quizScreen .bg-surface\/20,
+        #resultsScreen .bg-surface\/20 {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            padding: 0 !important;
+        }
+
+        /* ----------------------------------------- */
+        /* INTERACTIVE PLATES (Options)              */
+        /* ----------------------------------------- */
+        .ritual-plate {
+            background: var(--vantablack) !important;
+            border: 1px solid rgba(138, 129, 114, 0.1) !important;
+            color: var(--faded-ink) !important;
+            border-radius: 2px !important; /* Sharp edges */
+            padding: 1.5rem !important;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+            position: relative;
+            overflow: hidden;
+            font-family: 'EB Garamond', serif;
+            font-size: 1.25rem;
+            text-align: center;
+        }
+        
+        /* Magnetic Hover & Initial Glow */
+        .ritual-plate:hover {
+            transform: translateY(-3px) scale(1.01) !important;
+            color: var(--parchment-white) !important;
+            border-color: rgba(159, 212, 255, 0.3) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(159, 212, 255, 0.05);
+        }
+
+        /* Hover border streak */
+        .ritual-plate::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--spectral-cyan), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .ritual-plate:hover::before {
+            opacity: 1;
+        }
+
+        /* Selected/Committed State */
+        .ritual-plate.selected-plate {
+            border-color: var(--incantation-gold) !important;
+            color: var(--incantation-gold) !important;
+            background: rgba(223, 177, 91, 0.05) !important;
+            box-shadow: 0 0 20px rgba(223, 177, 91, 0.2), inset 0 0 15px rgba(223, 177, 91, 0.1) !important;
+            transform: translateY(-2px) !important;
+        }
+        .ritual-plate.selected-plate::before {
+            background: linear-gradient(90deg, transparent, var(--incantation-gold), transparent);
+            opacity: 1;
+        }
+
+        /* ----------------------------------------- */
+        /* BUTTONS & ACTIONS                         */
+        /* ----------------------------------------- */
+        .btn-ritual-primary {
+            background: linear-gradient(180deg, var(--ember-red), #5c0b0d) !important;
+            border: 1px solid rgba(223, 177, 91, 0.3) !important;
+            color: var(--parchment-white) !important;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border-radius: 2px !important;
+            transition: all 0.5s ease !important;
+        }
+        .btn-ritual-primary:hover:not(:disabled) {
+            background: linear-gradient(180deg, #b3151a, #730d0f) !important;
+            border-color: var(--incantation-gold) !important;
+            box-shadow: 0 0 30px rgba(143, 17, 21, 0.4);
+            transform: scale(1.02);
+        }
+        
+        .btn-ritual-secondary {
+            background: transparent !important;
+            border: 1px solid rgba(138, 129, 114, 0.2) !important;
+            color: var(--faded-ink) !important;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border-radius: 2px !important;
+            transition: all 0.4s ease !important;
+        }
+        .btn-ritual-secondary:hover:not(:disabled) {
+            border-color: var(--parchment-white) !important;
+            color: var(--parchment-white) !important;
+            background: rgba(255,255,255,0.02) !important;
+        }
+
+        .btn-ritual-primary:disabled, .btn-ritual-secondary:disabled {
+            opacity: 0.2 !important;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* ----------------------------------------- */
+        /* THE PROGRESS SPIRE                        */
+        /* ----------------------------------------- */
+        .progress-spire-container {
+            width: 100%;
+            height: 1px;
+            background: rgba(236, 225, 205, 0.1);
+            position: relative;
+            margin: 2rem 0 4rem 0;
+            overflow: visible; /* To allow glow to escape */
+        }
+        .progress-spire-fill {
+            height: 100%;
+            background: var(--incantation-gold);
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 0 10px var(--incantation-gold);
+        }
+        .progress-spire-head {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px 4px var(--incantation-gold);
+        }
+        
+        /* ----------------------------------------- */
+        /* METADATA TEXT                             */
+        /* ----------------------------------------- */
+        .ritual-metadata {
+            font-family: 'Cinzel', serif;
+            color: var(--faded-ink);
+            font-size: 0.875rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        /* Nav Override para encajar con el vacío */
+        nav {
+            background: rgba(5, 3, 3, 0.8) !important; /* Vantablack glass */
+            border-bottom: 1px solid rgba(138, 129, 114, 0.1) !important;
+        }

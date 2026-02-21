@@ -5,11 +5,13 @@
 
 class HouseHeadAdmin {
     constructor() {
-        // Usar el cliente global de auth.js para evitar múltiples instancias
-        this.supabase = window.supabaseClient || window.supabase.createClient(
-            'https://vdcclritlgnwwdxloayt.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkY2Nscml0bGdud3dkeGxvYXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTQxMDQsImV4cCI6MjA2ODY3MDEwNH0.BaBIrCS9fgkLEkC_KLZg9gR_jNgFIPC7bMvuwfCnb6E'
-        );
+        // Usar el cliente global de auth.js (conecta al backend local)
+        this.supabase = window.supabaseClient;
+        
+        if (!this.supabase) {
+            console.error('❌ Cliente de base de datos no disponible. Asegúrate de que auth.js esté cargado.');
+        }
+        
         this.currentUser = null;
         this.currentHouse = null;
         this.houseMembers = [];
